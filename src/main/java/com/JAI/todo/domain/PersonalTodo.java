@@ -33,7 +33,7 @@ public class PersonalTodo {
     private boolean done;
 
     @Column(nullable = false)
-    private int order;
+    private int todo_order;
 
     @Column(nullable = false)
     private LocalDate date;
@@ -55,10 +55,10 @@ public class PersonalTodo {
     private Category category;
 
     @Builder
-    private PersonalTodo(String description, boolean done, int order, LocalDate date, LocalTime startTime, User user, Category category){
+    private PersonalTodo(String description, boolean done, int todo_order, LocalDate date, LocalTime startTime, User user, Category category){
         this.description = description;
         this.done = done;
-        this.order = order;
+        this.todo_order = todo_order;
         this.date = date;
         this.startTime = startTime;
         this.user = user;
@@ -69,7 +69,7 @@ public class PersonalTodo {
         return PersonalTodo.builder()
                 .description(description)
                 .done(false)    //default
-                .order(0)   //default
+                .todo_order(0)   //default
                 .date(date)
                 .startTime(startTime)
                 .user(user)
