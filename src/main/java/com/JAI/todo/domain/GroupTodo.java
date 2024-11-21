@@ -33,7 +33,7 @@ public class GroupTodo {
     private boolean done;
 
     @Column(nullable = false)
-    private int order;
+    private int todo_order;
 
     @Column(nullable = false)
     private LocalDate date;
@@ -54,10 +54,10 @@ public class GroupTodo {
     private List<GroupTodoMapping> groupTodoMappings;
 
     @Builder
-    private GroupTodo(String description, boolean done, int order, LocalDate date, LocalTime startTime, Group group){
+    private GroupTodo(String description, boolean done, int todo_order, LocalDate date, LocalTime startTime, Group group){
         this.description = description;
         this.done = done;
-        this.order = order;
+        this.todo_order = todo_order;
         this.date = date;
         this.startTime = startTime;
         this.group = group;
@@ -67,7 +67,7 @@ public class GroupTodo {
         return GroupTodo.builder()
                 .description(description)
                 .done(false)    //default
-                .order(0)   //default
+                .todo_order(0)   //default
                 .date(date)
                 .startTime(startTime)
                 .group(group)
