@@ -50,7 +50,7 @@ public class GroupTodo {
     @JoinColumn(name = "group_id", referencedColumnName = "group_id",nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Group group;
 
-    @OneToMany(mappedBy = "group_todo_mapping", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "groupTodo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupTodoMapping> groupTodoMappings;
 
     @Builder

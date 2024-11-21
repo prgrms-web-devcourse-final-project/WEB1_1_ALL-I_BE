@@ -1,5 +1,6 @@
 package com.JAI.event.domain;
 import com.JAI.group.domain.Group;
+import com.JAI.group.domain.GroupSetting;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,22 +18,22 @@ public class GroupEventMapping {
     private UUID groupEventMappingId;
 
     @ManyToOne
-    @JoinColumn(name = "group_id", referencedColumnName = "group_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Group group;
-
-    @ManyToOne
     @JoinColumn(name = "group_event_id", referencedColumnName = "group_event_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private GroupEvent groupEvent;
 
+    @ManyToOne
+    @JoinColumn(name = "group_setting_id", referencedColumnName = "group_setting_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private GroupSetting groupSetting;
+
     @Builder
-    private GroupEventMapping(Group group, GroupEvent groupEvent) {
-        this.group = group;
+    private GroupEventMapping(GroupSetting groupSettingg, GroupEvent groupEvent) {
+        this.groupSetting = groupSetting;
         this.groupEvent = groupEvent;
     }
 
-    public static GroupEventMapping create(Group group, GroupEvent groupEvent) {
+    public static GroupEventMapping create(GroupSetting groupSetting, GroupEvent groupEvent) {
         return GroupEventMapping.builder()
-                .group(group)
+                .groupSettingg(groupSetting)
                 .groupEvent(groupEvent)
                 .build();
     }

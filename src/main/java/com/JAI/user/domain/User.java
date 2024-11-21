@@ -48,20 +48,20 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime endDatetime;
 
-    @OneToMany(mappedBy = "alarm", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(name = "alarm_id")
     private List<Alarm> alarms;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupSetting> groupSettings;
 
-    @OneToMany(mappedBy = "personal_event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PersonalEvent> personalEvents;
 
-    @OneToMany(mappedBy = "personal_todo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PersonalTodo> personalTodos;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories;
 
     @Builder

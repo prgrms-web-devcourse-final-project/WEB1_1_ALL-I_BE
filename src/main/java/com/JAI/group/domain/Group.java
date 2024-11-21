@@ -27,16 +27,16 @@ public class Group {
     @Column(name = "description", nullable = true, length = 255)
     private String description;
 
-    @OneToMany(mappedBy = "group_setting", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupSetting> groupSettings;
 
-    @OneToMany(mappedBy = "group_event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupEvent> groupEvents;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Category> categories;
+    @OneToOne(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Category category;
 
-    @OneToMany(mappedBy = "group_todo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupTodo> groupTodos;
 
     @Builder

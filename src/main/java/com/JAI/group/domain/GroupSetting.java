@@ -33,10 +33,10 @@ public class GroupSetting {
     @JoinColumn(name = "group_id", referencedColumnName = "group_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Group group;
 
-    @OneToMany(mappedBy = "group_event_mapping", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "groupSetting", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupEventMapping> groupEventMapping;
 
-    @OneToMany(mappedBy = "group_todo_mapping", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "groupSetting", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupTodoMapping> groupTodoMapping;
 
     @Builder
