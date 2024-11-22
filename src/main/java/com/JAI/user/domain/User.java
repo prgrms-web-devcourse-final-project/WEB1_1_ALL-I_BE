@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -25,28 +26,28 @@ public class User {
     @Column(name = "user_id", columnDefinition = "BINARY(16)")
     private UUID userId;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "nickname", nullable = false, unique = true, length = 20)
     private String nickname;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "role", nullable = false, length = 10)
     private Role role;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true, length = 50)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "passsword", nullable = false, length = 255)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "provider", nullable = false, length = 10)
     private Provider provider;
 
-    @Column(nullable = true)
+    @Column(name = "image_url", nullable = true, length = 500)
     private String imageUrl;
 
-    @Column(nullable = false)
-    private LocalDateTime endDatetime;
+    @Column(name = "end_datetime", nullable = false, columnDefinition = "DATETIME")
+    private LocalDate endDatetime;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(name = "alarm_id")
@@ -65,7 +66,7 @@ public class User {
     private List<Category> categories;
 
     @Builder
-    private User(String nickname, Role role, String email, String password, Provider provider, String imageUrl, LocalDateTime endDatetime) {
+    private User(String nickname, Role role, String email, String password, Provider provider, String imageUrl, LocalDate endDatetime) {
         this.nickname = nickname;
         this.role = role;
         this.email = email;
@@ -75,7 +76,7 @@ public class User {
         this.endDatetime = endDatetime;
     }
 
-    public static User create(String nickname, String email, String password, Provider provider, LocalDateTime endDatetime) {
+    public static User create(String nickname, String email, String password, Provider provider, LocalDate endDatetime) {
         return User.builder()
                 .nickname(nickname)
                 .role(Role.USER)    //기본값
