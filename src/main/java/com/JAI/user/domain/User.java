@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,8 +47,8 @@ public class User {
     @Column(name = "image_url", nullable = true, length = 500)
     private String imageUrl;
 
-    @Column(name = "end_datetime", nullable = false, columnDefinition = "DATETIME")
-    private LocalDate endDatetime;
+    @Column(name = "end_time", nullable = false, columnDefinition = "DATETIME")
+    private LocalTime endTime;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(name = "alarm_id")
