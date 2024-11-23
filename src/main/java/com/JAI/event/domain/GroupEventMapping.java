@@ -14,7 +14,7 @@ import java.util.UUID;
 public class GroupEventMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "group_event_mapping_id", columnDefinition = "BINARY(16)")
+    @Column(name = "group_event_mapping_id")
     private UUID groupEventMappingId;
 
     @ManyToOne

@@ -18,11 +18,11 @@ public class GroupSetting {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "group_setting_id", columnDefinition = "BINARY(16)")
+    @Column(name = "group_setting_id")
     private UUID groupSettingId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, length = 10)
+    @Column(name = "role", nullable = false)
     private GroupRole role;
 
     @ManyToOne
