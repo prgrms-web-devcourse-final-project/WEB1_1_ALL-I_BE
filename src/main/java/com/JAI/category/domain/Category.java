@@ -18,13 +18,13 @@ import com.JAI.user.domain.User;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "category_id")
+    @Column(name = "category_id", columnDefinition = "BINARY(16)")
     private UUID categoryId;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
 
-    @Column(name = "color", nullable = false)
+    @Column(name = "color", nullable = false, length = 50)
     private String color;
 
     @ManyToOne
