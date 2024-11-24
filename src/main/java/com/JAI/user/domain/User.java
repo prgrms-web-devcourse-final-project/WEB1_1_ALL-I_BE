@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,7 +46,7 @@ public class User {
     private String imageUrl;
 
     @Column(nullable = false)
-    private LocalDateTime endDatetime;
+    private LocalTime endDatetime;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(name = "alarm_id")
@@ -65,7 +65,7 @@ public class User {
     private List<Category> categories;
 
     @Builder
-    private User(String nickname, Role role, String email, String password, Provider provider, String imageUrl, LocalDateTime endDatetime) {
+    private User(String nickname, Role role, String email, String password, Provider provider, String imageUrl, LocalTime endDatetime) {
         this.nickname = nickname;
         this.role = role;
         this.email = email;
@@ -75,14 +75,14 @@ public class User {
         this.endDatetime = endDatetime;
     }
 
-    public static User create(String nickname, String email, String password, Provider provider, LocalDateTime endDatetime) {
+    public static User create(String nickname, String email, String password, Provider provider) {
         return User.builder()
                 .nickname(nickname)
                 .role(Role.USER)    //기본값
                 .email(email)
                 .password(password)
                 .provider(provider)
-                .endDatetime(endDatetime)
+                .endDatetime(LocalTime.of(11,59,0))
                 .build();
     }
 }
