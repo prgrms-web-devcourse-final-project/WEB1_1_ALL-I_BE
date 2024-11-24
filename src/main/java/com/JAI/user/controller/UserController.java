@@ -3,6 +3,7 @@ package com.JAI.user.controller;
 
 import com.JAI.global.controller.ApiResponse;
 import com.JAI.user.controller.request.UserJoinReq;
+import com.JAI.user.controller.request.UserLoginReq;
 import com.JAI.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,12 @@ public class UserController {
     public ApiResponse<?> updateUserInfo(){
         return null;
     }
+
+//    @PostMapping("login")
+//    public ApiResponse<String> login(@RequestBody UserLoginReq userLoginReq){
+//        System.out.println("Login Controller");
+//        return null;
+//    }
 
     //회원 정보 조회(마이페이지)
     //프로필 사진, 닉네임, 이메일

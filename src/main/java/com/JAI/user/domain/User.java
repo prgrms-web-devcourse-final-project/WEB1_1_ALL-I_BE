@@ -78,7 +78,7 @@ public class User {
     public static User create(String nickname, String email, String password, Provider provider) {
         return User.builder()
                 .nickname(nickname)
-                .role(Role.USER)    //기본값
+                .role(Role.ROLE_USER)    //기본값
                 .email(email)
                 .password(password)
                 .provider(provider)
