@@ -75,6 +75,14 @@ public class User {
         this.endDatetime = endDatetime;
     }
 
+    //로그인 용 빌더
+    @Builder
+    private User(String email, String password, Role role){
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
     public static User create(String nickname, String email, String password, Provider provider) {
         return User.builder()
                 .nickname(nickname)
@@ -83,6 +91,14 @@ public class User {
                 .password(password)
                 .provider(provider)
                 .endDatetime(LocalTime.of(11,59,0))
+                .build();
+    }
+
+    public static User createLoginInfo(String email, String password, Role role) {
+        return User.builder()
+                .email(email)
+                .password(password)
+                .role(role)
                 .build();
     }
 }

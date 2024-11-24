@@ -1,5 +1,6 @@
 package com.JAI.config;
 
+import com.JAI.user.jwt.JWTFilter;
 import com.JAI.user.jwt.JWTUtil;
 import com.JAI.user.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +39,10 @@ public class SecurityConfig {
                 .formLogin((auth) -> auth.disable())
                 .httpBasic((auth) -> auth.disable())
                 .authorizeRequests((auth) -> auth
-                        .requestMatchers("/user/join","/user/**").permitAll()
+                        .requestMatchers("/user/join","/login").permitAll()
                         .anyRequest().authenticated())
+                //jwt 필터 추가
+                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class)
                 //로그인 필터 추가
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement((session) -> session
