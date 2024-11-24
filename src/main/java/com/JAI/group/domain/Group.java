@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @Entity
-@Table(name = "group")
+@Table(name = "group_tb")
 public class Group {
 
     @Id
