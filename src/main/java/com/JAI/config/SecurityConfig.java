@@ -65,6 +65,7 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable())
                 .authorizeRequests((auth) -> auth
                         .requestMatchers("/user/join","/login").permitAll()
+                        .requestMatchers("/user/reissue").permitAll()
                         .anyRequest().authenticated())
                 //jwt 필터 추가
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class)

@@ -5,7 +5,10 @@ import com.JAI.global.controller.ApiResponse;
 import com.JAI.user.controller.request.UserJoinReq;
 import com.JAI.user.controller.request.UserLoginReq;
 import com.JAI.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -42,5 +45,11 @@ public class UserController {
         return ApiResponse.ok("Success");
     }
 
+    //액세스 토큰 재발급
+    @PostMapping("/reissue")
+    public ApiResponse<String> reissue(HttpServletRequest request, HttpServletResponse response){
+        userService.reissue(request, response);
+        return ApiResponse.of(HttpStatus.OK,"Reissue Access Token Successfully");
+    }
 
 }

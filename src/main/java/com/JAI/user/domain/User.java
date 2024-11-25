@@ -94,10 +94,9 @@ public class User {
                 .build();
     }
 
-    public static User createLoginInfo(String email, String password, Role role) {
+    public static User createLoginInfo(String email, Role role) {
         return User.builder()
                 .email(email)
-                .password(password)
                 .role(role)
                 .build();
     }
