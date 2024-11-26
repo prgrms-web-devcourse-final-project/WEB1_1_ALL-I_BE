@@ -1,9 +1,12 @@
 package com.JAI.user.service;
 
 import com.JAI.user.controller.request.UserSignupReq;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import com.JAI.user.domain.User;
+
+import java.util.UUID;
 
 public interface UserService {
     void signup(UserSignupReq userSignupReq);
+
+    public User getUserById(UUID userId);
 }
