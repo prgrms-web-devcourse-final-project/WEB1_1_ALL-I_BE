@@ -51,6 +51,7 @@ public class PersonalEvent {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "category_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Category category;
@@ -62,18 +63,16 @@ public class PersonalEvent {
         this.user = user;
     }
 
-    public void setCategory(final Category category) {
-        this.category = category;
-    }
-
-    @Builder
-    private PersonalEvent(String title, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, Boolean isAlarmed, User user, Category category) {
+    @Builder(toBuilder = true)
+    private PersonalEvent(UUID personalEventId, String title, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, Boolean isAlarmed, LocalDateTime createdAt, User user, Category category) {
+        this.personalEventId = personalEventId;
         this.title = title;
         this.startDate = startDate;
         this.startTime = startTime;
         this.endDate = endDate;
         this.endTime = endTime;
         this.isAlarmed = isAlarmed;
+        this.createdAt = createdAt;
         this.user = user;
         this.category = category;
     }
@@ -85,7 +84,7 @@ public class PersonalEvent {
                 .startTime(startTime)
                 .endDate(endDate)
                 .endTime(endTime)
-                .isAlarmed(false)   //default
+                .isAlarmed(false)
                 .user(user)
                 .category(category)
                 .build();

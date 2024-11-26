@@ -26,14 +26,14 @@ public class GroupEventMapping {
     private GroupSetting groupSetting;
 
     @Builder
-    private GroupEventMapping(GroupSetting groupSettingg, GroupEvent groupEvent) {
+    private GroupEventMapping(GroupSetting groupSetting, GroupEvent groupEvent) {
         this.groupSetting = groupSetting;
         this.groupEvent = groupEvent;
     }
 
     public static GroupEventMapping create(GroupSetting groupSetting, GroupEvent groupEvent) {
         return GroupEventMapping.builder()
-                .groupSettingg(groupSetting)
+                .groupSetting(groupSetting)
                 .groupEvent(groupEvent)
                 .build();
     }
