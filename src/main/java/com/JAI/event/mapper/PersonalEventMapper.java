@@ -30,6 +30,7 @@ public interface PersonalEventMapper {
         updatePersonalEvent.endDate(personalEventUpdateReqDTO.getEndDate() != null ? personalEventUpdateReqDTO.getEndDate() : personalEvent.getEndDate());
         updatePersonalEvent.endTime(personalEventUpdateReqDTO.getEndTime() != null ? personalEventUpdateReqDTO.getEndTime() : personalEvent.getEndTime());
         updatePersonalEvent.isAlarmed(personalEventUpdateReqDTO.getIsAlarmed() != null ? personalEventUpdateReqDTO.getIsAlarmed() : personalEvent.getIsAlarmed());
+        updatePersonalEvent.createdAt(personalEvent.getCreatedAt());
         updatePersonalEvent.user(personalEvent.getUser());
         updatePersonalEvent.category(personalEvent.getCategory());
 

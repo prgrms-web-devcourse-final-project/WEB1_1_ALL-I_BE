@@ -18,9 +18,10 @@ import java.util.UUID;
 public class PersonalEventController {
     private final PersonalEventService personalEventService;
 
+    // 추후 로그인 달면 userid 부분 수정
     @GetMapping
-    public ApiResponse<List<PersonalEventResDTO>> getPersonalEvent(@RequestParam String year, @RequestParam String month) {
-        List<PersonalEventResDTO> personalEventResDTOs = personalEventService.getPersonalEventsForMonth(year, month);
+    public ApiResponse<List<PersonalEventResDTO>> getPersonalEvent(@RequestParam String year, @RequestParam String month, @RequestParam UUID userId) {
+        List<PersonalEventResDTO> personalEventResDTOs = personalEventService.getPersonalEventsForMonth(year, month, userId);
         return ApiResponse.onSuccess(personalEventResDTOs);
     }
 

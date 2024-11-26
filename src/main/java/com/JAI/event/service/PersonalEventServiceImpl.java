@@ -70,11 +70,15 @@ public class PersonalEventServiceImpl implements PersonalEventService {
     }
 
     @Override
-    public List<PersonalEventResDTO> getPersonalEventsForMonth(String year, String month) {
+    public List<PersonalEventResDTO> getPersonalEventsForMonth(String year, String month, UUID userId) {
+        Optional.ofNullable(userService.getUserById(userId))
+                .orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자를 찾을 수 없습니다.", userId));
+
+
         LocalDate startDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
-        List<PersonalEvent> personalEvents = personalEventRepository.findAllByStartDateBetween(startDate, endDate);
+        List<PersonalEvent> personalEvents = personalEventRepository.findAllByStartDateBetweenAndUser_UserId(startDate, endDate, userId);
 
         // PersonalEvent 리스트를 PersonalEventResDTO 리스트로 변환
         return personalEvents.stream()
