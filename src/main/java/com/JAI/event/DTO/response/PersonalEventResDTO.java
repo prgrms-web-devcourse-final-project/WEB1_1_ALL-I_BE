@@ -1,6 +1,5 @@
-package com.JAI.event.DTO.request;
+package com.JAI.event.DTO.response;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -12,8 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Data
-public class PersonalUpdateEventReqDTO {
-    @NotNull(message = "Personal Event ID must not be null")
+public class PersonalEventResDTO {
     UUID personalEventId;
 
     String title;
@@ -29,4 +27,6 @@ public class PersonalUpdateEventReqDTO {
     Boolean isAlarmed;
 
     UUID categoryId;
+
+    UUID userId;
 }
