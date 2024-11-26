@@ -14,5 +14,5 @@ public interface PersonalEventService {
 
     public void deletePersonalEvent(UUID personalEventId);
 
-    public List<PersonalEventResDTO> getPersonalEventsForMonth(String year, String month);
+    public List<PersonalEventResDTO> getPersonalEventsForMonth(String year, String month, UUID userId);
 }

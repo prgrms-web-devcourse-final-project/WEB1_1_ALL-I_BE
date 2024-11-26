@@ -10,5 +10,5 @@ import java.util.UUID;
 public interface PersonalEventRepository extends JpaRepository<PersonalEvent, UUID> {
     void deletePersonalEventByPersonalEventId(UUID personalEventId);
 
-    List<PersonalEvent> findAllByStartDateBetween(LocalDate startDate, LocalDate endDate);
+    List<PersonalEvent> findAllByStartDateBetweenAndUser_UserId(LocalDate startDate, LocalDate endDate, UUID userId);
 }

@@ -3,6 +3,7 @@ package com.JAI.event.DTO.response;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -25,6 +26,8 @@ public class PersonalEventResDTO {
     LocalTime endTime;
 
     Boolean isAlarmed;
+
+    LocalDateTime createdAt;
 
     UUID categoryId;
 

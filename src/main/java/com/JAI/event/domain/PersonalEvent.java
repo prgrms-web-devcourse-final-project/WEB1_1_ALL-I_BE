@@ -64,7 +64,7 @@ public class PersonalEvent {
     }
 
     @Builder(toBuilder = true)
-    private PersonalEvent(UUID personalEventId, String title, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, Boolean isAlarmed, User user, Category category) {
+    private PersonalEvent(UUID personalEventId, String title, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, Boolean isAlarmed, LocalDateTime createdAt, User user, Category category) {
         this.personalEventId = personalEventId;
         this.title = title;
         this.startDate = startDate;
@@ -72,6 +72,7 @@ public class PersonalEvent {
         this.endDate = endDate;
         this.endTime = endTime;
         this.isAlarmed = isAlarmed;
+        this.createdAt = createdAt;
         this.user = user;
         this.category = category;
     }
