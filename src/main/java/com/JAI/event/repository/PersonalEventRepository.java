@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface PersonalEventRepository extends JpaRepository<PersonalEvent, UUID> {
+    void deletePersonalEventByPersonalEventId(UUID personalEventId);
 }
