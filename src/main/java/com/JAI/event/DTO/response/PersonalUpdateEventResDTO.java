@@ -1,5 +1,6 @@
-package com.JAI.event.DTO;
+package com.JAI.event.DTO.response;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -11,8 +12,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Data
-public class PersonalCreateEventReqDTO {
-    String description;
+public class PersonalUpdateEventResDTO {
+    UUID personalEventId;
+
+    String title;
 
     LocalDate startDate;
 
@@ -24,7 +27,7 @@ public class PersonalCreateEventReqDTO {
 
     Boolean isAlarmed;
 
-    UUID userId;
-
     UUID categoryId;
+
+    UUID userId;
 }
