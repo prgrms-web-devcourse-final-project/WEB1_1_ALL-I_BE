@@ -5,6 +5,7 @@ import com.JAI.user.controller.request.UserJoinReq;
 import com.JAI.user.domain.Provider;
 import com.JAI.user.domain.User;
 import com.JAI.user.jwt.JWTUtil;
+import com.JAI.user.jwt.RedisTokenUtil;
 import com.JAI.user.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
@@ -16,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -23,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JWTUtil jwtUtil;
+    private final RedisTokenUtil redisTokenUtil;
 
     @Override
     public void join(UserJoinReq userJoinReq) {
@@ -54,21 +58,24 @@ public class UserServiceImpl implements UserService {
     public void reissue(HttpServletRequest request, HttpServletResponse response) {
         //get Refresh Token
         String refresh = null;
+        //쿠키에서 Refresh Token 추출
         Cookie[] cookies = request.getCookies();
         for(Cookie cookie : cookies) {
             if(cookie.getName().equals("refresh")) {
                 refresh = cookie.getValue();
             }
         }
-
+        //RefreshToken이 없을때
         if(refresh == null) {
+            //System.out.println("리프레시 토큰 없음");
             throw new IllegalArgumentException("refresh token null");
         }
 
-        //만료 체크
+        //RefreshToken 만료 여부 확인
         try{
             jwtUtil.isExpired(refresh);
         }catch (ExpiredJwtException e){
+            //System.out.println("리프레시 토큰 만료됨");
             throw new IllegalArgumentException("refresh token expired");
         }
 
@@ -76,16 +83,25 @@ public class UserServiceImpl implements UserService {
         String type = jwtUtil.getType(refresh);
 
         if(!type.equals("refresh")) {
+            //System.out.println("리프레시 토큰이 아님");
             throw new IllegalArgumentException("invalid refresh token");
         }
 
+        //검증된 refreshToken에서 이메일 받아오기
         String email = jwtUtil.getEmail(refresh);
-        String role = jwtUtil.getRole(refresh);
 
-        //새 Access Token 발급
+        //해당 이메일의 토큰과 레디스에 저장되어 있는 토큰이 일치하는지 검증
+        String storedRefreshToken = redisTokenUtil.getRefreshToken(email);
+        if(storedRefreshToken == null || !storedRefreshToken.equals(refresh)) {
+            //System.out.println("레디스에 존재하지 않음");
+            throw new IllegalArgumentException("Refresh token expired or mismatch");
+        }
+
+        //RefreshToken 검증 완 새 Access Token 발급
+        String role = jwtUtil.getRole(refresh);
         String newAccess = jwtUtil.createJwt("access", email, role, 600000L);
 
         //response
-        response.setHeader("access", newAccess);
+        response.setHeader("Authorization", "Bearer " + newAccess);
     }
 }

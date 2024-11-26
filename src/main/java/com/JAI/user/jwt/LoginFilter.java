@@ -1,6 +1,8 @@
 package com.JAI.user.jwt;
 
 import com.JAI.user.controller.request.UserLoginReq;
+import com.JAI.user.domain.User;
+import com.JAI.user.repository.UserRepository;
 import com.JAI.user.service.dto.CustomUserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -14,11 +16,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.UUID;
 
 //스프링 시큐리티의 Form 로그인을 disable 시켰기때문에 커스텀으로 만들어줘야됨
 @RequiredArgsConstructor
@@ -26,20 +30,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final RedisTokenUtil redisTokenUtil;
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws AuthenticationException {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
+            throws AuthenticationException {
         try {
-            UserLoginReq userLoginReq = objectMapper.readValue(req.getInputStream(), UserLoginReq.class);
-
-            String email = userLoginReq.email();
-            String password = userLoginReq.password();
-            //클라이언트 요청에서 username, password 추출
-            // TODO ::  endpoint url 변경
-            System.out.println("email: "+ email + ", password: "+ password);
-            //스프링 시큐리티에서 로그인 정보 검증을 위해 담아놓을 token(=dto)
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
+            UserLoginReq userLoginReq = new ObjectMapper().readValue(req.getInputStream(), UserLoginReq.class);
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(userLoginReq.email(), userLoginReq.password(), null);
 
             return authenticationManager.authenticate(authToken);
         } catch (IOException e) {
@@ -47,43 +46,41 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         }
     }
 
-    //로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하는 메소드 호출)
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
-        System.out.println("로그인 성공");
-
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                            FilterChain chain, Authentication authentication) {
         String email = authentication.getName();
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority();
-
-        //Access Token 생성
         String access = jwtUtil.createJwt("access", email, role, 600000L);
-        //Refresh Token 생성
         String refresh = jwtUtil.createJwt("refresh", email, role, 86400000L);
 
-        //응답 헤더 설정
-        response.setHeader("access", access);
+        redisTokenUtil.saveRefreshToken(email, refresh, 86400); // Redis는 초 단위 TTL
+
+        //response.setHeader("Authorization", "Bearer " + access);
         response.addCookie(createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
-    }
 
-    //로그인 실패시 실행하는 메소드
-    @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-        System.out.println("로그인 실패");
-        response.setStatus(401);
+        // 응답 본문에 JSON으로 데이터 추가 (ok 메시지와 함께 토큰값)
+        String jsonResponse = "{"
+                + "\"message\": \"ok\","
+                + "\"access_token\": \"" + "Bearer " + access + "\","
+                + "\"refresh_token\": \"" + refresh + "\""
+                + "}";
+
+        // 응답 본문에 JSON을 작성하여 보내기
+        try {
+            response.setContentType("application/json");
+            response.getWriter().write(jsonResponse);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(true);
-        //cookie.setPath("/");
+        cookie.setMaxAge(86400); // 1일
         cookie.setHttpOnly(true);
-
         return cookie;
     }
 }
