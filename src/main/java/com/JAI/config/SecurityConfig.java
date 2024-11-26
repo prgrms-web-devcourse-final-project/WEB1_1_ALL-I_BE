@@ -29,6 +29,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
     private final RedisTokenUtil redisTokenUtil;
+    private final UserFindService userFindService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -70,7 +71,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/reissue").permitAll()
                         .anyRequest().authenticated())
                 //jwt 필터 추가
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class)
+                .addFilterBefore(new JWTFilter(jwtUtil, userFindService), LoginFilter.class)
                 //로그인 필터 추가
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, redisTokenUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, redisTokenUtil), LogoutFilter.class)

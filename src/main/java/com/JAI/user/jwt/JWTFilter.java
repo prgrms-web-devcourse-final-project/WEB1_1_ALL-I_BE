@@ -26,6 +26,7 @@ import java.util.UUID;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
+    private final UserFindService userFindService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -44,16 +45,16 @@ public class JWTFilter extends OncePerRequestFilter {
             }
 
             String email = jwtUtil.getEmail(token);
-            String roleString = jwtUtil.getRole(token);
 
-            Role role = Role.valueOf(roleString);
-            User userEntity = User.createLoginInfo(email, role);
+            // DB에서 jwt의 email을 기반으로 userEntity 조회
+            User userEntity = userFindService.getUserByEmail(email);
 
             //UserDetails에 회원 정보 객체 담기
             CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
 
             Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authToken);
+
         }catch (ExpiredJwtException e) {
             // 만료된 토큰 처리
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

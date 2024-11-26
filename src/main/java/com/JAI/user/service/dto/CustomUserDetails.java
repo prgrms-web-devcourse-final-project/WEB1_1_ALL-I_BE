@@ -1,6 +1,7 @@
 package com.JAI.user.service.dto;
 
 import com.JAI.user.domain.User;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,10 +9,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
+@Getter
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private final User user;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
@@ -25,7 +29,13 @@ public class CustomUserDetails implements UserDetails {
 
         return authorities;
     }
+    public User getUser() {
+        return this.user;
+    }
 
+    public UUID getUserId() {
+        return this.user.getUserId();
+    }
     @Override
     public String getPassword() {
         return user.getPassword();
