@@ -1,8 +1,8 @@
 package com.JAI.event.mapper;
 
-import com.JAI.event.DTO.request.PersonalCreateEventReqDTO;
-import com.JAI.event.DTO.request.PersonalUpdateEventReqDTO;
-import com.JAI.event.DTO.response.PersonalUpdateEventResDTO;
+import com.JAI.event.DTO.request.PersonalEventCreateReqDTO;
+import com.JAI.event.DTO.request.PersonalEventUpdateReqDTO;
+import com.JAI.event.DTO.response.PersonalEventResDTO;
 import com.JAI.event.domain.PersonalEvent;
 import org.mapstruct.*;
 
@@ -10,33 +10,33 @@ import org.mapstruct.*;
 public interface PersonalEventMapper {
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "user", ignore = true)
-    PersonalEvent personalCreateReqEventDTOToPersonalEvent(PersonalCreateEventReqDTO personalCreateReqEventDTO);
+    PersonalEvent personalCreateReqEventDTOToPersonalEvent(PersonalEventCreateReqDTO personalCreateReqEventDTO);
 
     @Mapping(target = "personalEventId", ignore = true)
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "user", ignore = true)
     @AfterMapping
-    default PersonalEvent personalUpdateReqEventDTOToPersonalEvent(PersonalUpdateEventReqDTO personalUpdateEventReqDTO, @MappingTarget PersonalEvent personalEvent) {
-        if (personalUpdateEventReqDTO == null) {
+    default PersonalEvent personalUpdateReqEventDTOToPersonalEvent(PersonalEventUpdateReqDTO personalEventUpdateReqDTO, @MappingTarget PersonalEvent personalEvent) {
+        if (personalEventUpdateReqDTO == null) {
             return null;
         }
 
         PersonalEvent.PersonalEventBuilder updatePersonalEvent = personalEvent.toBuilder();
 
         updatePersonalEvent.personalEventId(personalEvent.getPersonalEventId());
-        updatePersonalEvent.title(personalUpdateEventReqDTO.getTitle() != null ? personalUpdateEventReqDTO.getTitle() : personalEvent.getTitle());
-        updatePersonalEvent.startDate(personalUpdateEventReqDTO.getStartDate() != null ? personalUpdateEventReqDTO.getStartDate() : personalEvent.getStartDate());
-        updatePersonalEvent.startTime(personalUpdateEventReqDTO.getStartTime() != null ? personalUpdateEventReqDTO.getStartTime() : personalEvent.getStartTime());
-        updatePersonalEvent.endDate(personalUpdateEventReqDTO.getEndDate() != null ? personalUpdateEventReqDTO.getEndDate() : personalEvent.getEndDate());
-        updatePersonalEvent.endTime(personalUpdateEventReqDTO.getEndTime() != null ? personalUpdateEventReqDTO.getEndTime() : personalEvent.getEndTime());
-        updatePersonalEvent.isAlarmed(personalUpdateEventReqDTO.getIsAlarmed() != null ? personalUpdateEventReqDTO.getIsAlarmed() : personalEvent.getIsAlarmed());
+        updatePersonalEvent.title(personalEventUpdateReqDTO.getTitle() != null ? personalEventUpdateReqDTO.getTitle() : personalEvent.getTitle());
+        updatePersonalEvent.startDate(personalEventUpdateReqDTO.getStartDate() != null ? personalEventUpdateReqDTO.getStartDate() : personalEvent.getStartDate());
+        updatePersonalEvent.startTime(personalEventUpdateReqDTO.getStartTime() != null ? personalEventUpdateReqDTO.getStartTime() : personalEvent.getStartTime());
+        updatePersonalEvent.endDate(personalEventUpdateReqDTO.getEndDate() != null ? personalEventUpdateReqDTO.getEndDate() : personalEvent.getEndDate());
+        updatePersonalEvent.endTime(personalEventUpdateReqDTO.getEndTime() != null ? personalEventUpdateReqDTO.getEndTime() : personalEvent.getEndTime());
+        updatePersonalEvent.isAlarmed(personalEventUpdateReqDTO.getIsAlarmed() != null ? personalEventUpdateReqDTO.getIsAlarmed() : personalEvent.getIsAlarmed());
         updatePersonalEvent.user(personalEvent.getUser());
         updatePersonalEvent.category(personalEvent.getCategory());
 
         return updatePersonalEvent.build();
     }
 
-    @Mapping(target = "categoryId", ignore = true)
-    @Mapping(target = "userId", ignore = true)
-    PersonalUpdateEventResDTO personalUpdateEventResDTOTOToPersonalEvent(PersonalEvent personalEvent);
+    @Mapping(target = "categoryId", expression = "java(personalEvent.getCategory() != null ? personalEvent.getCategory().getCategoryId() : null)")
+    @Mapping(target = "userId", expression = "java(personalEvent.getUser() != null ? personalEvent.getUser().getUserId() : null)")
+    PersonalEventResDTO personalEventResDTOTOToPersonalEvent(PersonalEvent personalEvent);
 }
