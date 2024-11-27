@@ -11,12 +11,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/personal-todo")
 public class PersonalTodoController {
-    // TODO :: 로그인 권한 테스트용 코드
-    @GetMapping("/list")
-    public String list(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        System.out.println(userDetails.getUsername());
-        System.out.println(userDetails.getUserId());
-        //System.out.println(userDetails.getUserId());
-        return "Hello World";
-    }
+
 }

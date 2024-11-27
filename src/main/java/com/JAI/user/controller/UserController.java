@@ -21,7 +21,6 @@ public class UserController {
     // 회원가입(이메일, 비밀번호, 닉네임(중복확인))
     @PostMapping("/join")
     public ApiResponse<String> join(@RequestBody UserJoinReq userJoinReq) {
-        System.out.println("Post Controller");
         userService.join(userJoinReq);
         return ApiResponse.ok("Success");//(HttpStatus.CREATED, "success");
     }
@@ -41,7 +40,6 @@ public class UserController {
     //프로필 사진, 닉네임, 이메일
     @GetMapping("/info")
     public ApiResponse<String> getUserInfo(){
-        System.out.println("Get Controller");
         return ApiResponse.ok("Success");
     }
 

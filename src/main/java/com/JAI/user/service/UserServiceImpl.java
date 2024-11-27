@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
         if(userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("이미 존재하는 회원입니다.");
         }
-        //닉네임 중복 확인 --> 이걸 예외 처리하는게 맞나?
+        //닉네임 중복 확인
         if(userRepository.existsByNickname(nickname)) {
             throw new IllegalArgumentException("이미 사용중인 닉네임입니다.");
         }
