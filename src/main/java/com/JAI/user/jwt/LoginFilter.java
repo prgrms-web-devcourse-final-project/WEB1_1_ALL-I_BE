@@ -6,6 +6,7 @@ import com.JAI.user.repository.UserRepository;
 import com.JAI.user.service.dto.CustomUserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,13 +26,18 @@ import java.util.Iterator;
 import java.util.UUID;
 
 //스프링 시큐리티의 Form 로그인을 disable 시켰기때문에 커스텀으로 만들어줘야됨
-@RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
     private final RedisTokenUtil redisTokenUtil;
 
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, RedisTokenUtil redisTokenUtil) {
+        this.authenticationManager = authenticationManager;
+        setFilterProcessesUrl("/user/login");
+        this.jwtUtil = jwtUtil;
+        this.redisTokenUtil = redisTokenUtil;
+    }
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
             throws AuthenticationException {

@@ -67,7 +67,7 @@ public class SecurityConfig {
                 .formLogin((auth) -> auth.disable())
                 .httpBasic((auth) -> auth.disable())
                 .authorizeRequests((auth) -> auth
-                        .requestMatchers("/user/join","/login").permitAll()
+                        .requestMatchers("/user/join","/user/login").permitAll()
                         .requestMatchers("/user/reissue").permitAll()
                         .anyRequest().authenticated())
                 //jwt 필터 추가
