@@ -24,7 +24,7 @@ public class UserController {
     @PostMapping("/signup")
     public ApiResponse<String> signup(@RequestBody @Valid UserSignupReq userSignupReq) {
         userService.signup(userSignupReq);
-        return ApiResponse.ok("Success");
+        return ApiResponse.onSuccess("success");
     }
     //회원 정보 수정(프로필 사진, 닉네임(중복확인), 마감시간)
     @PatchMapping("")
@@ -44,7 +44,7 @@ public class UserController {
     @PostMapping("/reissue")
     public ApiResponse<String> reissue(HttpServletRequest request, HttpServletResponse response){
         jwtService.reissue(request, response);
-        return ApiResponse.of(HttpStatus.OK,"Reissue Access Token Successfully");
+        return ApiResponse.onSuccess("Reissue Access Token Successfully");
     }
 
 }

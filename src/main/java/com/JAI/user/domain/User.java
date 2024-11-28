@@ -30,7 +30,7 @@ public class User {
     private String nickname;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, length = 10)
+    @Column(name = "role", nullable = false, length = 20)
     private Role role;
 
     @Column(name = "email", nullable = false, unique = true, length = 50)
