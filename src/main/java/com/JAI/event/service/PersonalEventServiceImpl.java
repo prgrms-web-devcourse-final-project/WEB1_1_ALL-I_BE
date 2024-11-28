@@ -94,7 +94,7 @@ public class PersonalEventServiceImpl implements PersonalEventService {
         
         // 본인 외 다른 사용자의 개인 일정 삭제 요청 시 에러 처리
         if (!existingEvent.getUser().getUserId().equals(userId)) {
-            throw new PersonalEventNotOwnerException("다른 사용자의 개인 일정을 생성할 수 없습니다.");
+            throw new PersonalEventNotOwnerException("다른 사용자의 개인 일정을 삭제할 수 없습니다.");
         }
         
         personalEventRepository.deleteById(personalEventId);
