@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalTime;
+
 @Component
 @RequiredArgsConstructor
 public class UserConverter {
@@ -18,7 +20,8 @@ public class UserConverter {
                 requset.getNickname(),
                 requset.getEmail(),
                 bCryptPasswordEncoder.encode(requset.getPassword()),
-                Provider.ORIGIN
+                Provider.ORIGIN,
+                LocalTime.of(8,0)
         );
 
         return user;
