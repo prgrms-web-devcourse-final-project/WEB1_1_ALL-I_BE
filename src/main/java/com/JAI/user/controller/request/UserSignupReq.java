@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UserJoinReq {
+public class UserSignupReq {
 
     @NotBlank(message = "이메일은 필수입니다.")
     @Email(message = "형식이 이메일이어야 합니다.")

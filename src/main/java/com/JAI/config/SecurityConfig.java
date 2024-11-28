@@ -1,12 +1,10 @@
 package com.JAI.config;
 
 import com.JAI.user.jwt.*;
-import com.JAI.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,7 +27,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
     private final RedisTokenUtil redisTokenUtil;
-    private final UserFindService userFindService;
+    private final JWTService JWTService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -67,11 +65,11 @@ public class SecurityConfig {
                 .formLogin((auth) -> auth.disable())
                 .httpBasic((auth) -> auth.disable())
                 .authorizeRequests((auth) -> auth
-                        .requestMatchers("/user/join","/user/login").permitAll()
+                        .requestMatchers("/user/signup","/user/login").permitAll()
                         .requestMatchers("/user/reissue").permitAll()
                         .anyRequest().authenticated())
                 //jwt 필터 추가
-                .addFilterBefore(new JWTFilter(jwtUtil, userFindService), LoginFilter.class)
+                .addFilterBefore(new JWTFilter(jwtUtil, JWTService), LoginFilter.class)
                 //로그인 필터 추가
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, redisTokenUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, redisTokenUtil), LogoutFilter.class)

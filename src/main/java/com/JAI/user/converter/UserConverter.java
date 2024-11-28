@@ -1,6 +1,6 @@
 package com.JAI.user.converter;
 
-import com.JAI.user.controller.request.UserJoinReq;
+import com.JAI.user.controller.request.UserSignupReq;
 import com.JAI.user.domain.Provider;
 import com.JAI.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ public class UserConverter {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public User toUserEntity(UserJoinReq requset){
+    public User toUserEntity(UserSignupReq requset){
         User user = User.create(
                 requset.getNickname(),
                 requset.getEmail(),
