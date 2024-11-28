@@ -2,13 +2,17 @@ package com.JAI.user.service;
 
 import com.JAI.user.controller.request.UserSignupReq;
 import com.JAI.user.converter.UserConverter;
+import com.JAI.user.domain.User;
+import com.JAI.user.exception.UserNotFoundException;
 import com.JAI.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
+import java.util.UUID;
+
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -31,5 +35,9 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userConverter.toUserEntity(userSignupReq));
     }
 
-
+    @Override
+    public User getUserById(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("해당 ID를 가진 사용자를 찾을 수 없습니다.", userId));
+    }
 }
