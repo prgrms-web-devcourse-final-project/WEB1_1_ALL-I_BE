@@ -13,7 +13,7 @@ public class CategoryExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(CategoryNotFoundException.class)
-    public ApiResponse<Object> handleUserNotFound(CategoryNotFoundException e) {
+    public ApiResponse<Object> handleCategoryNotFound(CategoryNotFoundException e) {
         return ApiResponse.onFailure(
                 ErrorStatus.CATEGORY_NOT_FOUND,
                 e.getMessage(),
