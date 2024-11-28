@@ -25,23 +25,26 @@ public class PersonalEventController {
         return ApiResponse.onSuccess(personalEventResDTOs);
     }
 
+    // 추후 로그인 달면 userid 부분 수정
     @PostMapping
-    public ApiResponse<Void> createPersonalEvent(@RequestBody PersonalEventCreateReqDTO personalCreateEventReqDTO) {
-        personalEventService.createPersonalEvent(personalCreateEventReqDTO);
+    public ApiResponse<Void> createPersonalEvent(
+            @Valid @RequestBody PersonalEventCreateReqDTO personalCreateEventReqDTO, @RequestParam UUID userId) {
+        personalEventService.createPersonalEvent(personalCreateEventReqDTO, userId);
         return ApiResponse.onCreateSuccess();
     }
 
-    // uuid 나중에 추가 해서 비교하고 수정 가능하게
-    @PatchMapping
-    public ApiResponse<PersonalEventResDTO> updatePersonalEvent(@Valid @RequestBody PersonalEventUpdateReqDTO personalEventUpdateReqDTO) {
-        PersonalEventResDTO updatedPersonalEvent = personalEventService.updatePersonalEvent(personalEventUpdateReqDTO);
+    // 추후 로그인 달면 userid 부분 수정
+    @PatchMapping("{event_id}")
+    public ApiResponse<PersonalEventResDTO> updatePersonalEvent(@PathVariable("event_id") UUID personalEventId,
+                                                                @Valid @RequestBody PersonalEventUpdateReqDTO personalEventUpdateReqDTO, @RequestParam UUID userId) {
+        PersonalEventResDTO updatedPersonalEvent = personalEventService.updatePersonalEvent(personalEventUpdateReqDTO, personalEventId, userId);
         return ApiResponse.onSuccess(updatedPersonalEvent);
     }
 
-    // uuid 나중에 추가 해서 비교하고 수정 가능하게
-    @DeleteMapping
-    public ApiResponse<UUID> deletePersonalEvent(@RequestParam UUID personalEventId) {
-        personalEventService.deletePersonalEvent(personalEventId);
+    // 추후 로그인 달면 userid 부분 수정
+    @DeleteMapping("{event_id}")
+    public ApiResponse<UUID> deletePersonalEvent(@PathVariable("event_id") UUID personalEventId, @RequestParam UUID userId) {
+        personalEventService.deletePersonalEvent(personalEventId, userId);
         return ApiResponse.onDeleteSuccess(personalEventId);
     }
 }
