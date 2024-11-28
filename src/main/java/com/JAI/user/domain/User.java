@@ -47,7 +47,7 @@ public class User {
     @Column(name = "image_url", nullable = true, length = 500)
     private String imageUrl;
 
-    @Column(name = "end_time", nullable = false, columnDefinition = "DATETIME")
+    @Column(name = "end_time", nullable = false, columnDefinition = "TIME")
     private LocalTime endTime;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -67,24 +67,33 @@ public class User {
     private List<Category> categories;
 
     @Builder
-    private User(String nickname, Role role, String email, String password, Provider provider, String imageUrl, LocalDate endDatetime) {
+    private User(String nickname, Role role, String email, String password, Provider provider, String imageUrl, LocalTime endTime) {
         this.nickname = nickname;
         this.role = role;
         this.email = email;
         this.password = password;
         this.provider = provider;
         this.imageUrl = imageUrl;
-        this.endDatetime = endDatetime;
+        this.endTime = endTime;
     }
 
-    public static User create(String nickname, String email, String password, Provider provider, LocalDate endDatetime) {
+    //로그인 용 빌더
+    @Builder
+    private User(String email, String password, Role role){
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public static User create(String nickname, String email, String password, Provider provider) {
         return User.builder()
                 .nickname(nickname)
-                .role(Role.USER)    //기본값
+                .role(Role.ROLE_USER)    //기본값
                 .email(email)
                 .password(password)
                 .provider(provider)
-                .endDatetime(endDatetime)
+                .endTime(LocalTime.of(11,59,0))
                 .build();
     }
+
 }

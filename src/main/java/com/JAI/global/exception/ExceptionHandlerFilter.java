@@ -14,34 +14,35 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Slf4j
-@Component
+//@Component
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        try{
-//            filterChain.doFilter(request, response);
-//        } catch (JwtException e){
-//            log.error(e.getMessage());
-//            setErrorResponse(HttpStatus.UNAUTHORIZED, response, e);
-//        }
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        try {
+            filterChain.doFilter(request, response); // 요청을 컨트롤러로 전달
+        } catch (Exception e) { // 모든 예외 처리
+            log.error("Error during filtering: {}", e.getMessage());
+            setErrorResponse(HttpStatus.UNAUTHORIZED, response, e);
+        }
     }
 
-    public void setErrorResponse(HttpStatus status, HttpServletResponse response, Throwable ex){
+    private void setErrorResponse(HttpStatus status, HttpServletResponse response, Throwable ex) {
         ObjectMapper objectMapper = new ObjectMapper();
         response.setStatus(status.value());
         response.setContentType("application/json");
-        ApiResponse apiResponse =  ApiResponse.of(
-                HttpStatus.UNAUTHORIZED,
-                ex.getMessage(),
-                null
-        );
-        try{
+        ApiResponse<Object> apiResponse = ApiResponse.of(status, ex.getMessage(), null);
+
+        try {
             String jsonResponse = objectMapper.writeValueAsString(apiResponse);
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(jsonResponse);
-        }catch (IOException e){
-            e.printStackTrace();
+            response.getWriter().flush(); // 버퍼 비우기
+            response.getWriter().close(); // 스트림 닫기
+        } catch (IOException e) {
+            log.error("Error writing response: {}", e.getMessage());
         }
     }
 }
+
