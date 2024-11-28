@@ -2,16 +2,10 @@ package com.JAI.user.service;
 
 import com.JAI.user.controller.request.UserSignupReq;
 import com.JAI.user.converter.UserConverter;
-import com.JAI.user.jwt.JWTUtil;
-import com.JAI.user.jwt.RedisTokenUtil;
 import com.JAI.user.repository.UserRepository;
-import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -21,6 +15,7 @@ public class UserServiceImpl implements UserService {
     private final UserConverter userConverter;
 
     @Override
+    @Transactional
     public void signup(UserSignupReq userSignupReq) {
 
         //이메일 중복 확인

@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -25,28 +27,28 @@ public class User {
     @Column(name = "user_id", columnDefinition = "BINARY(16)")
     private UUID userId;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "nickname", nullable = false, unique = true, length = 20)
     private String nickname;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "role", nullable = false, length = 10)
     private Role role;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true, length = 50)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "passsword", nullable = false, length = 255)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "provider", nullable = false, length = 10)
     private Provider provider;
 
-    @Column(nullable = true)
+    @Column(name = "image_url", nullable = true, length = 500)
     private String imageUrl;
 
-    @Column(nullable = false)
-    private LocalTime endDatetime;
+    @Column(name = "end_time", nullable = false, columnDefinition = "TIME")
+    private LocalTime endTime;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(name = "alarm_id")
@@ -65,14 +67,14 @@ public class User {
     private List<Category> categories;
 
     @Builder
-    private User(String nickname, Role role, String email, String password, Provider provider, String imageUrl, LocalTime endDatetime) {
+    private User(String nickname, Role role, String email, String password, Provider provider, String imageUrl, LocalTime endTime) {
         this.nickname = nickname;
         this.role = role;
         this.email = email;
         this.password = password;
         this.provider = provider;
         this.imageUrl = imageUrl;
-        this.endDatetime = endDatetime;
+        this.endTime = endTime;
     }
 
     //로그인 용 빌더
@@ -90,14 +92,8 @@ public class User {
                 .email(email)
                 .password(password)
                 .provider(provider)
-                .endDatetime(LocalTime.of(11,59,0))
+                .endTime(LocalTime.of(11,59,0))
                 .build();
     }
 
-    public static User createLoginInfo(String email, Role role) {
-        return User.builder()
-                .email(email)
-                .role(role)
-                .build();
-    }
 }
