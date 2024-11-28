@@ -49,7 +49,6 @@ public class User {
     private LocalTime endTime;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(name = "alarm_id")
     private List<Alarm> alarms;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
