@@ -8,5 +8,5 @@ import java.util.UUID;
 public interface UserService {
     void signup(UserSignupReq userSignupReq);
 
-    public User getUserById(UUID userId);
+    User getUserById(UUID userId);
 }

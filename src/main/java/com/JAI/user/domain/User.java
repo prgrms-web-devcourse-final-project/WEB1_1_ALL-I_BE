@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -46,7 +45,7 @@ public class User {
     @Column(name = "image_url", nullable = true, length = 500)
     private String imageUrl;
 
-    @Column(name = "end_time", nullable = false, columnDefinition = "DATETIME")
+    @Column(name = "end_time", nullable = false, columnDefinition = "TIME")
     private LocalTime endTime;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -76,22 +75,14 @@ public class User {
         this.endTime = endTime;
     }
 
-    //로그인 용 빌더
-    @Builder
-    private User(String email, String password, Role role){
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
-
-    public static User create(String nickname, String email, String password, Provider provider) {
+    public static User create(String nickname, String email, String password, Provider provider, LocalTime endTime) {
         return User.builder()
                 .nickname(nickname)
                 .role(Role.ROLE_USER)    //기본값
                 .email(email)
                 .password(password)
                 .provider(provider)
-                .endTime(LocalTime.of(11,59,0))
+                .endTime(endTime)
                 .build();
     }
 }
