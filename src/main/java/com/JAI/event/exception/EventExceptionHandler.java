@@ -12,9 +12,27 @@ public class EventExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(PersonalEventNotFoundException.class)
-    public ApiResponse<Object> handleUserNotFound(PersonalEventNotFoundException e) {
+    public ApiResponse<Object> handlePersonalEventNotFound(PersonalEventNotFoundException e) {
         return ApiResponse.onFailure(
-                ErrorStatus.CATEGORY_NOT_FOUND,
+                ErrorStatus.PERSONAL_EVENT_NOT_FOUND,
+                e.getMessage(),
+                e.getData());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(PersonalEventNotOwnerException.class)
+    public ApiResponse<Object> handlePersonalEventNotOwner(PersonalEventNotOwnerException e) {
+        return ApiResponse.onFailure(
+                ErrorStatus.PERSONAL_EVENT_NOT_OWNER_FOUND,
+                e.getMessage(),
+                e.getData());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PersonalEventBadRequestException.class)
+    public ApiResponse<Object> handlePersonalEventBadRequest(PersonalEventBadRequestException e) {
+        return ApiResponse.onFailure(
+                ErrorStatus.PERSONAL_EVENT_BAD_REQUEST,
                 e.getMessage(),
                 e.getData());
     }
