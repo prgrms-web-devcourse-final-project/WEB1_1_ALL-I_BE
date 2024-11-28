@@ -7,6 +7,7 @@ import com.JAI.event.service.PersonalEventService;
 import com.JAI.global.controller.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class PersonalEventController {
 
     // 추후 로그인 달면 userid 부분 수정
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<Void> createPersonalEvent(
             @Valid @RequestBody PersonalEventCreateReqDTO personalCreateEventReqDTO, @RequestParam UUID userId) {
         personalEventService.createPersonalEvent(personalCreateEventReqDTO, userId);
