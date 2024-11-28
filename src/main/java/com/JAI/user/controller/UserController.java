@@ -7,6 +7,7 @@ import com.JAI.user.controller.request.UserLoginReq;
 import com.JAI.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class UserController {
 
     // 회원가입(이메일, 비밀번호, 닉네임(중복확인))
     @PostMapping("/join")
-    public ApiResponse<String> join(@RequestBody UserJoinReq userJoinReq) {
+    public ApiResponse<String> join(@RequestBody @Valid UserJoinReq userJoinReq) {
         userService.join(userJoinReq);
         return ApiResponse.ok("Success");//(HttpStatus.CREATED, "success");
     }
@@ -40,6 +41,7 @@ public class UserController {
     //프로필 사진, 닉네임, 이메일
     @GetMapping("/info")
     public ApiResponse<String> getUserInfo(){
+        System.out.println("GET Mapping");
         return ApiResponse.ok("Success");
     }
 

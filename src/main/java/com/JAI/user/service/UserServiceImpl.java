@@ -2,6 +2,7 @@ package com.JAI.user.service;
 
 import com.JAI.global.controller.ApiResponse;
 import com.JAI.user.controller.request.UserJoinReq;
+import com.JAI.user.converter.UserConverter;
 import com.JAI.user.domain.Provider;
 import com.JAI.user.domain.User;
 import com.JAI.user.jwt.JWTUtil;
@@ -27,31 +28,22 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JWTUtil jwtUtil;
     private final RedisTokenUtil redisTokenUtil;
+    private final UserConverter userConverter;
 
     @Override
     public void join(UserJoinReq userJoinReq) {
 
-        String email = userJoinReq.email();
-        String password = userJoinReq.password();
-        String nickname = userJoinReq.nickname();
-
         //이메일 중복 확인
-        if(userRepository.existsByEmail(email)) {
+        if(userRepository.existsByEmail(userJoinReq.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 회원입니다.");
         }
         //닉네임 중복 확인
-        if(userRepository.existsByNickname(nickname)) {
+        if(userRepository.existsByNickname(userJoinReq.getNickname())) {
             throw new IllegalArgumentException("이미 사용중인 닉네임입니다.");
         }
-        //비밀번호 암호화?
-        User user = User.create(
-                nickname,
-                email,
-                bCryptPasswordEncoder.encode(password),
-                Provider.ORIGIN
-        );
+
         //Repo에 저장
-        userRepository.save(user);
+        userRepository.save(userConverter.toUserEntity(userJoinReq));
     }
 
     @Override
