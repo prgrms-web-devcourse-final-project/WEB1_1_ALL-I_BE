@@ -8,7 +8,6 @@ import com.JAI.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-// TODO :: todo 작업
 @Component
 @RequiredArgsConstructor
 public class PersonalTodoConverter {

@@ -27,8 +27,10 @@ public class PersonalTodoController {
     @PostMapping()
     public ApiResponse<String> createPersonalTodo(@RequestBody PersonalTodoCreateReq req, @AuthenticationPrincipal CustomUserDetails user){
         personalTodoService.createPersonalTodo(req, user);
+
         return ApiResponse.onCreateSuccess("Todo Create Success");
     }
+
     //투두 세부 항목 수정
     @PatchMapping("/{todoId}/update")
     public ApiResponse<PersonalTodoUpdateRes> updatePersonalTodo(@PathVariable UUID todoId, @RequestBody PersonalTodoUpdateReq req, @AuthenticationPrincipal CustomUserDetails user){
