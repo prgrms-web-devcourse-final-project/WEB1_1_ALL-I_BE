@@ -76,4 +76,10 @@ public class PersonalTodo {
                 .category(category)
                 .build();
     }
+
+    public void updatePersonalTodoState(boolean done){
+        if(this.done != done){
+            this.done = done;
+        }
+    }
 }
