@@ -26,24 +26,24 @@ public class PersonalTodo {
     @Column(name="personal_todo_id", columnDefinition = "BINARY(16)")
     private UUID personalTodoId;
 
-    @Column(nullable = false)
-    private String description;
+    @Column(name = "title", nullable = false, length = 255)
+    private String title;
 
-    @Column(nullable = false)
+    @Column(name = "done", nullable = false, columnDefinition = "TINYINT(1)")
     private boolean done;
 
-    @Column(nullable = false)
+    @Column(name = "todo_order", nullable = false, columnDefinition = "INT")
     private int todoOrder;
 
-    @Column(nullable = false)
+    @Column(name = "date", nullable = false, columnDefinition = "DATE")
     private LocalDate date;
 
-    @Column(nullable = true)
+    @Column(name = "start_time", nullable = true, columnDefinition = "TIME")
     private LocalTime startTime;
 
     // 객체 생성 시 JPA에서 생성 시간 자동 기입
     @CreatedDate
-    @Column(updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME")
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,8 +55,8 @@ public class PersonalTodo {
     private Category category;
 
     @Builder
-    private PersonalTodo(String description, boolean done, int todoOrder, LocalDate date, LocalTime startTime, User user, Category category){
-        this.description = description;
+    private PersonalTodo(String title, boolean done, int todoOrder, LocalDate date, LocalTime startTime, User user, Category category){
+        this.title = title;
         this.done = done;
         this.todoOrder = todoOrder;
         this.date = date;
@@ -65,9 +65,9 @@ public class PersonalTodo {
         this.category = category;
     }
 
-    public static PersonalTodo create(String description, LocalDate date, LocalTime startTime, User user, Category category){
+    public static PersonalTodo create(String title, LocalDate date, LocalTime startTime, User user, Category category){
         return PersonalTodo.builder()
-                .description(description)
+                .title(title)
                 .done(false)    //default
                 .todoOrder(0)   //default
                 .date(date)

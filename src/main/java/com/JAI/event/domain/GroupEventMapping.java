@@ -14,7 +14,7 @@ import java.util.UUID;
 public class GroupEventMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "group_event_mapping_id")
+    @Column(name = "group_event_mapping_id", columnDefinition = "BINARY(16)")
     private UUID groupEventMappingId;
 
     @ManyToOne
@@ -26,14 +26,14 @@ public class GroupEventMapping {
     private GroupSetting groupSetting;
 
     @Builder
-    private GroupEventMapping(GroupSetting groupSettingg, GroupEvent groupEvent) {
+    private GroupEventMapping(GroupSetting groupSetting, GroupEvent groupEvent) {
         this.groupSetting = groupSetting;
         this.groupEvent = groupEvent;
     }
 
     public static GroupEventMapping create(GroupSetting groupSetting, GroupEvent groupEvent) {
         return GroupEventMapping.builder()
-                .groupSettingg(groupSetting)
+                .groupSetting(groupSetting)
                 .groupEvent(groupEvent)
                 .build();
     }

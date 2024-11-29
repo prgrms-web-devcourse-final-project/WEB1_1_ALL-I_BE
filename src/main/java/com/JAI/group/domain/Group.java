@@ -18,10 +18,10 @@ public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "group_id")
+    @Column(name = "group_id", columnDefinition = "BINARY(16)")
     private UUID groupId;
 
-    @Column(name = "name", nullable = false, length = 155)
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
 
     @Column(name = "description", nullable = true, length = 255)

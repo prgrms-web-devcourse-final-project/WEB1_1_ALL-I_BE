@@ -31,7 +31,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation 'com.h2database:h2'
+	implementation 'com.h2database:h2'
 
 	// MySQL
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -40,6 +40,30 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.orbisgis:h2gis:2.2.0'
+
+    // Jackson
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.session:spring-session-data-redis'
+
+    // validation
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+
+	// test
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.orbisgis:h2gis:2.2.0'
 }
 
 tasks.named('test') {
