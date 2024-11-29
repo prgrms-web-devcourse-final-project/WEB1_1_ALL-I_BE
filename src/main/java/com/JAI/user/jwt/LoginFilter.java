@@ -58,7 +58,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String email = authentication.getName();
         String role = authentication.getAuthorities().iterator().next().getAuthority();
 
-        String access = jwtUtil.createJwt("access", email, role, 600000L);
+        String access = jwtUtil.createJwt("access", email, role, 3600000L);
         String refresh = jwtUtil.createJwt("refresh", email, role, 86400000L);
 
         redisTokenUtil.saveRefreshToken(email, refresh, 86400); // Redis는 초 단위 TTL
