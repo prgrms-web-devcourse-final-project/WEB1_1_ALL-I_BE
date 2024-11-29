@@ -1,10 +1,8 @@
 package com.JAI.chatbot.service;
 
-import com.JAI.chatbot.controller.ChatGPTMessage;
-import com.JAI.chatbot.controller.request.ChatGPTReq;
-import com.JAI.chatbot.controller.request.TokenReq;
-import com.JAI.chatbot.controller.response.ChatGPTResp;
-import com.JAI.chatbot.domain.Intention;
+import com.JAI.chatbot.controller.dto.ChatGPTMessageDTO;
+import com.JAI.chatbot.controller.dto.request.TokenReqDTO;
+import com.JAI.chatbot.controller.dto.response.ChatGPTRespDTO;
 
 import java.util.List;
 
@@ -16,9 +14,10 @@ public interface ChatGPTService {
      *
      * @param message : ChatGPT에 넣을 요청
      * @param token : 레디스에 저장된 데이터 key값
+     *
      * @return : ChatGPT가 반환하는 응답
      */
-    public ChatGPTResp postMessage(List<ChatGPTMessage> message, TokenReq token);
+    public ChatGPTRespDTO postMessage(List<ChatGPTMessageDTO> message, TokenReqDTO token);
 
     /**
      * ChatGPT에 텍스트 의도 분석 요청
@@ -27,8 +26,9 @@ public interface ChatGPTService {
      *
      * @param message : ChatGPT에 넣을 요청
      * @param token : 레디스에 저장된 데이터 key값
-     * @return : ChatGPT가 반환하는 응답 -> Intention enum으로 변경
+     *
+     * @return : ChatGPT가 반환하는 응답 -> Intention
      */
-    public Intention findIntention(List<ChatGPTMessage> message, TokenReq token);
+    public String findIntention(List<ChatGPTMessageDTO> message, TokenReqDTO token);
 
 }

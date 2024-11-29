@@ -1,10 +1,9 @@
 package com.JAI.chatbot.service;
 
-import com.JAI.chatbot.controller.ChatGPTMessage;
-import com.JAI.chatbot.controller.request.ChatGPTReq;
-import com.JAI.chatbot.controller.request.TokenReq;
-import com.JAI.chatbot.controller.response.ChatGPTResp;
-import com.JAI.chatbot.domain.Intention;
+import com.JAI.chatbot.controller.dto.ChatGPTMessageDTO;
+import com.JAI.chatbot.controller.dto.request.ChatGPTReqDTO;
+import com.JAI.chatbot.controller.dto.request.TokenReqDTO;
+import com.JAI.chatbot.controller.dto.response.ChatGPTRespDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,24 +23,51 @@ public class ChatGPTServiceImpl implements ChatGPTService {
     private final RestTemplate openAiRestTemplate;
 
     @Override
-    public ChatGPTResp postMessage(List<ChatGPTMessage> message, TokenReq token) {
-        ChatGPTReq request = new ChatGPTReq(model, message);
-        ChatGPTResp response = openAiRestTemplate.postForObject(apiURL, request, ChatGPTResp.class);
+    public ChatGPTRespDTO postMessage(List<ChatGPTMessageDTO> message, TokenReqDTO token) {
 
+        // ChatGPT 응답 형식 맞춰서 생성
+        ChatGPTReqDTO request = ChatGPTReqDTO.builder()
+                .model(model)
+                .messages(message)
+                .build();
+
+        // ChatGPT 응답 생성 요청
+        ChatGPTRespDTO response = openAiRestTemplate.postForObject(apiURL, request, ChatGPTRespDTO.class);
+        System.out.println("response: "+response);
+        System.out.println("choice: "+response.getChoices().get(0));
+        System.out.println("message: "+response.getChoices().get(0).getMessage());
+        System.out.println("content: "+response.getChoices().get(0).getMessage().getContent());
+
+        // ChatGPT 응답 반환
         return response;
     }
 
     @Override
-    public Intention findIntention(List<ChatGPTMessage> message, TokenReq token) {
-        ChatGPTReq request = new ChatGPTReq(model, message);
-        ChatGPTResp response =  openAiRestTemplate.postForObject(apiURL, request, ChatGPTResp.class);
-        String content = response.choices().get(0).message().content();
-        Intention intention;
+    public String findIntention(List<ChatGPTMessageDTO> message, TokenReqDTO token) {
 
-        if (content.equals("계획 추천")) { intention = Intention.PLAN_RECOMMENDATION; }
-        else if (content.equals("일정 자동 기입")) { intention = Intention.AUTOMATIC_EVENT_ENTRY; }
-        else if (content.equals("투두 자동 기입")) { intention = Intention.AUTOMATIC_TODO_ENTRY; }
-        else { intention = Intention.EXCEPTION; }
+        // ChatGPT 응답 형식 맞춰서 생성
+        ChatGPTReqDTO request = ChatGPTReqDTO.builder()
+                .model(model)
+                .messages(message)
+                .build();
+
+        // ChatGPT 응답 생성 요청
+        ChatGPTRespDTO response =  openAiRestTemplate.postForObject(apiURL, request, ChatGPTRespDTO.class);
+        System.out.println("response: "+response);
+        System.out.println("choice: "+response.getChoices().get(0));
+        System.out.println("message: "+response.getChoices().get(0).getMessage());
+        System.out.println("content: "+response.getChoices().get(0).getMessage().getContent());
+
+        // ChatGPT 응답으로 intention 결정
+        String content = response.getChoices().get(0).getMessage().getContent();
+
+
+
+        String intention;
+        if (content.equals("계획 추천")) { intention = "PLAN_RECOMMENDATION"; }
+        else if (content.equals("일정 자동 기입")) { intention = "EVENT"; }
+        else if (content.equals("투두 자동 기입")) { intention = "TODO"; }
+        else { intention = "EXCEPTION"; }
 
         return intention;
     }

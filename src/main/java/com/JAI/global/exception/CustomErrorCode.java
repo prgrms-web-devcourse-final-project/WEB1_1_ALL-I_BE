@@ -1,4 +1,4 @@
-package com.JAI.global.exception;
-
-public class CustomErrorCode {
-}
+//package com.JAI.global.exception;
+//
+//public class CustomErrorCode {
+//}
