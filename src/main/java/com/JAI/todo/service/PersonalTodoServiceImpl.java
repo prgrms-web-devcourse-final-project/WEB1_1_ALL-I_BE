@@ -5,9 +5,11 @@ import com.JAI.category.repository.CategoryRepository;
 import com.JAI.todo.controller.request.PersonalTodoCreateReq;
 import com.JAI.todo.controller.request.PersonalTodoStateReq;
 import com.JAI.todo.controller.request.PersonalTodoUpdateReq;
+import com.JAI.todo.controller.request.PersonalTodoUpdateTitleReq;
 import com.JAI.todo.controller.response.PersonalTodoListRes;
 import com.JAI.todo.controller.response.PersonalTodoStateRes;
 import com.JAI.todo.controller.response.PersonalTodoUpdateRes;
+import com.JAI.todo.controller.response.PersonalTodoUpdateTitleRes;
 import com.JAI.todo.converter.PersonalTodoConverter;
 import com.JAI.todo.domain.PersonalTodo;
 import com.JAI.todo.repository.PersonalTodoRepository;
@@ -103,6 +105,22 @@ public class PersonalTodoServiceImpl implements PersonalTodoService{
         personalTodoRepository.save(personalTodo);
 
         return personalTodoConverter.toPersonalTodoStateDTO(personalTodo);
+    }
+
+    @Override
+    public PersonalTodoUpdateTitleRes updatePersonalTodoTitle(UUID todoId, PersonalTodoUpdateTitleReq req, CustomUserDetails user) {
+        //todo 존재 여부 확인
+        PersonalTodo personalTodo = personalTodoRepository.findById(todoId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 투두를 찾을 수 없습니다."));
+
+        //같은 유저인지 확인
+        validatePersonalTodoOwner(user, personalTodo);
+
+        personalTodo.updatePersonalTodoTitle(req.getTitle());
+
+        personalTodoRepository.save(personalTodo);
+
+        return personalTodoConverter.toPersonalTodoUpdateTitleDTO(personalTodo);
     }
 
 

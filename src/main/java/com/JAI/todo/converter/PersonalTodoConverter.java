@@ -5,6 +5,7 @@ import com.JAI.todo.controller.request.PersonalTodoCreateReq;
 import com.JAI.todo.controller.response.PersonalTodoListRes;
 import com.JAI.todo.controller.response.PersonalTodoStateRes;
 import com.JAI.todo.controller.response.PersonalTodoUpdateRes;
+import com.JAI.todo.controller.response.PersonalTodoUpdateTitleRes;
 import com.JAI.todo.domain.PersonalTodo;
 import com.JAI.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,13 @@ public class PersonalTodoConverter {
         return PersonalTodoStateRes.builder()
                 .todoId(personalTodo.getPersonalTodoId())
                 .done(personalTodo.isDone())
+                .build();
+    }
+
+    public PersonalTodoUpdateTitleRes toPersonalTodoUpdateTitleDTO(PersonalTodo personalTodo){
+        return PersonalTodoUpdateTitleRes.builder()
+                .todoId(personalTodo.getPersonalTodoId())
+                .title(personalTodo.getTitle())
                 .build();
     }
 

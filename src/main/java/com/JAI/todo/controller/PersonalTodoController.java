@@ -4,9 +4,11 @@ import com.JAI.global.controller.ApiResponse;
 import com.JAI.todo.controller.request.PersonalTodoCreateReq;
 import com.JAI.todo.controller.request.PersonalTodoStateReq;
 import com.JAI.todo.controller.request.PersonalTodoUpdateReq;
+import com.JAI.todo.controller.request.PersonalTodoUpdateTitleReq;
 import com.JAI.todo.controller.response.PersonalTodoListRes;
 import com.JAI.todo.controller.response.PersonalTodoStateRes;
 import com.JAI.todo.controller.response.PersonalTodoUpdateRes;
+import com.JAI.todo.controller.response.PersonalTodoUpdateTitleRes;
 import com.JAI.todo.service.PersonalTodoService;
 import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/todos")
 public class PersonalTodoController {
+
     private final PersonalTodoService personalTodoService;
+
     //투두 생성
     @PostMapping()
     public ApiResponse<String> createPersonalTodo(@RequestBody PersonalTodoCreateReq req, @AuthenticationPrincipal CustomUserDetails user){
@@ -34,7 +38,10 @@ public class PersonalTodoController {
     }
 
     //투두 내용 변경
-
+    @PatchMapping("{todoId}/title")
+    public ApiResponse<PersonalTodoUpdateTitleRes> updatePersonalTodoTitle(@PathVariable UUID todoId, @RequestBody PersonalTodoUpdateTitleReq req, @AuthenticationPrincipal CustomUserDetails user) {
+        return ApiResponse.onSuccess(personalTodoService.updatePersonalTodoTitle(todoId, req, user));
+    }
     //투두 상태 변경
     @PatchMapping("/{todoId}/state")
     public ApiResponse<PersonalTodoStateRes> updatePersonTodoState(@PathVariable UUID todoId, @RequestBody PersonalTodoStateReq req, @AuthenticationPrincipal CustomUserDetails user){

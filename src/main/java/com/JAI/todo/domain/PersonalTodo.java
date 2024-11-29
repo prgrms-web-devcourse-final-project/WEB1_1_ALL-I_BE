@@ -83,6 +83,11 @@ public class PersonalTodo {
         }
     }
 
+    //투두 타이틀 변경
+    public void updatePersonalTodoTitle(String title){
+        this.title = title;
+    }
+
     //투두 세부 항목 변경
     public void updatePersonalTodo(String title, Category category, LocalTime startTime, LocalDate date){
         this.title = title;
