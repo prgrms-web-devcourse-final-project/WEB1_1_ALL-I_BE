@@ -11,4 +11,6 @@ import java.util.UUID;
 @Repository
 public interface PersonalTodoRepository extends JpaRepository<PersonalTodo, UUID> {
     List<PersonalTodo> findAllByDateBetweenAndUser_UserId(LocalDate startDate, LocalDate endDate, UUID userId);
+
+    List<PersonalTodo> findByDate(LocalDate date);
 }

@@ -2,10 +2,7 @@ package com.JAI.todo.converter;
 
 import com.JAI.category.domain.Category;
 import com.JAI.todo.controller.request.PersonalTodoCreateReq;
-import com.JAI.todo.controller.response.PersonalTodoListRes;
-import com.JAI.todo.controller.response.PersonalTodoStateRes;
-import com.JAI.todo.controller.response.PersonalTodoUpdateRes;
-import com.JAI.todo.controller.response.PersonalTodoUpdateTitleRes;
+import com.JAI.todo.controller.response.*;
 import com.JAI.todo.domain.PersonalTodo;
 import com.JAI.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +25,8 @@ public class PersonalTodoConverter {
     }
 
     //Entity -> DTO
-    public PersonalTodoListRes toPersonalTodoListDTO(PersonalTodo personalTodo){
-        return PersonalTodoListRes.builder()
+    public PersonalTodoRes toPersonalTodoListDTO(PersonalTodo personalTodo){
+        return PersonalTodoRes.builder()
                 .personalTodoId(personalTodo.getPersonalTodoId())
                 .title(personalTodo.getTitle())
                 .done(personalTodo.isDone())
@@ -39,6 +36,13 @@ public class PersonalTodoConverter {
                 .createdAt(personalTodo.getCreatedAt())
                 .userId(personalTodo.getUser().getUserId())
                 .categoryId(personalTodo.getCategory().getCategoryId())
+                .build();
+    }
+
+    public PersonalTodoExistListRes toPersonalTodoExistDTO(PersonalTodo personalTodo){
+        return PersonalTodoExistListRes.builder()
+                .personalTodoId(personalTodo.getPersonalTodoId())
+                .date(personalTodo.getDate())
                 .build();
     }
 

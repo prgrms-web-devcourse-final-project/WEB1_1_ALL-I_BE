@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Data
-public class PersonalTodoListRes {
+public class PersonalTodoRes {
     UUID personalTodoId;
 
     String title;

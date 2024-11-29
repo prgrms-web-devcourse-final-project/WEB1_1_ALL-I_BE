@@ -6,10 +6,7 @@ import com.JAI.todo.controller.request.PersonalTodoCreateReq;
 import com.JAI.todo.controller.request.PersonalTodoStateReq;
 import com.JAI.todo.controller.request.PersonalTodoUpdateReq;
 import com.JAI.todo.controller.request.PersonalTodoUpdateTitleReq;
-import com.JAI.todo.controller.response.PersonalTodoListRes;
-import com.JAI.todo.controller.response.PersonalTodoStateRes;
-import com.JAI.todo.controller.response.PersonalTodoUpdateRes;
-import com.JAI.todo.controller.response.PersonalTodoUpdateTitleRes;
+import com.JAI.todo.controller.response.*;
 import com.JAI.todo.converter.PersonalTodoConverter;
 import com.JAI.todo.domain.PersonalTodo;
 import com.JAI.todo.repository.PersonalTodoRepository;
@@ -46,7 +43,7 @@ public class PersonalTodoServiceImpl implements PersonalTodoService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<PersonalTodoListRes> getTodoListForMonth(String year, String month, CustomUserDetails user) {
+    public List<PersonalTodoRes> getMonthlyPersonalTodoList(String year, String month, CustomUserDetails user) {
 
         // 조회할 일정의 범위 설정
         LocalDate startDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
@@ -55,6 +52,31 @@ public class PersonalTodoServiceImpl implements PersonalTodoService{
         List<PersonalTodo> personalTodos =
                 personalTodoRepository.findAllByDateBetweenAndUser_UserId(startDate, endDate, user.getUserId());
 
+        return personalTodos.stream()
+                .map(personalTodoConverter::toPersonalTodoListDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PersonalTodoExistListRes> getPersonalTodosExist(String year, String month, CustomUserDetails user) {
+        // 조회할 일정의 범위 설정
+        LocalDate startDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        List<PersonalTodo> personalTodos =
+                personalTodoRepository.findAllByDateBetweenAndUser_UserId(startDate, endDate, user.getUserId());
+
+        return personalTodos.stream()
+                .map(personalTodoConverter::toPersonalTodoExistDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PersonalTodoRes> getDailyPersonalTodoList(String year, String month, String day, CustomUserDetails userDetails) {
+        //조회할 날짜 설정
+        LocalDate date = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
+        List<PersonalTodo> personalTodos =
+                personalTodoRepository.findByDate(date);
         return personalTodos.stream()
                 .map(personalTodoConverter::toPersonalTodoListDTO)
                 .collect(Collectors.toList());

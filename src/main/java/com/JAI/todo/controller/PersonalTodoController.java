@@ -5,10 +5,8 @@ import com.JAI.todo.controller.request.PersonalTodoCreateReq;
 import com.JAI.todo.controller.request.PersonalTodoStateReq;
 import com.JAI.todo.controller.request.PersonalTodoUpdateReq;
 import com.JAI.todo.controller.request.PersonalTodoUpdateTitleReq;
-import com.JAI.todo.controller.response.PersonalTodoListRes;
-import com.JAI.todo.controller.response.PersonalTodoStateRes;
-import com.JAI.todo.controller.response.PersonalTodoUpdateRes;
-import com.JAI.todo.controller.response.PersonalTodoUpdateTitleRes;
+import com.JAI.todo.controller.response.*;
+import com.JAI.todo.domain.PersonalTodo;
 import com.JAI.todo.service.PersonalTodoService;
 import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -56,14 +54,21 @@ public class PersonalTodoController {
     }
 
     //투두 조회(한달치)
-    @GetMapping
-    public ApiResponse<List<PersonalTodoListRes>> getPersonalTodo(@RequestParam String year, @RequestParam String month, @AuthenticationPrincipal CustomUserDetails user){
-        List<PersonalTodoListRes> responseList = personalTodoService.getTodoListForMonth(year, month, user);
+    @GetMapping("/monthly")
+    public ApiResponse<List<PersonalTodoRes>> getMonthlyPersonalTodoList(@RequestParam String year, @RequestParam String month, @AuthenticationPrincipal CustomUserDetails user){
+        List<PersonalTodoRes> responseList = personalTodoService.getMonthlyPersonalTodoList(year, month, user);
         return ApiResponse.onSuccess(responseList);
     }
 
     //투두 조회(존재하는지만)
+    @GetMapping("/exist-dates")
+    public ApiResponse<List<PersonalTodoExistListRes>> getPersonalTodosExist(@RequestParam String year, @RequestParam String month, @AuthenticationPrincipal CustomUserDetails user){
+        return ApiResponse.onSuccess(personalTodoService.getPersonalTodosExist(year, month, user));
+    }
 
     //투두 조회(하루)
-
+    @GetMapping("/date")
+    public ApiResponse<List<PersonalTodoRes>> getDailyPersonalTodoList(@RequestParam String year, @RequestParam String month,@RequestParam String day, @AuthenticationPrincipal CustomUserDetails user){
+        return ApiResponse.onSuccess(personalTodoService.getDailyPersonalTodoList(year, month, day, user));
+    }
 }
