@@ -3,8 +3,10 @@ package com.JAI.todo.controller;
 import com.JAI.global.controller.ApiResponse;
 import com.JAI.todo.controller.request.PersonalTodoCreateReq;
 import com.JAI.todo.controller.request.PersonalTodoStateReq;
+import com.JAI.todo.controller.request.PersonalTodoUpdateReq;
 import com.JAI.todo.controller.response.PersonalTodoListRes;
 import com.JAI.todo.controller.response.PersonalTodoStateRes;
+import com.JAI.todo.controller.response.PersonalTodoUpdateRes;
 import com.JAI.todo.service.PersonalTodoService;
 import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -25,18 +27,20 @@ public class PersonalTodoController {
         personalTodoService.createPersonalTodo(req, user);
         return ApiResponse.onCreateSuccess("Todo Create Success");
     }
-    //투두 내용 수정
+    //투두 세부 항목 수정
     @PatchMapping("/{todoId}/update")
-    public ApiResponse<?> updatePersonalTodo(){
-
-        return null;
+    public ApiResponse<PersonalTodoUpdateRes> updatePersonalTodo(@PathVariable UUID todoId, @RequestBody PersonalTodoUpdateReq req, @AuthenticationPrincipal CustomUserDetails user){
+        return ApiResponse.onSuccess(personalTodoService.updatePersonalTodo(todoId, req, user));
     }
 
-    //투두 완료
+    //투두 내용 변경
+
+    //투두 상태 변경
     @PatchMapping("/{todoId}/state")
     public ApiResponse<PersonalTodoStateRes> updatePersonTodoState(@PathVariable UUID todoId, @RequestBody PersonalTodoStateReq req, @AuthenticationPrincipal CustomUserDetails user){
         return ApiResponse.onSuccess(personalTodoService.updatePersonTodoState(todoId, req, user));
     }
+
     //투두 삭제
     @DeleteMapping("/{todoId}")
     public ApiResponse<String> deletePersonalTodo(@PathVariable UUID todoId, @AuthenticationPrincipal CustomUserDetails user){

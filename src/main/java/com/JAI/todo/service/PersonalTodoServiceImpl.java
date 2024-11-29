@@ -4,8 +4,10 @@ import com.JAI.category.domain.Category;
 import com.JAI.category.repository.CategoryRepository;
 import com.JAI.todo.controller.request.PersonalTodoCreateReq;
 import com.JAI.todo.controller.request.PersonalTodoStateReq;
+import com.JAI.todo.controller.request.PersonalTodoUpdateReq;
 import com.JAI.todo.controller.response.PersonalTodoListRes;
 import com.JAI.todo.controller.response.PersonalTodoStateRes;
+import com.JAI.todo.controller.response.PersonalTodoUpdateRes;
 import com.JAI.todo.converter.PersonalTodoConverter;
 import com.JAI.todo.domain.PersonalTodo;
 import com.JAI.todo.repository.PersonalTodoRepository;
@@ -70,6 +72,23 @@ public class PersonalTodoServiceImpl implements PersonalTodoService{
     }
 
     @Override
+    public PersonalTodoUpdateRes updatePersonalTodo(UUID todoId, PersonalTodoUpdateReq req, CustomUserDetails user) {
+        // todo 존재 여부 확인
+        PersonalTodo personalTodo = personalTodoRepository.findById(todoId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 투두를 찾을 수 없습니다."));
+        //같은 유저인지 확인
+        validatePersonalTodoOwner(user, personalTodo);
+        //변경할 카테고리 조회
+        Category changeCategory = categoryRepository.findById(req.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리를 찾을 수 없습니다."));
+        //변경 사항 적용
+        personalTodo.updatePersonalTodo(req.getTitle(), changeCategory, req.getStartTime(), req.getDate());
+        personalTodoRepository.save(personalTodo);
+
+        return personalTodoConverter.toPersonalTodoUpdateDTO(personalTodo);
+    }
+
+    @Override
     public PersonalTodoStateRes updatePersonTodoState(UUID todoId, PersonalTodoStateReq req, CustomUserDetails user) {
         //todo 존재 여부 확인
         PersonalTodo personalTodo = personalTodoRepository.findById(todoId)
@@ -80,6 +99,8 @@ public class PersonalTodoServiceImpl implements PersonalTodoService{
 
         //값 업데이트
         personalTodo.updatePersonalTodoState(req.isState());
+
+        personalTodoRepository.save(personalTodo);
 
         return personalTodoConverter.toPersonalTodoStateDTO(personalTodo);
     }
