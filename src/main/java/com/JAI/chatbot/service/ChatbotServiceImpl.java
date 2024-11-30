@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -75,6 +76,8 @@ public class ChatbotServiceImpl implements ChatbotService {
         // 레디스에서 key 이용해서 prompt, intention 가져오기
         String prompt = chatbotRedisDataDTO.getChatbotReqDTO().getPrompt();
         String intention = chatbotRedisDataDTO.getChatbotReqDTO().getIntention();
+
+        prompt += JsonConstants.DATE_INFO;
 
         // intention에 따라 prompt 수정
         switch (intention) {
