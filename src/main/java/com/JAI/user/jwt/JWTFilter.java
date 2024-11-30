@@ -59,14 +59,6 @@ public class JWTFilter extends OncePerRequestFilter {
             writer.print("{\"error\":\"Access token expired\"}");
             writer.flush();
             return;
-        } catch (Exception e) {
-            // 기타 예외 처리
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType("application/json");
-            PrintWriter writer = response.getWriter();
-            writer.print("{\"error\":\"Invalid token\"}");
-            writer.flush();
-            return;
         }
 
         filterChain.doFilter(request, response);
