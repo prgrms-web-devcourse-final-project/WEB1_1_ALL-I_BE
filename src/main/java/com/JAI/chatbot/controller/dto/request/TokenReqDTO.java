@@ -11,4 +11,6 @@ import lombok.*;
 public class TokenReqDTO {
     @NotBlank
     private String token;
+
+
 }

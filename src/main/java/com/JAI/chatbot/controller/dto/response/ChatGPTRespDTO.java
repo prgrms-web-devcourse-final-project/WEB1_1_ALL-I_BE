@@ -8,7 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatGPTRespDTO {
+
     private List<ChatGPTChoiceDTO> choices;
+
 }
 
 

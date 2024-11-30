@@ -4,6 +4,8 @@ import com.JAI.chatbot.controller.dto.ChatbotRedisDataDTO;
 import com.JAI.chatbot.controller.dto.request.ChatbotReqDTO;
 import com.JAI.chatbot.controller.dto.response.ChatbotEventRespDTO;
 import com.JAI.chatbot.controller.dto.response.ChatbotTodoRespDTO;
+import com.JAI.chatbot.exception.ChatbotNotFoundException;
+import com.JAI.chatbot.exception.ChatbotUnprocessableEntityException;
 import com.JAI.global.util.RedisUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +36,7 @@ public class RedisChatbotUtil {
         System.out.println("token: "+token);
         String key = redisUtil.get(PREFIX_KEY_TOKEN + token);
         if (key == null) {
-            throw new RuntimeException("토큰에 해당하는 키가 Redis에 존재하지 않습니다. 토큰: " + token);
+            throw new ChatbotNotFoundException("토큰에 해당하는 키가 Redis에 존재하지 않습니다.", token);
         }
         return key;
     }
@@ -59,7 +61,7 @@ public class RedisChatbotUtil {
             // token을 사용하여 Redis에서 key를 찾을 수 있도록 매핑
             redisUtil.save(PREFIX_KEY_TOKEN + token, key, ttlSeconds); // 토큰에 대한 key 저장
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("ChatbotRedisData 직렬화 실패", e);
+            throw new ChatbotUnprocessableEntityException("ChatbotRedisData 직렬화 실패");
         }
     }
 
@@ -73,10 +75,13 @@ public class RedisChatbotUtil {
 
         try {
             String json = redisUtil.get(PREFIX_CHATBOT + key); // Redis에서 JSON 가져오기
-            if (json == null) return null; // 데이터가 없으면 null 반환
+            // 데이터가 없으면 에러 처리
+            if (json == null) {
+                throw new ChatbotNotFoundException("키에 해당하는 데이터가 없습니다", key);
+            }
             return objectMapper.readValue(json, ChatbotRedisDataDTO.class); // JSON -> DTO 변환
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("ChatbotRedisData 역직렬화 실패", e);
+            throw new ChatbotUnprocessableEntityException("ChatbotRedisData 역직렬화 실패");
         }
     }
 
@@ -89,7 +94,7 @@ public class RedisChatbotUtil {
 
         ChatbotRedisDataDTO existingData = getChatbotData(token);
         if(existingData == null) {
-            throw new RuntimeException("ChatbotData with key " + key + " does not exist");
+            throw new ChatbotNotFoundException("키에 해당하는 데이터가 없습니다", key);
         }
 
         existingData = ChatbotRedisDataDTO.builder()
@@ -107,6 +112,7 @@ public class RedisChatbotUtil {
     public void saveChatbotEventResp(String token, List<ChatbotEventRespDTO> chatbotEventRespDTO) {
         System.out.println("saveChatbotEventResp");
         System.out.println("token: "+token);
+
         // token을 통해 key 조회
         String key = getKeyByToken(token);
         System.out.println("key: "+key);
@@ -114,7 +120,7 @@ public class RedisChatbotUtil {
         // 기존 데이터 가져오기
         ChatbotRedisDataDTO existingData = getChatbotData(token);
         if (existingData == null) {
-            throw new RuntimeException("ChatbotData with key " + key + " does not exist");
+            throw new ChatbotNotFoundException("키에 해당하는 데이터가 없습니다", key);
         }
 
         // ChatbotEventResp를 기존 데이터에 추가
@@ -142,7 +148,7 @@ public class RedisChatbotUtil {
         // 기존 데이터 가져오기
         ChatbotRedisDataDTO existingData = getChatbotData(token);
         if (existingData == null) {
-            throw new RuntimeException("ChatbotData with key " + key + " does not exist");
+            throw new ChatbotNotFoundException("키에 해당하는 데이터가 없습니다", key);
         }
 
         // ChatbotTodoResp를 기존 데이터에 추가
@@ -170,7 +176,7 @@ public class RedisChatbotUtil {
             String json = objectMapper.writeValueAsString(chatbotData); // DTO -> JSON 변환
             redisUtil.save(PREFIX_CHATBOT + key, json, ttlSeconds);    // Redis 저장
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("ChatbotRedisData 직렬화 실패", e);
+            throw new ChatbotUnprocessableEntityException("ChatbotRedisData 직렬화 실패");
         }
     }
 
@@ -182,4 +188,5 @@ public class RedisChatbotUtil {
         System.out.println("key: "+key);
         redisUtil.delete(key);
     }
+
 }

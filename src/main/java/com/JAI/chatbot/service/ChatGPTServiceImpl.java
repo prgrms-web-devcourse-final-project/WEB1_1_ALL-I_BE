@@ -14,6 +14,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ChatGPTServiceImpl implements ChatGPTService {
+
     @Value("${openai.model}")
     private String model;
 
@@ -70,5 +71,6 @@ public class ChatGPTServiceImpl implements ChatGPTService {
         else { intention = "EXCEPTION"; }
 
         return intention;
+
     }
 }

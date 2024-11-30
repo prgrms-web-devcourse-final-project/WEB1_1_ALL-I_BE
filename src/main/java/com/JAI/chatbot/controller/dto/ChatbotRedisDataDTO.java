@@ -13,9 +13,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatbotRedisDataDTO {
+
     private String token;
     private UUID userId;
     private ChatbotReqDTO chatbotReqDTO;
     private List<ChatbotEventRespDTO> chatbotEventRespDTO;
     private List<ChatbotTodoRespDTO> chatbotTodoRespDTO;
+
 }
