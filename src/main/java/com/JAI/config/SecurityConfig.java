@@ -65,9 +65,10 @@ public class SecurityConfig {
                 .formLogin((auth) -> auth.disable())
                 .httpBasic((auth) -> auth.disable())
                 .authorizeRequests((auth) -> auth
-                        .requestMatchers("/user/signup","/user/login").permitAll()
-                        .requestMatchers("/user/reissue").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/user/signup","/user/login", "/user/reissue").permitAll()
+
+                        .requestMatchers("user/reissue", "user/logout", "user/update").authenticated()
+                        .requestMatchers("/todos", "/events", "/groupTodos", "/groupEvents", "/groups", "/categories", "/alarms", "/chatbot").authenticated())
                 //jwt 필터 추가
                 .addFilterBefore(new JWTFilter(jwtUtil, JWTService), LoginFilter.class)
                 //로그인 필터 추가

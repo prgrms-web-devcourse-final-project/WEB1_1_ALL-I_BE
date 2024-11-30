@@ -1,6 +1,7 @@
 package com.JAI.user.jwt;
 
 import com.JAI.user.domain.User;
+import com.JAI.user.exception.UserNotFoundException;
 import com.JAI.user.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
@@ -18,9 +19,9 @@ public class JWTService {
     private final RedisTokenUtil redisTokenUtil;
 
 
-    public User getUserByEmail(String email) throws Exception{
+    public User getUserByEmail(String email) throws UserNotFoundException {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new Exception("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     public void reissue(HttpServletRequest request, HttpServletResponse response) {
