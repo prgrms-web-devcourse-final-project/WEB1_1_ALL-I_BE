@@ -38,7 +38,7 @@ public class PersonalTodoController {
     }
 
     //투두 내용 변경
-    @PatchMapping("{todoId}/title")
+    @PatchMapping("/{todoId}/title")
     public ApiResponse<PersonalTodoUpdateTitleRes> updatePersonalTodoTitle(@PathVariable UUID todoId, @RequestBody PersonalTodoUpdateTitleReq req, @AuthenticationPrincipal CustomUserDetails user) {
         return ApiResponse.onSuccess(personalTodoService.updatePersonalTodoTitle(todoId, req, user));
     }
