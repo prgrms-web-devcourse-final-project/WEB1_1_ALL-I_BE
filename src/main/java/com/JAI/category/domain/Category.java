@@ -49,7 +49,7 @@ public class Category {
         this.group = group;
     }
 
-    private static Category create(String name, String color, User user, Group group) {
+    public static Category create(String name, String color, User user, Group group) {
         return Category.builder()
                 .name(name)
                 .color(color)
