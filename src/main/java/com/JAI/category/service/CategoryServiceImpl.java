@@ -2,6 +2,7 @@ package com.JAI.category.service;
 
 import com.JAI.category.converter.CategoryConverter;
 import com.JAI.category.domain.Category;
+import com.JAI.category.exception.CategoryNotFoundException;
 import com.JAI.category.repository.CategoryRepository;
 import com.JAI.category.service.request.CreateGroupCategoryServiceReq;
 import com.JAI.group.domain.Group;
@@ -47,5 +48,19 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.save(category);
 
         return category.getCategoryId();
+    }
+
+    @Override
+    public void updateGroupCategoryColor(Group group, String color) {
+        //일단 그룹 카테고리 찾아
+        Category category = categoryRepository.findByGroup(group)
+                .orElseThrow(() -> new CategoryNotFoundException("해당 카테고리를 찾을 수 없습니다."));
+
+        //매개변수의 color값과 다르면 update
+        if(!category.getColor().equals(color)) {
+            category.updateCategoryColor(color);
+            categoryRepository.save(category);
+        }
+
     }
 }

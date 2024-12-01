@@ -58,4 +58,7 @@ public class Category {
                 .build();
     }
 
+    public void updateCategoryColor(String color){
+        this.color = color;
+    }
 }

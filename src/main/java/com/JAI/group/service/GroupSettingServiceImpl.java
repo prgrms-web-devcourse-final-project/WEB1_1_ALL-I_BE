@@ -3,6 +3,7 @@ package com.JAI.group.service;
 import com.JAI.group.controller.response.GroupListRes;
 import com.JAI.group.converter.GroupSettingConverter;
 import com.JAI.group.domain.Group;
+import com.JAI.group.domain.GroupRole;
 import com.JAI.group.domain.GroupSetting;
 import com.JAI.group.repository.GroupRepository;
 import com.JAI.group.repository.GroupSettingRepository;
@@ -53,5 +54,11 @@ public class GroupSettingServiceImpl implements GroupSettigService{
                 .map(groupSetting -> groupSetting.getGroup().getGroupId())
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+    public GroupRole findGroupMemberRole(Group group, User user){
+        GroupSetting groupSetting = groupSettingRepository.findByUserAndGroup(user, group)
+                .orElseThrow(() -> new RuntimeException("해당 그룹 멤버가 아닙니다."));
+        return groupSetting.getRole();
     }
 }

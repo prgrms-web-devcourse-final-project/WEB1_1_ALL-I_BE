@@ -4,8 +4,10 @@ import com.JAI.category.converter.CategoryConverter;
 import com.JAI.category.service.CategoryService;
 import com.JAI.category.service.request.CreateGroupCategoryServiceReq;
 import com.JAI.group.controller.request.GroupCreateReq;
+import com.JAI.group.controller.request.GroupUpdateReq;
 import com.JAI.group.controller.response.GroupCreateRes;
 import com.JAI.group.controller.response.GroupListRes;
+import com.JAI.group.controller.response.GroupUpdateRes;
 import com.JAI.group.converter.GroupConverter;
 import com.JAI.group.converter.GroupSettingConverter;
 import com.JAI.group.domain.Group;
@@ -74,5 +76,28 @@ public class GroupServiceImpl implements GroupService {
         return groupList.stream()
                 .map(groupConverter::toGroupListDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public GroupUpdateRes updateGroupInfo(UUID groupId, GroupUpdateReq req, CustomUserDetails user) {
+        //id로 그룹 찾아와
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+        //현재 유저가 해당 그룹 인지 체크
+        GroupRole role = groupSettigService.findGroupMemberRole(group, user.getUser());
+
+        if(role.equals(GroupRole.MEMBER)) {
+            throw new RuntimeException("접근 권한이 없습니다.");
+        }
+
+        //그룹 카테고리 색상 변경
+        categoryService.updateGroupCategoryColor(group, req.getColor());
+
+        //그룹 설명 변경
+        group.updateGroupDescription(req.getDescription());
+        groupRepository.save(group);
+
+        //바뀐 정보들로 DTO 구성
+        return groupConverter.toGroupUpdateDTO(group, req.getColor());
     }
 }

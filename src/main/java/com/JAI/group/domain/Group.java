@@ -52,4 +52,7 @@ public class Group {
                 .build();
     }
 
+    public void updateGroupDescription(String description) {
+        this.description = description;
+    }
 }
