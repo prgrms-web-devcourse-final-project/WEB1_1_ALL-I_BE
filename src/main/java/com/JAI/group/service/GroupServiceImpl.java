@@ -5,6 +5,7 @@ import com.JAI.category.service.CategoryService;
 import com.JAI.category.service.request.CreateGroupCategoryServiceReq;
 import com.JAI.group.controller.request.GroupCreateReq;
 import com.JAI.group.controller.response.GroupCreateRes;
+import com.JAI.group.controller.response.GroupListRes;
 import com.JAI.group.converter.GroupConverter;
 import com.JAI.group.converter.GroupSettingConverter;
 import com.JAI.group.domain.Group;
@@ -16,7 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -60,5 +63,16 @@ public class GroupServiceImpl implements GroupService {
                 groupConverter.toGroupCreateDTO(groupEntity, user.getUser(), categoryId);
 
         return groupCreateRes;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<GroupListRes> getGroupList(CustomUserDetails user) {
+        List<UUID> groupIdList = groupSettigService.getGroupIdList(user.getUser());
+        List<Group> groupList = groupRepository.findAllById(groupIdList);
+
+        return groupList.stream()
+                .map(groupConverter::toGroupListDTO)
+                .collect(Collectors.toList());
     }
 }

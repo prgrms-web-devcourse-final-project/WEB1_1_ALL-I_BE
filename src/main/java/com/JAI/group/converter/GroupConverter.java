@@ -2,6 +2,7 @@ package com.JAI.group.converter;
 
 import com.JAI.group.controller.request.GroupCreateReq;
 import com.JAI.group.controller.response.GroupCreateRes;
+import com.JAI.group.controller.response.GroupListRes;
 import com.JAI.group.domain.Group;
 import com.JAI.group.domain.GroupRole;
 import com.JAI.group.service.request.AddGroupMemberServiceReq;
@@ -31,6 +32,14 @@ public class GroupConverter {
                 .groupName(group.getName())
                 .userId(user.getUserId())
                 .categoryId(categoryId)
+                .build();
+    }
+
+    public GroupListRes toGroupListDTO(Group group) {
+        return GroupListRes.builder()
+                .groupId(group.getGroupId())
+                .groupName(group.getName())
+                .description(group.getDescription())
                 .build();
     }
 }

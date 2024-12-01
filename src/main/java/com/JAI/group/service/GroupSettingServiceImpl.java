@@ -1,5 +1,6 @@
 package com.JAI.group.service;
 
+import com.JAI.group.controller.response.GroupListRes;
 import com.JAI.group.converter.GroupSettingConverter;
 import com.JAI.group.domain.Group;
 import com.JAI.group.domain.GroupSetting;
@@ -9,10 +10,15 @@ import com.JAI.group.service.request.AddGroupMemberServiceReq;
 import com.JAI.user.domain.User;
 import com.JAI.user.exception.UserNotFoundException;
 import com.JAI.user.repository.UserRepository;
+import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -38,5 +44,14 @@ public class GroupSettingServiceImpl implements GroupSettigService{
         groupSettingRepository.save(
                 groupSettingConverter.toGroupSettingEntity(req.getRole(), user, group)
         );
+    }
+
+    @Override
+    public List<UUID> getGroupIdList(User user) {
+        //해당 유저가 포함되어있는 그룹 아이디 리스트 반환
+        return groupSettingRepository.findByUser(user).stream()
+                .map(groupSetting -> groupSetting.getGroup().getGroupId())
+                .distinct()
+                .collect(Collectors.toList());
     }
 }
