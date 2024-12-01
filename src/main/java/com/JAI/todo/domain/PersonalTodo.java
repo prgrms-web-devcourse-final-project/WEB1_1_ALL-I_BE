@@ -76,4 +76,25 @@ public class PersonalTodo {
                 .category(category)
                 .build();
     }
+    //투두 상태 변경
+    public void updatePersonalTodoState(boolean done){
+        if(this.done != done){
+            this.done = done;
+        }
+    }
+
+    //투두 타이틀 변경
+    public void updatePersonalTodoTitle(String title){
+        this.title = title;
+    }
+
+    //투두 세부 항목 변경
+    public void updatePersonalTodo(String title, Category category, LocalTime startTime, LocalDate date){
+        this.title = title;
+        this.category = category;
+        this.startTime = startTime;
+        this.date = date;
+    }
+
+
 }
