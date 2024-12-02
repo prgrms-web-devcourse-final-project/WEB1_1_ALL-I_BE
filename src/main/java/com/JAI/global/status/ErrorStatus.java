@@ -18,6 +18,7 @@ public enum ErrorStatus {
 
     // 카테고리 에러
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY404"),
+    CATEGORY_NOT_OWNER_FOUND(HttpStatus.FORBIDDEN, "CATEGORY403"),
 
     // 개인 일정 에러
     PERSONAL_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY404"),
@@ -29,6 +30,11 @@ public enum ErrorStatus {
     CHATBOT_FORBIDDEN(HttpStatus.FORBIDDEN, "CHATBOT403"),
     CHATBOT_NOT_FOUND(HttpStatus.NOT_FOUND, "CHATBOT404"),
     CHATBOT_UNPROCESSABLE_ENTITY(HttpStatus.UNPROCESSABLE_ENTITY, "CHATBOT422");
+  
+    // 개인 투두 에러
+    PERSONAL_TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "TODO404"),
+    PERSONAL_TODO_NOT_OWNER_FOUND(HttpStatus.FORBIDDEN, "TODO403"),
+    PERSONAL_TODO_BAD_REQUEST(HttpStatus.BAD_REQUEST, "TODO400");
 
     private final HttpStatus httpStatus;
     private final String code;

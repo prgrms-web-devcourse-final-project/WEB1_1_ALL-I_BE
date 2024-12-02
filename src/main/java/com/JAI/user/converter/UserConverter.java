@@ -20,8 +20,7 @@ public class UserConverter {
                 requset.getNickname(),
                 requset.getEmail(),
                 bCryptPasswordEncoder.encode(requset.getPassword()),
-                Provider.ORIGIN,
-                LocalTime.of(8,0)
+                Provider.ORIGIN
         );
 
         return user;

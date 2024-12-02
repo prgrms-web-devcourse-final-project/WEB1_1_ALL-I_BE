@@ -74,14 +74,14 @@ public class User {
         this.endTime = endTime;
     }
 
-    public static User create(String nickname, String email, String password, Provider provider, LocalTime endTime) {
+    public static User create(String nickname, String email, String password, Provider provider) {
         return User.builder()
                 .nickname(nickname)
                 .role(Role.ROLE_USER)    //기본값
                 .email(email)
                 .password(password)
                 .provider(provider)
-                .endTime(endTime)
+                .endTime(LocalTime.of(11,59,0))
                 .build();
     }
 }

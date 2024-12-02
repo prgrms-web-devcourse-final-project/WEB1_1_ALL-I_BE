@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackages = {"com.JAI.event"})
+@RestControllerAdvice(basePackages = {"com.JAI.event","com.JAI.todo"})
 public class CategoryExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -16,6 +16,15 @@ public class CategoryExceptionHandler {
     public ApiResponse<Object> handleCategoryNotFound(CategoryNotFoundException e) {
         return ApiResponse.onFailure(
                 ErrorStatus.CATEGORY_NOT_FOUND,
+                e.getMessage(),
+                e.getData());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(CategoryNotOwnerException.class)
+    public ApiResponse<Object> handleCategoryNotOwner(CategoryNotOwnerException e) {
+        return ApiResponse.onFailure(
+                ErrorStatus.CATEGORY_NOT_OWNER_FOUND,
                 e.getMessage(),
                 e.getData());
     }
