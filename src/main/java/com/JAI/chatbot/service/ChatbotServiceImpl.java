@@ -43,15 +43,17 @@ public class ChatbotServiceImpl implements ChatbotService {
 
     @Override
     public UUID validateUser(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO) {
-        System.out.println("validateUser");
+//        System.out.println("validateUser");
 
         // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
         UUID userId = chatbotRedisDataDTO.getUserId(); // 레디스에 저장되어 있는 userId(데이터 입력한 유저)
         UUID currUserId = user.getUser().getUserId();  // 현재 로그인한 userId
-        System.out.println("userId: "+userId);
-        System.out.println("currUserId: "+currUserId);
+
+//        System.out.println("userId: "+userId);
+//        System.out.println("currUserId: "+currUserId);
+
         if (!currUserId.toString().equals(userId.toString())) {
-            throw new ChatbotForbiddenException("해당 유저는 접근할 수 없는 데이터입니다.");
+            throw new ChatbotForbiddenException("해당 유저는 접근할 수 없는 데이터입니다");
         }
 
         return currUserId;
@@ -59,7 +61,11 @@ public class ChatbotServiceImpl implements ChatbotService {
 
     @Override
     public TokenReqDTO saveRequest (CustomUserDetails user, ChatbotReqDTO request) {
-        System.out.println("saveRequest");
+//        System.out.println("saveRequest");
+
+        if (request.getPrompt() == null) {
+            throw new ChatbotBadRequestException("프롬프트를 입력해주세요");
+        }
 
         // userId 불러오기
         UUID userId = user.getUser().getUserId();
@@ -76,8 +82,8 @@ public class ChatbotServiceImpl implements ChatbotService {
     @Override
     public ChatbotResponseWrapper<?> createResponseJson(CustomUserDetails user,  TokenReqDTO token) throws ChatbotForbiddenException{
 
-        System.out.println("createResponseJson");
-        System.out.println("token: "+token.getToken());
+//        System.out.println("createResponseJson");
+//        System.out.println("token: "+token.getToken());
 
         ChatbotRedisDataDTO chatbotRedisDataDTO = redisChatbotUtil.getChatbotData(token.getToken());
 
@@ -148,8 +154,8 @@ public class ChatbotServiceImpl implements ChatbotService {
     @Override
     public void analyzeIntention(CustomUserDetails user, TokenReqDTO token) {
 
-        System.out.println("analyzeIntention");
-        System.out.println("token: "+token.getToken());
+//        System.out.println("analyzeIntention");
+//        System.out.println("token: "+token.getToken());
 
 
         ChatbotRedisDataDTO chatbotRedisDataDTO = redisChatbotUtil.getChatbotData(token.getToken());
@@ -182,8 +188,12 @@ public class ChatbotServiceImpl implements ChatbotService {
     @Override
     public void validateAcceptAlarm(CustomUserDetails user, Boolean accept, Boolean alarm, TokenReqDTO token) {
 
-        System.out.println("validateAcceptAlarm");
-        System.out.println("token: "+token.getToken());
+//        System.out.println("validateAcceptAlarm");
+//        System.out.println("token: "+token.getToken());
+
+        if(token == null) {
+            throw new ChatbotBadRequestException("토큰을 넣어주세요");
+        }
 
         ChatbotRedisDataDTO chatbotRedisDataDTO = redisChatbotUtil.getChatbotData(token.getToken());
 
@@ -210,7 +220,7 @@ public class ChatbotServiceImpl implements ChatbotService {
         // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
         UUID currUserId = validateUser(user, chatbotRedisDataDTO);
 
-        System.out.println("사용자 접근 가능");
+//        System.out.println("사용자 접근 가능");
 
         // 레디스에 저장되어 있던 Chatbot 응답 데이터 불러오기
         ChatbotRedisDataDTO chatbotData = redisChatbotUtil.getChatbotData(token.getToken());
@@ -229,8 +239,8 @@ public class ChatbotServiceImpl implements ChatbotService {
 
     @Override
     public void saveTodo(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO, Boolean alarm, TokenReqDTO token) {
-        System.out.println("saveTodo");
-        System.out.println("token: "+token);
+//        System.out.println("saveTodo");
+//        System.out.println("token: "+token);
 
         // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
         validateUser(user, chatbotRedisDataDTO);

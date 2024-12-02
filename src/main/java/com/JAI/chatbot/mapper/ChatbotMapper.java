@@ -33,7 +33,7 @@ public class ChatbotMapper {
             // content에서 JSON 객체만 추출 (정규식 사용)
             String jsonContent = extractJson(content);
             if (jsonContent == null) {
-                throw new ChatbotUnprocessableEntityException("ChatGPT 응답에서 유효한 JSON을 찾지 못했습니다.");
+                throw new ChatbotUnprocessableEntityException("ChatGPT 응답에서 유효한 JSON을 찾지 못했습니다");
             }
 
             // JSON을 파싱하여 List<ChatbotEventRespDTO>로 변환
@@ -46,7 +46,7 @@ public class ChatbotMapper {
             return events.stream()
                     .map(event -> {
                         if (event.getStartDate() == null) {
-                            throw new ChatbotBadRequestException("startDate는 null일 수 없습니다.");
+                            throw new ChatbotBadRequestException("startDate는 null일 수 없습니다");
                         }
                         if (event.getEndDate() == null) {
                             // endDate가 null이면 startDate와 동일하게 설정
@@ -63,7 +63,7 @@ public class ChatbotMapper {
                     .collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ChatbotUnprocessableEntityException("ChatGPT 응답이 적절하지 않습니다.");
+            throw new ChatbotUnprocessableEntityException("ChatGPT 응답이 적절하지 않습니다");
         }
     }
 
@@ -76,7 +76,7 @@ public class ChatbotMapper {
             String jsonContent = extractJson(content);
 
             if (jsonContent == null) {
-                throw new ChatbotUnprocessableEntityException("ChatGPT 응답에서 유효한 JSON을 찾지 못했습니다.");
+                throw new ChatbotUnprocessableEntityException("ChatGPT 응답에서 유효한 JSON을 찾지 못했습니다");
             }
 
             // JSON을 파싱하여 List<ChatbotTodoRespDTO>로 변환
@@ -89,7 +89,7 @@ public class ChatbotMapper {
             return todos.stream()
                     .map(todo -> {
                         if (todo.getDate() == null) {
-                            throw new ChatbotBadRequestException("date는 null일 수 없습니다.");
+                            throw new ChatbotBadRequestException("date는 null일 수 없습니다");
                         }
                         return todo; // 기본적으로 그대로 반환
                     })
@@ -97,7 +97,7 @@ public class ChatbotMapper {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ChatbotUnprocessableEntityException("ChatGPT 응답이 적절하지 않습니다.");
+            throw new ChatbotUnprocessableEntityException("ChatGPT 응답이 적절하지 않습니다");
         }
     }
 
@@ -132,15 +132,15 @@ public class ChatbotMapper {
     }
 
     private String extractJson(String content) {
-        System.out.println("extractJson");
-        System.out.println("content: "+content);
+//        System.out.println("extractJson");
+//        System.out.println("content: "+content);
         // 정규식을 이용하여 JSON 객체 추출
         Pattern pattern = Pattern.compile("\\{.*\\}", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(content);
 
         if (matcher.find()) {
-            System.out.println("matcher: "+matcher);
-            System.out.println("matcher group: "+matcher.group());
+//            System.out.println("matcher: "+matcher);
+//            System.out.println("matcher group: "+matcher.group());
             return matcher.group(); // 첫 번째 JSON 객체 반환
         }
 

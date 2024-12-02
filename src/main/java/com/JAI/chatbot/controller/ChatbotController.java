@@ -6,6 +6,7 @@ import com.JAI.chatbot.controller.dto.request.ChatbotReqDTO;
 import com.JAI.chatbot.controller.dto.request.TokenReqDTO;
 import com.JAI.chatbot.controller.dto.response.ChatbotResponseWrapper;
 import com.JAI.chatbot.service.ChatbotService;
+import com.JAI.global.controller.ApiResponse;
 import com.JAI.user.service.dto.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.*;
@@ -23,7 +24,7 @@ public class ChatbotController {
     private final RedisChatbotUtil redisChatbotUtil;
 
     @PostMapping("/messages")
-    public ChatbotResponseWrapper message(
+    public ApiResponse<ChatbotResponseWrapper> message(
             @RequestBody @Valid ChatbotReqDTO request,
             @AuthenticationPrincipal CustomUserDetails user) {
 
@@ -36,7 +37,7 @@ public class ChatbotController {
 
         // intention이 null 아닌 경우 -> createResponseJson() 호출
         if (intention != null) {
-            return chatbotService.createResponseJson(user, tokenReqDTO);
+            return ApiResponse.onCreateSuccess(chatbotService.createResponseJson(user, tokenReqDTO));
         }
 
         // intention이 null인 경우
@@ -44,19 +45,21 @@ public class ChatbotController {
         // createResponseJson() 호출
         else {
             chatbotService.analyzeIntention(user, tokenReqDTO);
-            return chatbotService.createResponseJson(user, tokenReqDTO);
+            return ApiResponse.onCreateSuccess(chatbotService.createResponseJson(user, tokenReqDTO));
         }
     }
 
     @PostMapping("/message")
-    public void accept(
+    public ApiResponse<Void> accept(
             @RequestBody TokenReqDTO token,
             @RequestParam Boolean accept, Boolean isAlarmed,
             @AuthenticationPrincipal CustomUserDetails user) {
-        System.out.println("controller");
-        System.out.println("token: "+token);
-        System.out.println("accept: "+accept);
-        System.out.println("isAlarmed: "+isAlarmed);
+//        System.out.println("controller");
+//        System.out.println("token: "+token);
+//        System.out.println("accept: "+accept);
+//        System.out.println("isAlarmed: "+isAlarmed);
         chatbotService.validateAcceptAlarm(user, accept, isAlarmed, token);
+
+        return ApiResponse.onCreateSuccess();
     }
 }
