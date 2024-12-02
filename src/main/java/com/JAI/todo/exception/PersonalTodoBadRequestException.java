@@ -1,4 +1,4 @@
-package com.JAI.todo.excepion;
+package com.JAI.todo.exception;
 
 public class PersonalTodoBadRequestException extends RuntimeException {
     private Object data;

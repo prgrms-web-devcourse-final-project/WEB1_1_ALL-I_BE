@@ -12,6 +12,8 @@ import com.JAI.group.converter.GroupConverter;
 import com.JAI.group.converter.GroupSettingConverter;
 import com.JAI.group.domain.Group;
 import com.JAI.group.domain.GroupRole;
+import com.JAI.group.exception.GroupNotFoundException;
+import com.JAI.group.exception.GroupNotOwnerException;
 import com.JAI.group.repository.GroupRepository;
 import com.JAI.group.service.request.AddGroupMemberServiceReq;
 import com.JAI.user.service.dto.CustomUserDetails;
@@ -83,7 +85,7 @@ public class GroupServiceImpl implements GroupService {
     public GroupUpdateRes updateGroupInfo(UUID groupId, GroupUpdateReq req, CustomUserDetails user) {
         //id로 그룹 찾아와
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+                .orElseThrow(() -> new GroupNotFoundException("해당 ID의 그룹을 찾을 수 없습니다."));
 
         //현재 유저가 해당 그룹 인지 체크, leader인지 체크
         checkGroupLeader(groupId, user.getUser().getUserId());
@@ -104,7 +106,7 @@ public class GroupServiceImpl implements GroupService {
     public void deleteGroup(UUID groupId, CustomUserDetails user) {
         //id로 그룹 찾아와
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+                .orElseThrow(() -> new GroupNotFoundException("해당 ID의 그룹을 찾을 수 없습니다."));
 
         //현재 유저가 해당 그룹 인지 체크, leader인지 체크
         checkGroupLeader(groupId, user.getUser().getUserId());
@@ -116,7 +118,7 @@ public class GroupServiceImpl implements GroupService {
     public void checkGroupLeader(UUID groupId, UUID userId){
         GroupRole role = groupSettingService.findGroupMemberRole(groupId, userId);
         if(role.equals(GroupRole.MEMBER)) {
-            throw new RuntimeException("접근 권한이 없습니다.");
+            throw new GroupNotOwnerException("접근 권한이 없습니다.");
         }
     }
 }

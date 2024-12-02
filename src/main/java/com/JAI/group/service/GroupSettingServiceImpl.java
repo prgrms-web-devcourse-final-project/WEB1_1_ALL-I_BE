@@ -4,6 +4,8 @@ import com.JAI.group.converter.GroupSettingConverter;
 import com.JAI.group.domain.Group;
 import com.JAI.group.domain.GroupRole;
 import com.JAI.group.domain.GroupSetting;
+import com.JAI.group.exception.GroupNotFoundException;
+import com.JAI.group.exception.GroupSettingNotOwnerException;
 import com.JAI.group.repository.GroupRepository;
 import com.JAI.group.repository.GroupSettingRepository;
 import com.JAI.group.service.request.AddGroupMemberServiceReq;
@@ -34,10 +36,10 @@ public class GroupSettingServiceImpl implements GroupSettingService {
         //dto에서 받은 그룹아이디로 그룹 찾기
         // TODO :: 여기 예외처리
         Group group = groupRepository.findById(req.getGroupId())
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+                .orElseThrow(() -> new GroupNotFoundException("해당 ID의 그룹을 찾을 수 없습니다."));
         //dto에서 받은 유저아이디로 유저 찾기
         User user = userRepository.findById(req.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("해당 ID의 유저를 찾을 수 없습니다."));
 
         //DB에 저장
         groupSettingRepository.save(
@@ -58,7 +60,7 @@ public class GroupSettingServiceImpl implements GroupSettingService {
     @Override
     public GroupRole findGroupMemberRole(UUID groupId, UUID userId){
         GroupSetting groupSetting = groupSettingRepository.findByGroup_GroupIdAndUser_UserId(groupId, userId)
-                .orElseThrow(() -> new RuntimeException("해당 그룹 멤버가 아닙니다."));
+                .orElseThrow(() -> new GroupSettingNotOwnerException("해당 그룹 멤버가 아닙니다."));
         return groupSetting.getRole();
     }
 }
