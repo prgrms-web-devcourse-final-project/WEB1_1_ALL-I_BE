@@ -10,5 +10,5 @@ import java.util.UUID;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
-    Optional<Category> findByGroup(Group group);
+    Optional<Category> findByGroup_GroupId(UUID groupId);
 }

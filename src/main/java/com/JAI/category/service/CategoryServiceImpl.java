@@ -51,9 +51,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void updateGroupCategoryColor(Group group, String color) {
+    public void updateGroupCategoryColor(UUID groupId, String color) {
         //일단 그룹 카테고리 찾아
-        Category category = categoryRepository.findByGroup(group)
+        Category category = categoryRepository.findByGroup_GroupId(groupId)
                 .orElseThrow(() -> new CategoryNotFoundException("해당 카테고리를 찾을 수 없습니다."));
 
         //매개변수의 color값과 다르면 update
@@ -61,6 +61,5 @@ public class CategoryServiceImpl implements CategoryService {
             category.updateCategoryColor(color);
             categoryRepository.save(category);
         }
-
     }
 }

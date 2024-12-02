@@ -1,6 +1,5 @@
 package com.JAI.group.service;
 
-import com.JAI.group.controller.response.GroupListRes;
 import com.JAI.group.converter.GroupSettingConverter;
 import com.JAI.group.domain.Group;
 import com.JAI.group.domain.GroupRole;
@@ -11,7 +10,6 @@ import com.JAI.group.service.request.AddGroupMemberServiceReq;
 import com.JAI.user.domain.User;
 import com.JAI.user.exception.UserNotFoundException;
 import com.JAI.user.repository.UserRepository;
-import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,7 +21,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class GroupSettingServiceImpl implements GroupSettigService{
+public class GroupSettingServiceImpl implements GroupSettingService {
 
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
@@ -48,14 +46,16 @@ public class GroupSettingServiceImpl implements GroupSettigService{
     }
 
     @Override
-    public List<UUID> getGroupIdList(User user) {
+    @Transactional(readOnly = true)
+    public List<UUID> getGroupIdList(UUID userId) {
         //해당 유저가 포함되어있는 그룹 아이디 리스트 반환
-        return groupSettingRepository.findByUser(user).stream()
+        return groupSettingRepository.findByUser_UserId(userId).stream()
                 .map(groupSetting -> groupSetting.getGroup().getGroupId())
                 .distinct()
                 .collect(Collectors.toList());
     }
 
+    @Override
     public GroupRole findGroupMemberRole(UUID groupId, UUID userId){
         GroupSetting groupSetting = groupSettingRepository.findByGroup_GroupIdAndUser_UserId(groupId, userId)
                 .orElseThrow(() -> new RuntimeException("해당 그룹 멤버가 아닙니다."));

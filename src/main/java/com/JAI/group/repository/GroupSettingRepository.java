@@ -12,6 +12,6 @@ import java.util.UUID;
 
 @Repository
 public interface GroupSettingRepository extends JpaRepository<GroupSetting, UUID> {
-    List<GroupSetting> findByUser(User user);
+    List<GroupSetting> findByUser_UserId(UUID userId);
     Optional<GroupSetting> findByGroup_GroupIdAndUser_UserId(UUID groupId, UUID userId);
 }

@@ -33,7 +33,7 @@ public class GroupServiceImpl implements GroupService {
     //repository
     private final GroupRepository groupRepository;
     //service
-    private final GroupSettigService groupSettigService;
+    private final GroupSettingService groupSettingService;
     private final CategoryService categoryService;
 
 
@@ -51,7 +51,7 @@ public class GroupServiceImpl implements GroupService {
                 groupSettingConverter.toAddGroupMemberServiceReq(groupEntity, user.getUser(), GroupRole.LEADER);
 
         //그룹 세팅에 멤버 저장하는 메서드 호출
-        groupSettigService.addGroupMember(addGroupMemberServiceReq);
+        groupSettingService.addGroupMember(addGroupMemberServiceReq);
 
         //카테고리에 저장할 수 있도록 dto로 변환
         CreateGroupCategoryServiceReq createGroupCategoryServiceReq =
@@ -70,8 +70,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional(readOnly = true)
     public List<GroupListRes> getGroupList(CustomUserDetails user) {
-        // TODO :: id로 넘겨
-        List<UUID> groupIdList = groupSettigService.getGroupIdList(user.getUser());
+        List<UUID> groupIdList = groupSettingService.getGroupIdList(user.getUser().getUserId());
         List<Group> groupList = groupRepository.findAllById(groupIdList);
 
         return groupList.stream()
@@ -85,16 +84,12 @@ public class GroupServiceImpl implements GroupService {
         //id로 그룹 찾아와
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
-        //현재 유저가 해당 그룹 인지 체크, leader인지 체크
-        GroupRole role = groupSettigService.findGroupMemberRole(groupId, user.getUser().getUserId());
 
-        if(role.equals(GroupRole.MEMBER)) {
-            throw new RuntimeException("접근 권한이 없습니다.");
-        }
+        //현재 유저가 해당 그룹 인지 체크, leader인지 체크
+        checkGroupLeader(groupId, user.getUser().getUserId());
 
         //그룹 카테고리 색상 변경 -->
-        // TODO :: id로 넘겨
-        categoryService.updateGroupCategoryColor(group, req.getColor());
+        categoryService.updateGroupCategoryColor(group.getGroupId(), req.getColor());
 
         //그룹 설명 변경
         group.updateGroupDescription(req.getDescription());
@@ -111,14 +106,17 @@ public class GroupServiceImpl implements GroupService {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
 
-        //현재 유저가 해당 그룹 인지 체크, leader인지 체크 --> id로 넘겨
-        GroupRole role = groupSettigService.findGroupMemberRole(groupId, user.getUser().getUserId());
-
-        if(role.equals(GroupRole.MEMBER)) {
-            throw new RuntimeException("접근 권한이 없습니다.");
-        }
+        //현재 유저가 해당 그룹 인지 체크, leader인지 체크
+        checkGroupLeader(groupId, user.getUser().getUserId());
 
         //그룹 삭제
         groupRepository.delete(group);
+    }
+
+    public void checkGroupLeader(UUID groupId, UUID userId){
+        GroupRole role = groupSettingService.findGroupMemberRole(groupId, userId);
+        if(role.equals(GroupRole.MEMBER)) {
+            throw new RuntimeException("접근 권한이 없습니다.");
+        }
     }
 }

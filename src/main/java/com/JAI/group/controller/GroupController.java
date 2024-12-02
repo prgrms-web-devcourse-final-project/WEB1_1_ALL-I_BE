@@ -8,7 +8,6 @@ import com.JAI.group.controller.response.GroupCreateRes;
 import com.JAI.group.controller.response.GroupListRes;
 import com.JAI.group.controller.response.GroupUpdateRes;
 import com.JAI.group.service.GroupService;
-import com.JAI.group.service.GroupSettigService;
 import com.JAI.user.service.dto.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
