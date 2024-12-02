@@ -15,12 +15,12 @@ import com.JAI.chatbot.exception.ChatbotForbiddenException;
 import com.JAI.chatbot.mapper.ChatbotMapper;
 import com.JAI.event.DTO.request.PersonalEventCreateReqDTO;
 import com.JAI.event.service.PersonalEventService;
+import com.JAI.todo.controller.request.PersonalTodoCreateReq;
+import com.JAI.todo.service.PersonalTodoService;
 import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +33,8 @@ public class ChatbotServiceImpl implements ChatbotService {
 
     private final PersonalEventService personalEventService;
 
+    private final PersonalTodoService personalTodoService;
+
     private final RedisChatbotUtil redisChatbotUtil;
 
     private final ChatbotMapper chatbotMapper;
@@ -41,10 +43,14 @@ public class ChatbotServiceImpl implements ChatbotService {
 
     @Override
     public UUID validateUser(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO) {
+        System.out.println("validateUser");
+
         // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
         UUID userId = chatbotRedisDataDTO.getUserId(); // 레디스에 저장되어 있는 userId(데이터 입력한 유저)
         UUID currUserId = user.getUser().getUserId();  // 현재 로그인한 userId
-        if ( currUserId != userId ) {
+        System.out.println("userId: "+userId);
+        System.out.println("currUserId: "+currUserId);
+        if (!currUserId.toString().equals(userId.toString())) {
             throw new ChatbotForbiddenException("해당 유저는 접근할 수 없는 데이터입니다.");
         }
 
@@ -223,20 +229,24 @@ public class ChatbotServiceImpl implements ChatbotService {
 
     @Override
     public void saveTodo(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO, Boolean alarm, TokenReqDTO token) {
+        System.out.println("saveTodo");
+        System.out.println("token: "+token);
+
+        // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
+        validateUser(user, chatbotRedisDataDTO);
 
         // 레디스에 저장되어 있던 Chatbot 응답 데이터 불러오기
         ChatbotRedisDataDTO chatbotData = redisChatbotUtil.getChatbotData(token.getToken());
-        UUID userId = chatbotData.getUserId();
         UUID categoryId = chatbotData.getChatbotReqDTO().getCategoryId();
         List<ChatbotTodoRespDTO> chatbotTodoRespDTOs = chatbotData.getChatbotTodoRespDTO();
 
         // 개인 투두 DB에 삽입
         for (ChatbotTodoRespDTO chatbotTodoRespDTO : chatbotTodoRespDTOs) {
+            PersonalTodoCreateReq personalTodoCreateReq =
+                    chatbotMapper.toPersonalTodoCreateReq(chatbotTodoRespDTO, categoryId);
 
+            personalTodoService.createPersonalTodo(personalTodoCreateReq, user);
         }
-
-        // 개인 투두 DB에 저장하는 함수 호출
-
     }
 
 }

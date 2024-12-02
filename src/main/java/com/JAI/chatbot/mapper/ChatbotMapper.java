@@ -4,6 +4,7 @@ import com.JAI.chatbot.controller.dto.response.ChatGPTRespDTO;
 import com.JAI.chatbot.controller.dto.response.ChatbotEventRespDTO;
 import com.JAI.chatbot.controller.dto.response.ChatbotTodoRespDTO;
 import com.JAI.event.DTO.request.PersonalEventCreateReqDTO;
+import com.JAI.todo.controller.request.PersonalTodoCreateReq;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +68,17 @@ public class ChatbotMapper {
                 .build();
 
         return personalEventCreateReqDTO;
+    }
+
+    public PersonalTodoCreateReq toPersonalTodoCreateReq(ChatbotTodoRespDTO chatbotTodoRespDTO, UUID categoryId) {
+        PersonalTodoCreateReq personalTodoCreateReq = PersonalTodoCreateReq.builder()
+                .title(chatbotTodoRespDTO.getTitle())
+                .date(chatbotTodoRespDTO.getDate())
+                .startTime(chatbotTodoRespDTO.getTime())
+                .categoryId(categoryId)
+                .build();
+
+        return personalTodoCreateReq;
     }
 }
 
