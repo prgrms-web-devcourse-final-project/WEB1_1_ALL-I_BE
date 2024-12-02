@@ -70,6 +70,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional(readOnly = true)
     public List<GroupListRes> getGroupList(CustomUserDetails user) {
+        // TODO :: id로 넘겨
         List<UUID> groupIdList = groupSettigService.getGroupIdList(user.getUser());
         List<Group> groupList = groupRepository.findAllById(groupIdList);
 
@@ -79,18 +80,20 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public GroupUpdateRes updateGroupInfo(UUID groupId, GroupUpdateReq req, CustomUserDetails user) {
         //id로 그룹 찾아와
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
-        //현재 유저가 해당 그룹 인지 체크
-        GroupRole role = groupSettigService.findGroupMemberRole(group, user.getUser());
+        //현재 유저가 해당 그룹 인지 체크, leader인지 체크
+        GroupRole role = groupSettigService.findGroupMemberRole(groupId, user.getUser().getUserId());
 
         if(role.equals(GroupRole.MEMBER)) {
             throw new RuntimeException("접근 권한이 없습니다.");
         }
 
-        //그룹 카테고리 색상 변경
+        //그룹 카테고리 색상 변경 -->
+        // TODO :: id로 넘겨
         categoryService.updateGroupCategoryColor(group, req.getColor());
 
         //그룹 설명 변경
@@ -99,5 +102,23 @@ public class GroupServiceImpl implements GroupService {
 
         //바뀐 정보들로 DTO 구성
         return groupConverter.toGroupUpdateDTO(group, req.getColor());
+    }
+
+    @Override
+    @Transactional
+    public void deleteGroup(UUID groupId, CustomUserDetails user) {
+        //id로 그룹 찾아와
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        //현재 유저가 해당 그룹 인지 체크, leader인지 체크 --> id로 넘겨
+        GroupRole role = groupSettigService.findGroupMemberRole(groupId, user.getUser().getUserId());
+
+        if(role.equals(GroupRole.MEMBER)) {
+            throw new RuntimeException("접근 권한이 없습니다.");
+        }
+
+        //그룹 삭제
+        groupRepository.delete(group);
     }
 }

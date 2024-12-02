@@ -56,8 +56,8 @@ public class GroupSettingServiceImpl implements GroupSettigService{
                 .collect(Collectors.toList());
     }
 
-    public GroupRole findGroupMemberRole(Group group, User user){
-        GroupSetting groupSetting = groupSettingRepository.findByUserAndGroup(user, group)
+    public GroupRole findGroupMemberRole(UUID groupId, UUID userId){
+        GroupSetting groupSetting = groupSettingRepository.findByGroup_GroupIdAndUser_UserId(groupId, userId)
                 .orElseThrow(() -> new RuntimeException("해당 그룹 멤버가 아닙니다."));
         return groupSetting.getRole();
     }

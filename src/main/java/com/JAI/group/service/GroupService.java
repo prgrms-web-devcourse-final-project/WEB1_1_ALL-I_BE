@@ -14,4 +14,5 @@ public interface GroupService {
     GroupCreateRes createGroup(GroupCreateReq req, CustomUserDetails user);
     List<GroupListRes> getGroupList(CustomUserDetails user);
     GroupUpdateRes updateGroupInfo(UUID groupId, GroupUpdateReq req, CustomUserDetails user);
+    void deleteGroup(UUID groupId, CustomUserDetails user);
 }

@@ -13,5 +13,5 @@ import java.util.UUID;
 public interface GroupSettigService {
     void addGroupMember(AddGroupMemberServiceReq req);
     List<UUID> getGroupIdList(User user);
-    GroupRole findGroupMemberRole(Group group, User user);
+    GroupRole findGroupMemberRole(UUID groupId, UUID userId);
 }

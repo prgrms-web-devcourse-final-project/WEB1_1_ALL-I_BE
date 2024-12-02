@@ -24,7 +24,6 @@ import java.util.UUID;
 public class GroupController {
 
     private final GroupService groupService;
-    private final GroupSettigService groupSettigService;
 
     @PostMapping
     public ApiResponse<GroupCreateRes> createGroup(@RequestBody @Valid GroupCreateReq req, @AuthenticationPrincipal CustomUserDetails user) {
@@ -39,5 +38,11 @@ public class GroupController {
     @PatchMapping("/{groupId}")
     public ApiResponse<GroupUpdateRes> updateGroupInfo(@PathVariable UUID groupId, @RequestBody GroupUpdateReq req, @AuthenticationPrincipal CustomUserDetails user) {
         return ApiResponse.onSuccess(groupService.updateGroupInfo(groupId, req, user));
+    }
+
+    @DeleteMapping("/{groupId}")
+    public ApiResponse<String> deleteGroup(@PathVariable UUID groupId, @AuthenticationPrincipal CustomUserDetails user) {
+        groupService.deleteGroup(groupId, user);
+        return ApiResponse.onDeleteSuccess("정상적으로 삭제되었습니다.");
     }
 }
