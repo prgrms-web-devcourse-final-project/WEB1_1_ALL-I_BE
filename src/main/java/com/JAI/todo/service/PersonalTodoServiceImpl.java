@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class PersonalTodoServiceImpl implements PersonalTodoService{
 
+
     private final PersonalTodoRepository personalTodoRepository;
     private final CategoryRepository categoryRepository;
     private final PersonalTodoConverter personalTodoConverter;
@@ -173,4 +174,5 @@ public class PersonalTodoServiceImpl implements PersonalTodoService{
             throw new CategoryNotOwnerException("해당 사용자의 카테고리가 아닙니다.",categoryOwnerUserId);
         }
     }
+
 }

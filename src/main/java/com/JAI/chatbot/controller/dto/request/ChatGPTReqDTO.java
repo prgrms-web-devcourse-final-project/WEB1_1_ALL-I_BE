@@ -20,5 +20,6 @@ public class ChatGPTReqDTO {
 
     @NotBlank
     private List<ChatGPTMessageDTO> messages;
+
 }
 

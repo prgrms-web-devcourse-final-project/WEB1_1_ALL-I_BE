@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 
 @Builder
 @Getter
@@ -16,8 +18,9 @@ public class ChatbotReqDTO {
 
     private String intention;
 
-    private Category category;
+    private UUID categoryId;
 
     @NotBlank
     private String prompt;
+
 }
