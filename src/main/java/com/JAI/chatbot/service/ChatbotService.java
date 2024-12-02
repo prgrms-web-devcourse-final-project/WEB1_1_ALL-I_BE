@@ -9,6 +9,7 @@ import com.JAI.chatbot.controller.dto.response.ChatbotTodoRespDTO;
 import com.JAI.user.service.dto.CustomUserDetails;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ChatbotService {
 
@@ -90,5 +91,13 @@ public interface ChatbotService {
      * @return : 투두 저장 결과 반환
      */
     public void saveTodo(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO, Boolean alarm, TokenReqDTO token);
+
+    /**
+     * 현재 로그인한 유저랑 레디스에 저장된 유저가 동일한지 확인
+     *
+     * @param user : 현재 로그인 중인 유저
+     * @param chatbotRedisDataDTO : ChatGPT 응답 레디스에 저장한 거
+     */
+    public UUID validateUser(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO);
 
 }

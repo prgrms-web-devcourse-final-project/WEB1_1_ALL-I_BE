@@ -29,18 +29,27 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ChatbotServiceImpl implements ChatbotService {
 
-    @Autowired
-    ChatGPTService chatGPTService;
+    private final ChatGPTService chatGPTService;
 
-    @Autowired
-    PersonalEventService personalEventService;
+    private final PersonalEventService personalEventService;
 
-    @Autowired
-    RedisChatbotUtil redisChatbotUtil;
+    private final RedisChatbotUtil redisChatbotUtil;
 
-    @Autowired
-    ChatbotMapper chatbotMapper;
+    private final ChatbotMapper chatbotMapper;
 
+
+
+    @Override
+    public UUID validateUser(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO) {
+        // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
+        UUID userId = chatbotRedisDataDTO.getUserId(); // 레디스에 저장되어 있는 userId(데이터 입력한 유저)
+        UUID currUserId = user.getUser().getUserId();  // 현재 로그인한 userId
+        if ( currUserId != userId ) {
+            throw new ChatbotForbiddenException("해당 유저는 접근할 수 없는 데이터입니다.");
+        }
+
+        return currUserId;
+    }
 
     @Override
     public TokenReqDTO saveRequest (CustomUserDetails user, ChatbotReqDTO request) {
@@ -67,11 +76,7 @@ public class ChatbotServiceImpl implements ChatbotService {
         ChatbotRedisDataDTO chatbotRedisDataDTO = redisChatbotUtil.getChatbotData(token.getToken());
 
         // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
-        String userId = chatbotRedisDataDTO.getUserId().toString(); // 레디스에 저장되어 있는 userId(데이터 입력한 유저)
-        String currUserId = user.getUser().getUserId().toString();  // 현재 로그인한 userId
-        if (!currUserId.equals(userId)) {
-            throw new ChatbotForbiddenException("해당 유저는 접근할 수 없는 데이터입니다.");
-        }
+        validateUser(user, chatbotRedisDataDTO);
 
         // 레디스에서 key 이용해서 prompt, intention 가져오기
         String prompt = chatbotRedisDataDTO.getChatbotReqDTO().getPrompt();
@@ -143,11 +148,8 @@ public class ChatbotServiceImpl implements ChatbotService {
 
         ChatbotRedisDataDTO chatbotRedisDataDTO = redisChatbotUtil.getChatbotData(token.getToken());
 
-        String userId = chatbotRedisDataDTO.getUserId().toString(); // 레디스에 저장되어 있는 userId(데이터 입력한 유저)
-        String currUserId = user.getUser().getUserId().toString();  // 현재 로그인한 userId
-        if (!currUserId.equals(userId)) {
-            throw new ChatbotForbiddenException("해당 유저는 접근할 수 없는 데이터입니다.");
-        }
+        // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
+        validateUser(user, chatbotRedisDataDTO);
 
         // 레디스에서 prompt 가져오기
         String prompt = chatbotRedisDataDTO.getChatbotReqDTO().getPrompt();
@@ -179,11 +181,8 @@ public class ChatbotServiceImpl implements ChatbotService {
 
         ChatbotRedisDataDTO chatbotRedisDataDTO = redisChatbotUtil.getChatbotData(token.getToken());
 
-        String userId = chatbotRedisDataDTO.getUserId().toString(); // 레디스에 저장되어 있는 userId(데이터 입력한 유저)
-        String currUserId = user.getUser().getUserId().toString();  // 현재 로그인한 userId
-        if (!currUserId.equals(userId)) {
-            throw new ChatbotForbiddenException("해당 유저는 접근할 수 없는 데이터입니다.");
-        }
+        // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
+        validateUser(user, chatbotRedisDataDTO);
 
         // 수락했을 경우 -> token으로 레디스에 저장된 ChatGPT 응답 객체, Intention 찾고 saveEvent() 혹은 saveTodo() 호출
         if(accept) {
@@ -202,18 +201,14 @@ public class ChatbotServiceImpl implements ChatbotService {
     @Override
     public void saveEvent(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO, Boolean alarm, TokenReqDTO token) {
 
-        // 현재 로그인 중인 userId 불러오기 -> createPersonalEvent parameter로 삽입
-        UUID userId = chatbotRedisDataDTO.getUserId(); // 레디스에 저장되어 있는 userId(데이터 입력한 유저)
-        UUID currUserId = user.getUser().getUserId();  // 현재 로그인한 userId
-        if (!currUserId.toString().equals(userId.toString())) {
-            throw new ChatbotForbiddenException("해당 유저는 접근할 수 없는 데이터입니다.");
-        }
+        // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
+        UUID currUserId = validateUser(user, chatbotRedisDataDTO);
 
         System.out.println("사용자 접근 가능");
 
         // 레디스에 저장되어 있던 Chatbot 응답 데이터 불러오기
         ChatbotRedisDataDTO chatbotData = redisChatbotUtil.getChatbotData(token.getToken());
-        String categoryId = chatbotData.getChatbotReqDTO().getCategoryId();
+        UUID categoryId = chatbotData.getChatbotReqDTO().getCategoryId();
         List<ChatbotEventRespDTO> chatbotEventRespDTOs = chatbotData.getChatbotEventRespDTO();
 
         // 개인 일정 DB에 삽입
@@ -232,7 +227,7 @@ public class ChatbotServiceImpl implements ChatbotService {
         // 레디스에 저장되어 있던 Chatbot 응답 데이터 불러오기
         ChatbotRedisDataDTO chatbotData = redisChatbotUtil.getChatbotData(token.getToken());
         UUID userId = chatbotData.getUserId();
-        String categoryId = chatbotData.getChatbotReqDTO().getCategoryId();
+        UUID categoryId = chatbotData.getChatbotReqDTO().getCategoryId();
         List<ChatbotTodoRespDTO> chatbotTodoRespDTOs = chatbotData.getChatbotTodoRespDTO();
 
         // 개인 투두 DB에 삽입

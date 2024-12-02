@@ -20,9 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RedisChatbotUtil {
 
-    @Autowired
     private final RedisUtil redisUtil;
-
     private final ObjectMapper objectMapper;
 
     private static final String PREFIX_CHATBOT = "chatbot:";

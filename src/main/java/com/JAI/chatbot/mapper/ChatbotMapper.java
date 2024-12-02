@@ -16,7 +16,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ChatbotMapper {
 
-
     private final ObjectMapper mapper;
 
     public List<ChatbotEventRespDTO> toChatbotEventResp(ChatGPTRespDTO chatGPTRespDTO) {
@@ -52,7 +51,7 @@ public class ChatbotMapper {
     }
 
     public PersonalEventCreateReqDTO toPersonalEventCreateReqDTO (
-            UUID userId, String categoryId, Boolean alarm,
+            UUID userId, UUID categoryId, Boolean alarm,
             ChatbotEventRespDTO chatbotEventRespDTO
             ) {
 
@@ -64,7 +63,7 @@ public class ChatbotMapper {
                 .endTime(chatbotEventRespDTO.getEndTime())
                 .isAlarmed(alarm)
                 .userId(userId)
-                .categoryId(UUID.fromString(categoryId))
+                .categoryId(categoryId)
                 .build();
 
         return personalEventCreateReqDTO;

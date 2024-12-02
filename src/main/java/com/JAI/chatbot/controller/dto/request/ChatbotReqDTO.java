@@ -18,7 +18,7 @@ public class ChatbotReqDTO {
 
     private String intention;
 
-    private String categoryId;
+    private UUID categoryId;
 
     @NotBlank
     private String prompt;

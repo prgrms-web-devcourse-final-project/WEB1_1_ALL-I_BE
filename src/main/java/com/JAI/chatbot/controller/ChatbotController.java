@@ -18,10 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ChatbotController {
 
-    @Autowired
     private final ChatbotService chatbotService;
 
-    @Autowired
     private final RedisChatbotUtil redisChatbotUtil;
 
     @PostMapping("/messages")
