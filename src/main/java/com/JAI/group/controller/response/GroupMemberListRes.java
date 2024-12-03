@@ -13,6 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Data
 public class GroupMemberListRes {
+    UUID groupSettingId;
     UUID userId;
     String nickname;
     GroupRole role;

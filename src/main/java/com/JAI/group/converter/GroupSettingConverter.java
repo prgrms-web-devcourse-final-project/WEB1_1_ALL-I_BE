@@ -26,6 +26,7 @@ public class GroupSettingConverter {
     // TODO :: 그룹원 조회
     public GroupMemberListRes toGroupMemberListDTO(GroupSetting groupSetting, String nickname) {
         return GroupMemberListRes.builder()
+                .groupSettingId(groupSetting.getGroupSettingId())
                 .userId(groupSetting.getUser().getUserId())
                 .nickname(nickname)
                 .role(groupSetting.getRole())
