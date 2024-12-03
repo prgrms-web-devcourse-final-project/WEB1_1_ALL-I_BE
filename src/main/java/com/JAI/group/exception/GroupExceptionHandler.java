@@ -64,7 +64,7 @@ public class GroupExceptionHandler {
                 e.getData());
     }
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(GroupSettingAccessDeniedException.class)
     public ApiResponse<Object> handleGroupSettingAccessDenied(GroupSettingAccessDeniedException e){
         return ApiResponse.onFailure(
@@ -74,7 +74,7 @@ public class GroupExceptionHandler {
     }
 
     //GroupInvitation
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(GroupInvitationAccessDeniedException.class)
     public ApiResponse<Object> handleGroupInvitationAccessDenied(GroupInvitationAccessDeniedException e){
         return ApiResponse.onFailure(
