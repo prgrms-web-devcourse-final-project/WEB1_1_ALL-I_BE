@@ -1,5 +1,6 @@
 package com.JAI.event.mapper;
 
+import com.JAI.event.DTO.PersonalEventDTO;
 import com.JAI.event.DTO.request.PersonalEventCreateReqDTO;
 import com.JAI.event.DTO.request.PersonalEventUpdateReqDTO;
 import com.JAI.event.DTO.response.PersonalEventResDTO;
@@ -34,7 +35,7 @@ public class PersonalEventConverter {
                 .build();
     }
 
-    public PersonalEventResDTO personalEventResDTOTOToPersonalEvent(PersonalEvent personalEvent) {
+    public PersonalEventResDTO personalEventToPersonalEventResDTO(PersonalEvent personalEvent) {
         return PersonalEventResDTO.builder()
                 .personalEventId(personalEvent.getPersonalEventId())
                 .title(personalEvent.getTitle())
@@ -46,6 +47,51 @@ public class PersonalEventConverter {
                 .createdAt(personalEvent.getCreatedAt())
                 .categoryId(personalEvent.getCategory().getCategoryId())
                 .personalEventId(personalEvent.getUser().getUserId())
+                .build();
+    }
+
+    public PersonalEventDTO personalEventToPersonalEventDTO(PersonalEvent personalEvent) {
+        return PersonalEventDTO.builder()
+                .personalEventId(personalEvent.getPersonalEventId())
+                .title(personalEvent.getTitle())
+                .startDate(personalEvent.getStartDate())
+                .endDate(personalEvent.getEndDate())
+                .startTime(personalEvent.getStartTime())
+                .endTime(personalEvent.getEndTime())
+                .isAlarmed(personalEvent.getIsAlarmed())
+                .createdAt(personalEvent.getCreatedAt())
+                .category(personalEvent.getCategory())
+                .user(personalEvent.getUser())
+                .build();
+    }
+
+    public PersonalEvent personalEventDTOToPersonalEvent(PersonalEventDTO personalEventDTO) {
+        return PersonalEvent.builder()
+                .personalEventId(personalEventDTO.getPersonalEventId())
+                .title(personalEventDTO.getTitle())
+                .startDate(personalEventDTO.getStartDate())
+                .endDate(personalEventDTO.getEndDate())
+                .startTime(personalEventDTO.getStartTime())
+                .endTime(personalEventDTO.getEndTime())
+                .isAlarmed(personalEventDTO.getIsAlarmed())
+                .createdAt(personalEventDTO.getCreatedAt())
+                .category(personalEventDTO.getCategory())
+                .user(personalEventDTO.getUser())
+                .build();
+    }
+
+    public PersonalEventResDTO personalEventDTOToPersonalEventResDTO(PersonalEventDTO personalEventDTO) {
+        return PersonalEventResDTO.builder()
+                .personalEventId(personalEventDTO.getPersonalEventId())
+                .title(personalEventDTO.getTitle())
+                .startDate(personalEventDTO.getStartDate())
+                .endDate(personalEventDTO.getEndDate())
+                .startTime(personalEventDTO.getStartTime())
+                .endTime(personalEventDTO.getEndTime())
+                .isAlarmed(personalEventDTO.getIsAlarmed())
+                .createdAt(personalEventDTO.getCreatedAt())
+                .categoryId(personalEventDTO.getCategory().getCategoryId())
+                .userId(personalEventDTO.getUser().getUserId())
                 .build();
     }
 }
