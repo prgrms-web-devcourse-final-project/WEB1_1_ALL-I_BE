@@ -1,4 +1,4 @@
-package com.JAI.todo.excepion;
+package com.JAI.todo.exception;
 
 import com.JAI.global.controller.ApiResponse;
 import com.JAI.global.status.ErrorStatus;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackages = {"com.JAI.todo"})
+@RestControllerAdvice()
 public class TodoExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
