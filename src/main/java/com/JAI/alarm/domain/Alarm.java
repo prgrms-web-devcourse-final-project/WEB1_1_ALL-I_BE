@@ -90,4 +90,9 @@ public class Alarm {
     public void markAsSent() {
         this.isSent = true;
     }
+
+    // 읽음 시간 설정
+    public void updateReadTime(LocalDateTime now) {
+        this.readTime = now;
+    }
 }

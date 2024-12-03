@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AlarmConverter {
-    public AlarmResDTO alarmResDTOToAlarm(Alarm alarm) {
+    public AlarmResDTO alarmToAlarmResDTO(Alarm alarm) {
         return AlarmResDTO.builder()
                 .alarmId(alarm.getAlarmId())
                 .type(alarm.getType())

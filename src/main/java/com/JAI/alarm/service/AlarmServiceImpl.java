@@ -10,8 +10,9 @@ import com.JAI.event.DTO.PersonalEventDTO;
 import com.JAI.event.mapper.PersonalEventConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -52,8 +53,14 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Override
-    public void getAlarm(UUID alarmId, SseEmitter emitter) {
-
+    public List<AlarmResDTO> getAlarm(UUID userId) {
+        return alarmRepository.findByUser_UserId(userId).stream()
+                .map(alarm -> {
+                    AlarmResDTO alarmResDTO = alarmConverter.alarmToAlarmResDTO(alarm);
+                    markAlarmAsRead(alarmResDTO);
+                    return alarmResDTO;
+                })
+                .collect(Collectors.toList());
     }
 
     // 추후 오버로딩 진행
@@ -88,8 +95,19 @@ public class AlarmServiceImpl implements AlarmService {
         alarmRepository.save(updatedAlarm);
     }
 
-    // 보내야 할 알림 찾기
-    // 친구 초대도 찾자...
+    @Scheduled(fixedRate = 60000)
+    @Transactional
+    protected void deleteAlarm() {
+        log.info("Checking alarms need to be deleted...");
+
+        // 읽은지 7일이 지난 알림 삭제
+        LocalDateTime standardTime = LocalDateTime.now().minusDays(7);
+
+        alarmRepository.deleteAlarmNeedToBeDelete(standardTime);
+
+        log.info("Alarms need to be deleted.");
+    }
+
     @Override
     public List<AlarmResDTO> findPendingAlarms(LocalDateTime start, LocalDateTime end) {
         // 그룹 초대 알람 조회
@@ -102,7 +120,7 @@ public class AlarmServiceImpl implements AlarmService {
                         invitationAlarms.stream(),
                         personalEventAlarms.stream()
                 )
-                .map(alarmConverter::alarmResDTOToAlarm)
+                .map(alarmConverter::alarmToAlarmResDTO)
                 .collect(Collectors.toList());
     }
 
@@ -112,6 +130,19 @@ public class AlarmServiceImpl implements AlarmService {
         Optional<Alarm> targetAlarm = alarmRepository.findById(alarmResDTO.getAlarmId());
         targetAlarm.ifPresent(alarm -> {
             alarm.markAsSent();
+            alarmRepository.save(alarm);
+        });
+    }
+
+    // 보낸 알림  칼럼 변경
+    private void markAlarmAsRead(AlarmResDTO alarmResDTO) {
+        Optional<Alarm> targetAlarm = alarmRepository.findById(alarmResDTO.getAlarmId());
+        LocalDateTime now = LocalDateTime.now();
+
+        targetAlarm.ifPresent(alarm -> {
+            alarm.markAsSent();
+            alarm.markAsRead();
+            alarm.updateReadTime(now);
             alarmRepository.save(alarm);
         });
     }

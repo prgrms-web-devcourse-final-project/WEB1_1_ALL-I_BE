@@ -21,7 +21,7 @@ public class AlarmNotificationService {
     private final AlarmService alarmService;
 
     // 실시간 알림 조회
-    public SseEmitter getAlarms(UUID userId) {
+    public SseEmitter getRealTimeAlarms(UUID userId) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         userEmitters.put(userId, emitter);
 

@@ -17,7 +17,7 @@ public interface AlarmService {
 
     }
 
-    public void getAlarm(UUID alarmId, SseEmitter emitter);
+    public List<AlarmResDTO> getAlarm(UUID userId);
 
     public List<AlarmResDTO> findPendingAlarms(LocalDateTime start, LocalDateTime end);
 
