@@ -1,5 +1,6 @@
 package com.JAI.group.converter;
 
+import com.JAI.group.controller.response.GroupMemberListRes;
 import com.JAI.group.domain.Group;
 import com.JAI.group.domain.GroupRole;
 import com.JAI.group.domain.GroupSetting;
@@ -19,6 +20,16 @@ public class GroupSettingConverter {
                 group
         );
         return groupSetting;
+    }
+
+    //Entity -> DTO
+    // TODO :: 그룹원 조회
+    public GroupMemberListRes toGroupMemberListDTO(GroupSetting groupSetting, String nickname) {
+        return GroupMemberListRes.builder()
+                .userId(groupSetting.getUser().getUserId())
+                .nickname(nickname)
+                .role(groupSetting.getRole())
+                .build();
     }
 
     //Service -> Service

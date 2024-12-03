@@ -1,5 +1,6 @@
 package com.JAI.group.service;
 
+import com.JAI.group.controller.response.GroupMemberListRes;
 import com.JAI.group.converter.GroupSettingConverter;
 import com.JAI.group.domain.Group;
 import com.JAI.group.domain.GroupRole;
@@ -47,6 +48,8 @@ public class GroupSettingServiceImpl implements GroupSettingService {
         );
     }
 
+
+
     @Override
     @Transactional(readOnly = true)
     public List<UUID> getGroupIdList(UUID userId) {
@@ -62,5 +65,23 @@ public class GroupSettingServiceImpl implements GroupSettingService {
         GroupSetting groupSetting = groupSettingRepository.findByGroup_GroupIdAndUser_UserId(groupId, userId)
                 .orElseThrow(() -> new GroupSettingNotOwnerException("해당 그룹 멤버가 아닙니다."));
         return groupSetting.getRole();
+    }
+
+    @Override
+    public void findGroupMemberExisted(UUID groupId, UUID userId) {
+        if(groupSettingRepository.existsByGroup_GroupIdAndUser_UserId(groupId, userId)){
+            throw new RuntimeException("이미 존재하는 멤버입니다.");
+        }
+    }
+
+    // TODO :: 그룹원 조회
+    @Override
+    @Transactional(readOnly = true)
+    public List<GroupMemberListRes> getGroupMembers(UUID groupId) {
+        List<GroupSetting> groupSettings = groupSettingRepository.findByGroup_GroupIdWithUser(groupId);
+
+        return groupSettings.stream()
+                .map(gs -> groupSettingConverter.toGroupMemberListDTO(gs, gs.getUser().getNickname()))
+                .collect(Collectors.toList());
     }
 }

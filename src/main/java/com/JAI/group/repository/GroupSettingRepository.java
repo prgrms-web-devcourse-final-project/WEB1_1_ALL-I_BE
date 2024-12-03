@@ -4,6 +4,8 @@ import com.JAI.group.domain.Group;
 import com.JAI.group.domain.GroupSetting;
 import com.JAI.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,4 +16,8 @@ import java.util.UUID;
 public interface GroupSettingRepository extends JpaRepository<GroupSetting, UUID> {
     List<GroupSetting> findByUser_UserId(UUID userId);
     Optional<GroupSetting> findByGroup_GroupIdAndUser_UserId(UUID groupId, UUID userId);
+    Boolean existsByGroup_GroupIdAndUser_UserId(UUID groupId, UUID userId);
+
+    @Query("SELECT gs FROM GroupSetting gs JOIN FETCH gs.user WHERE gs.group.groupId = :groupId")
+    List<GroupSetting> findByGroup_GroupIdWithUser(@Param("groupId") UUID groupId);
 }
