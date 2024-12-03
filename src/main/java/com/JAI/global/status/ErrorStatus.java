@@ -21,8 +21,11 @@ public enum ErrorStatus {
 
     // 개인 일정 에러
     PERSONAL_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY404"),
-    PERSONAL_EVENT_NOT_OWNER_FOUND(HttpStatus.FORBIDDEN, "CATEGORY403"),
-    PERSONAL_EVENT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "CATEGORY400");
+    PERSONAL_EVENT_NOT_OWNER(HttpStatus.FORBIDDEN, "CATEGORY403"),
+    PERSONAL_EVENT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "CATEGORY400"),
+
+    // 알람 에러
+    ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "ALARM404");
 
     private final HttpStatus httpStatus;
     private final String code;
