@@ -26,7 +26,7 @@ public enum ErrorStatus {
     PERSONAL_EVENT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "CATEGORY400"),
 
     // 알람 에러
-    ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "ALARM404");
+    ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "ALARM404"),
 
     // 챗봇 에러
     CHATBOT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "CHATBOT400"),

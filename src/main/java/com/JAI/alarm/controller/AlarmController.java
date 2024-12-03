@@ -3,6 +3,7 @@ package com.JAI.alarm.controller;
 import com.JAI.alarm.DTO.AlarmResDTO;
 import com.JAI.alarm.service.AlarmNotificationService;
 import com.JAI.alarm.service.AlarmService;
+import com.JAI.global.controller.ApiResponse;
 import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,7 +29,7 @@ public class AlarmController {
 
     // 사용자가 받은 알림 전체 조회 (여태 받은 알림 한 번에)
     @GetMapping
-    public List<AlarmResDTO> getAlarms(@AuthenticationPrincipal CustomUserDetails user) {
-        return alarmService.getAlarm(user.getUserId());
+    public ApiResponse<List<AlarmResDTO>> getAlarms(@AuthenticationPrincipal CustomUserDetails user) {
+        return ApiResponse.onSuccess(alarmService.getAlarm(user.getUserId()));
     }
 }
