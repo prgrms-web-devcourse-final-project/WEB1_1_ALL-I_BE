@@ -25,14 +25,14 @@ public class GroupSettingController {
 
     //본인 탈퇴
     @DeleteMapping("/{groupSettingId}/quit")
-    public ApiResponse<?> quitGroupMember(@PathVariable UUID groupSettingId, @AuthenticationPrincipal CustomUserDetails user) {
+    public ApiResponse<String> quitGroupMember(@PathVariable UUID groupSettingId, @AuthenticationPrincipal CustomUserDetails user) {
         groupSettingService.quitGroupMember(groupSettingId, user);
         return ApiResponse.onDeleteSuccess("그룹 탈퇴에 성공하였습니다.");
     }
 
     //팀장이 강퇴
     @DeleteMapping("/{groupSettingId}/ejection")
-    public ApiResponse<?> ejectionGroupMember(@PathVariable UUID groupSettingId, @AuthenticationPrincipal CustomUserDetails user) {
+    public ApiResponse<String> ejectionGroupMember(@PathVariable UUID groupSettingId, @AuthenticationPrincipal CustomUserDetails user) {
         groupSettingService.ejectionGroupMember(groupSettingId, user);
         return ApiResponse.onDeleteSuccess("성공적으로 탈퇴 시켰습니다.");
     }
