@@ -1,5 +1,6 @@
 package com.JAI.event.service;
 
+import com.JAI.alarm.service.AlarmService;
 import com.JAI.category.exception.CategoryNotFoundException;
 import com.JAI.category.service.CategoryService;
 import com.JAI.event.DTO.request.PersonalEventCreateReqDTO;
@@ -28,6 +29,7 @@ public class PersonalEventServiceImpl implements PersonalEventService {
     private final PersonalEventRepository personalEventRepository;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final AlarmService alarmService;
     private final PersonalEventConverter personalEventConverter;
 
     @Override
@@ -49,6 +51,10 @@ public class PersonalEventServiceImpl implements PersonalEventService {
                 .orElseThrow(() -> new CategoryNotFoundException("해당 ID의 카테고리를 찾을 수 없습니다.", personalEventCreateReqDTO.getCategoryId())));
 
         personalEventRepository.save(personalEvent);
+
+        if (personalEvent.getIsAlarmed()) {
+            alarmService.createPersonalEventAlarm(personalEventConverter.personalEventToPersonalEventDTO(personalEvent));
+        }
     }
 
     @Override
@@ -67,7 +73,6 @@ public class PersonalEventServiceImpl implements PersonalEventService {
             throw new PersonalEventNotOwnerException("다른 사용자의 개인 일정을 수정할 수 없습니다.");
         }
 
-        // MapStruct 매퍼를 사용한 업데이트
         PersonalEvent updatedPersonalEvent = personalEventConverter.personalUpdateReqEventDTOToPersonalEvent(personalEventUpdateReqDTO, existingEvent);
 
         // categoryService를 통해 Category를 설정
@@ -78,7 +83,11 @@ public class PersonalEventServiceImpl implements PersonalEventService {
 
         personalEventRepository.save(updatedPersonalEvent);
 
-        return personalEventConverter.personalEventResDTOTOToPersonalEvent(updatedPersonalEvent);
+        if (updatedPersonalEvent.getIsAlarmed()) {
+            alarmService.updatePersonalEventAlarm(personalEventConverter.personalEventToPersonalEventDTO(updatedPersonalEvent));
+        }
+
+        return personalEventConverter.personalEventToPersonalEventResDTO(updatedPersonalEvent);
     }
 
     @Override
@@ -112,9 +121,14 @@ public class PersonalEventServiceImpl implements PersonalEventService {
 
         List<PersonalEvent> personalEvents = personalEventRepository.findAllByStartDateBetweenAndUser_UserId(startDate, endDate, userId);
 
-        // PersonalEvent 리스트를 PersonalEventResDTO 리스트로 변환
+        // PersonalEvent 리스트를 PersonalEventDTO 리스트로 변환
         return personalEvents.stream()
-                .map(personalEventConverter::personalEventResDTOTOToPersonalEvent)
+                .map(personalEventConverter::personalEventToPersonalEventResDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<PersonalEvent> findPersonalEventById(UUID personalEventId) {
+        return personalEventRepository.findById(personalEventId);
     }
 }
