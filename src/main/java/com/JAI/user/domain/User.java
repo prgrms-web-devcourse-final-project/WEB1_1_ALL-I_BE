@@ -3,6 +3,7 @@ package com.JAI.user.domain;
 import com.JAI.alarm.domain.Alarm;
 import com.JAI.category.domain.Category;
 import com.JAI.event.domain.PersonalEvent;
+import com.JAI.group.domain.GroupInvitation;
 import com.JAI.group.domain.GroupSetting;
 import com.JAI.todo.domain.PersonalTodo;
 import jakarta.persistence.*;
@@ -62,6 +63,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GroupInvitation> groupInvitations;
 
     @Builder
     private User(String nickname, Role role, String email, String password, Provider provider, String imageUrl, LocalTime endTime) {

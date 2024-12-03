@@ -1,5 +1,6 @@
 package com.JAI.event.domain;
 
+import com.JAI.alarm.domain.Alarm;
 import com.JAI.category.domain.Category;
 import com.JAI.user.domain.User;
 import jakarta.persistence.*;
@@ -55,6 +56,9 @@ public class PersonalEvent {
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "category_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Category category;
+
+    @OneToOne(mappedBy = "personalEvent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Alarm alarm;
 
     public void setUser(final User user) {
         if (this.user != null) {
