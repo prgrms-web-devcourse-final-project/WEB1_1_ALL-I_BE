@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PersonalTodoService {
+
     void createPersonalTodo(PersonalTodoCreateReq req, CustomUserDetails user);
     List<PersonalTodoRes> getMonthlyPersonalTodoList(String year, String month, CustomUserDetails user);
     List<PersonalTodoExistListRes> getPersonalTodosExist(String year, String month, CustomUserDetails user);
@@ -21,4 +22,5 @@ public interface PersonalTodoService {
     PersonalTodoUpdateRes updatePersonalTodo(UUID todoId, PersonalTodoUpdateReq req, CustomUserDetails user);
     PersonalTodoStateRes updatePersonTodoState(UUID todoId, PersonalTodoStateReq req, CustomUserDetails user);
     PersonalTodoUpdateTitleRes updatePersonalTodoTitle(UUID todoId, PersonalTodoUpdateTitleReq req, CustomUserDetails user);
+  
 }

@@ -14,6 +14,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ChatGPTServiceImpl implements ChatGPTService {
+
     @Value("${openai.model}")
     private String model;
 
@@ -33,10 +34,8 @@ public class ChatGPTServiceImpl implements ChatGPTService {
 
         // ChatGPT 응답 생성 요청
         ChatGPTRespDTO response = openAiRestTemplate.postForObject(apiURL, request, ChatGPTRespDTO.class);
-        System.out.println("response: "+response);
-        System.out.println("choice: "+response.getChoices().get(0));
-        System.out.println("message: "+response.getChoices().get(0).getMessage());
-        System.out.println("content: "+response.getChoices().get(0).getMessage().getContent());
+
+//        System.out.println("content: "+response.getChoices().get(0).getMessage().getContent());
 
         // ChatGPT 응답 반환
         return response;
@@ -53,10 +52,8 @@ public class ChatGPTServiceImpl implements ChatGPTService {
 
         // ChatGPT 응답 생성 요청
         ChatGPTRespDTO response =  openAiRestTemplate.postForObject(apiURL, request, ChatGPTRespDTO.class);
-        System.out.println("response: "+response);
-        System.out.println("choice: "+response.getChoices().get(0));
-        System.out.println("message: "+response.getChoices().get(0).getMessage());
-        System.out.println("content: "+response.getChoices().get(0).getMessage().getContent());
+
+//        System.out.println("content: "+response.getChoices().get(0).getMessage().getContent());
 
         // ChatGPT 응답으로 intention 결정
         String content = response.getChoices().get(0).getMessage().getContent();
@@ -70,5 +67,6 @@ public class ChatGPTServiceImpl implements ChatGPTService {
         else { intention = "EXCEPTION"; }
 
         return intention;
+
     }
 }

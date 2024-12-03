@@ -10,9 +10,15 @@ import com.JAI.chatbot.controller.dto.response.ChatbotEventRespDTO;
 import com.JAI.chatbot.controller.dto.response.ChatbotResponseWrapper;
 import com.JAI.chatbot.controller.dto.response.ChatbotTodoRespDTO;
 import com.JAI.chatbot.domain.JsonConstants;
+import com.JAI.chatbot.exception.ChatbotBadRequestException;
+import com.JAI.chatbot.exception.ChatbotForbiddenException;
 import com.JAI.chatbot.mapper.ChatbotMapper;
+import com.JAI.event.DTO.request.PersonalEventCreateReqDTO;
+import com.JAI.event.service.PersonalEventService;
+import com.JAI.todo.controller.request.PersonalTodoCreateReq;
+import com.JAI.todo.service.PersonalTodoService;
+import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,20 +29,46 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ChatbotServiceImpl implements ChatbotService {
 
-    @Autowired
-    ChatGPTService chatGPTService;
+    private final ChatGPTService chatGPTService;
 
-    @Autowired
-    RedisChatbotUtil redisChatbotUtil;
+    private final PersonalEventService personalEventService;
 
-    @Autowired
-    ChatbotMapper chatbotMapper;
+    private final PersonalTodoService personalTodoService;
+
+    private final RedisChatbotUtil redisChatbotUtil;
+
+    private final ChatbotMapper chatbotMapper;
+
+
 
     @Override
-    public TokenReqDTO saveRequest (ChatbotReqDTO request) {
+    public UUID validateUser(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO) {
+//        System.out.println("validateUser");
 
-        // userId 불러오는 로직으로 수정
-        UUID userId = UUID.randomUUID();
+        // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
+        UUID userId = chatbotRedisDataDTO.getUserId(); // 레디스에 저장되어 있는 userId(데이터 입력한 유저)
+        UUID currUserId = user.getUser().getUserId();  // 현재 로그인한 userId
+
+//        System.out.println("userId: "+userId);
+//        System.out.println("currUserId: "+currUserId);
+
+        if (!currUserId.toString().equals(userId.toString())) {
+            throw new ChatbotForbiddenException("해당 유저는 접근할 수 없는 데이터입니다");
+        }
+
+        return currUserId;
+    }
+
+    @Override
+    public TokenReqDTO saveRequest (CustomUserDetails user, ChatbotReqDTO request) {
+//        System.out.println("saveRequest");
+
+        if (request.getPrompt() == null) {
+            throw new ChatbotBadRequestException("프롬프트를 입력해주세요");
+        }
+
+        // userId 불러오기
+        UUID userId = user.getUser().getUserId();
 
         // 레디스 키, 토큰 생성
         String redisKey = UUID.randomUUID().toString();  // 레디스 키 생성
@@ -48,19 +80,21 @@ public class ChatbotServiceImpl implements ChatbotService {
     }
 
     @Override
-    public ChatbotResponseWrapper<?> createResponseJson(TokenReqDTO token) {
+    public ChatbotResponseWrapper<?> createResponseJson(CustomUserDetails user,  TokenReqDTO token) throws ChatbotForbiddenException{
 
-        List<ChatGPTMessageDTO> messages = new ArrayList<>();
-
-        // 현재 유저의 userId가 레디스에 저장된 userId와 동일할 경우에만 레디스에 접근 가능하도록 로직 수정
-
-        // 레디스에서 key 이용해서 prompt, intention 가져오기
-        System.out.println("createResponseJson");
-        System.out.println("token: "+token.getToken());
+//        System.out.println("createResponseJson");
+//        System.out.println("token: "+token.getToken());
 
         ChatbotRedisDataDTO chatbotRedisDataDTO = redisChatbotUtil.getChatbotData(token.getToken());
+
+        // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
+        validateUser(user, chatbotRedisDataDTO);
+
+        // 레디스에서 key 이용해서 prompt, intention 가져오기
         String prompt = chatbotRedisDataDTO.getChatbotReqDTO().getPrompt();
         String intention = chatbotRedisDataDTO.getChatbotReqDTO().getIntention();
+
+        prompt += JsonConstants.DATE_INFO;
 
         // intention에 따라 prompt 수정
         switch (intention) {
@@ -75,6 +109,7 @@ public class ChatbotServiceImpl implements ChatbotService {
                 break;
         }
 
+        List<ChatGPTMessageDTO> messages = new ArrayList<>();
         ChatGPTMessageDTO message = new ChatGPTMessageDTO("user", prompt);
         messages.add(message);
 
@@ -83,51 +118,58 @@ public class ChatbotServiceImpl implements ChatbotService {
 
         if (intention.equals("EVENT")) {
             // ChatGPT 응답 -> Chatbot 응답
-            List<ChatbotEventRespDTO> chatbotEventResp = chatbotMapper.toChatbotEventResp(chatGPTRespDTO);
+            List<ChatbotEventRespDTO> chatbotEventRespList = chatbotMapper.toChatbotEventResp(chatGPTRespDTO);
             ChatbotResponseWrapper<ChatbotEventRespDTO> chatbotEventRespWrapper =
-                    new ChatbotResponseWrapper<>(chatbotEventResp);
-
+                    ChatbotResponseWrapper.<ChatbotEventRespDTO>builder()
+                            .responses(chatbotEventRespList)
+                            .tokenReqDTO(token)
+                            .build();
 
             // Chatbot 응답 레디스에 저장
-            redisChatbotUtil.saveChatbotEventResp(token.getToken(), chatbotEventResp);
+            redisChatbotUtil.saveChatbotEventResp(token.getToken(), chatbotEventRespList);
 
             // Chatbot 응답 반환
             return chatbotEventRespWrapper;
         }
         else if(intention.equals("TODO") || intention.equals("PLAN_RECOMMENDATION")) {
             // ChatGPT 응답 -> Chatbot 응답
-            List<ChatbotTodoRespDTO> chatbotTodoResp = chatbotMapper.toChatbotTodoResp(chatGPTRespDTO);
-
+            List<ChatbotTodoRespDTO> chatbotTodoRespList = chatbotMapper.toChatbotTodoResp(chatGPTRespDTO);
             ChatbotResponseWrapper<ChatbotTodoRespDTO> chatbotTodoRespWrapper =
-                    new ChatbotResponseWrapper<>(chatbotTodoResp);
-
+                    ChatbotResponseWrapper.<ChatbotTodoRespDTO>builder()
+                            .responses(chatbotTodoRespList)
+                            .tokenReqDTO(token)
+                            .build();
 
             // Chatbot 응답 레디스에 저장
-            redisChatbotUtil.saveChatbotTodoResp(token.getToken(), chatbotTodoResp);
+            redisChatbotUtil.saveChatbotTodoResp(token.getToken(), chatbotTodoRespList);
 
             // Chatbot 응답 반환
             return chatbotTodoRespWrapper;
         }
         else {
-            throw new IllegalArgumentException("Unsupported intention: " + intention);
+            throw new ChatbotBadRequestException("일정 / 투두 자동 기입, 계획 추천과 관련된 명령을 해주세요");
         }
     }
 
     @Override
-    public void analyzeIntention(TokenReqDTO token) {
+    public void analyzeIntention(CustomUserDetails user, TokenReqDTO token) {
 
-        List<ChatGPTMessageDTO> messages = new ArrayList<>();
+//        System.out.println("analyzeIntention");
+//        System.out.println("token: "+token.getToken());
 
-        // 현재 유저의 userId가 레디스에 저장된 userId와 동일할 경우에만 레디스에 접근 가능하도록 로직 수정
-        // 레디스에서 key 이용해서 prompt 가져오기
-        System.out.println("analyzeIntention");
-        System.out.println("token: "+token.getToken());
+
         ChatbotRedisDataDTO chatbotRedisDataDTO = redisChatbotUtil.getChatbotData(token.getToken());
+
+        // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
+        validateUser(user, chatbotRedisDataDTO);
+
+        // 레디스에서 prompt 가져오기
         String prompt = chatbotRedisDataDTO.getChatbotReqDTO().getPrompt();
 
         // prompt에 텍스트 의도 분석 요청 텍스트 붙이기
         prompt += JsonConstants.INTENTION;
 
+        List<ChatGPTMessageDTO> messages = new ArrayList<>();
         ChatGPTMessageDTO message = new ChatGPTMessageDTO("user", prompt);
         messages.add(message);
 
@@ -137,54 +179,84 @@ public class ChatbotServiceImpl implements ChatbotService {
         // 레디스에 intention 저장하기
         ChatbotReqDTO newChatbotReqDTO = ChatbotReqDTO.builder()
                 .intention(intention)
-                .category(chatbotRedisDataDTO.getChatbotReqDTO().getCategory())
+                .categoryId(chatbotRedisDataDTO.getChatbotReqDTO().getCategoryId())
                 .prompt(chatbotRedisDataDTO.getChatbotReqDTO().getPrompt())
                 .build();
         redisChatbotUtil.saveChatbotReq(token.getToken(), newChatbotReqDTO);
     }
 
     @Override
-    public void validateAcceptAlarm(Boolean accept, Boolean alarm, TokenReqDTO token) {
-        System.out.println("validateAcceptAlarm");
-        System.out.println("token: "+token.getToken());
-        // 수락했을 경우
-        // token으로 레디스에 저장된 ChatGPT 응답 객체, Intention 찾고 saveEvent() 혹은 saveTodo() 호출
-        if(accept) {
-            ChatbotRedisDataDTO chatbotRedisDataDTO = redisChatbotUtil.getChatbotData(token.getToken());
-            if (chatbotRedisDataDTO.getChatbotReqDTO().getIntention().equals("EVENT")) {
-                saveEvent(chatbotRedisDataDTO, alarm, token);
-            } else {
-                saveTodo(chatbotRedisDataDTO, token);
-            }
+    public void validateAcceptAlarm(CustomUserDetails user, Boolean accept, Boolean alarm, TokenReqDTO token) {
+
+//        System.out.println("validateAcceptAlarm");
+//        System.out.println("token: "+token.getToken());
+
+        if(token == null) {
+            throw new ChatbotBadRequestException("토큰을 넣어주세요");
         }
 
-        // 거절했을 경우
-        // token으로 해당 데이터 레디스에서 삭제
+        ChatbotRedisDataDTO chatbotRedisDataDTO = redisChatbotUtil.getChatbotData(token.getToken());
+
+        // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
+        validateUser(user, chatbotRedisDataDTO);
+
+        // 수락했을 경우 -> token으로 레디스에 저장된 ChatGPT 응답 객체, Intention 찾고 saveEvent() 혹은 saveTodo() 호출
+        if(accept) {
+            if (chatbotRedisDataDTO.getChatbotReqDTO().getIntention().equals("EVENT")) {
+                saveEvent(user, chatbotRedisDataDTO, alarm, token);
+            } else {
+                saveTodo(user, chatbotRedisDataDTO, alarm, token);
+            }
+        }
+        // 거절했을 경우 -> token으로 해당 데이터 레디스에서 삭제
         else {
             redisChatbotUtil.deleteChatbotData(token.getToken());
         }
     }
 
     @Override
-    public ChatbotEventRespDTO saveEvent(ChatbotRedisDataDTO chatbotRedisDataDTO, Boolean alarm, TokenReqDTO token) {
+    public void saveEvent(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO, Boolean alarm, TokenReqDTO token) {
+
+        // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
+        UUID currUserId = validateUser(user, chatbotRedisDataDTO);
+
+//        System.out.println("사용자 접근 가능");
 
         // 레디스에 저장되어 있던 Chatbot 응답 데이터 불러오기
         ChatbotRedisDataDTO chatbotData = redisChatbotUtil.getChatbotData(token.getToken());
-        List<ChatbotEventRespDTO> chatbotEventRespDTO = chatbotData.getChatbotEventRespDTO();
+        UUID categoryId = chatbotData.getChatbotReqDTO().getCategoryId();
+        List<ChatbotEventRespDTO> chatbotEventRespDTOs = chatbotData.getChatbotEventRespDTO();
 
-        // 개인 일정 DB에 저장하는 함수 호출
-        return null;
+        // 개인 일정 DB에 삽입
+        for (ChatbotEventRespDTO chatbotEventRespDTO : chatbotEventRespDTOs) {
+            PersonalEventCreateReqDTO personalEventCreateReqDTO =
+                    chatbotMapper.toPersonalEventCreateReqDTO(currUserId, categoryId, alarm, chatbotEventRespDTO);
+
+            personalEventService.createPersonalEvent(personalEventCreateReqDTO, currUserId);
+        }
+
     }
 
     @Override
-    public ChatbotTodoRespDTO saveTodo(ChatbotRedisDataDTO chatbotRedisDataDTO, TokenReqDTO token) {
+    public void saveTodo(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO, Boolean alarm, TokenReqDTO token) {
+//        System.out.println("saveTodo");
+//        System.out.println("token: "+token);
+
+        // 레디스에 저장된 userId와 현재 로그인한 userId가 동일해야 접근 가능
+        validateUser(user, chatbotRedisDataDTO);
 
         // 레디스에 저장되어 있던 Chatbot 응답 데이터 불러오기
         ChatbotRedisDataDTO chatbotData = redisChatbotUtil.getChatbotData(token.getToken());
-        List<ChatbotTodoRespDTO> chatbotTodoRespDTO = chatbotData.getChatbotTodoRespDTO();
+        UUID categoryId = chatbotData.getChatbotReqDTO().getCategoryId();
+        List<ChatbotTodoRespDTO> chatbotTodoRespDTOs = chatbotData.getChatbotTodoRespDTO();
 
-        // 개인 투두 DB에 저장하는 함수 호출
-        return null;
+        // 개인 투두 DB에 삽입
+        for (ChatbotTodoRespDTO chatbotTodoRespDTO : chatbotTodoRespDTOs) {
+            PersonalTodoCreateReq personalTodoCreateReq =
+                    chatbotMapper.toPersonalTodoCreateReq(chatbotTodoRespDTO, categoryId);
 
+            personalTodoService.createPersonalTodo(personalTodoCreateReq, user);
+        }
     }
+
 }

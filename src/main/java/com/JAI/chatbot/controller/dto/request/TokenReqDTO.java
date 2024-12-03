@@ -9,6 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TokenReqDTO {
+
     @NotBlank
     private String token;
+
 }

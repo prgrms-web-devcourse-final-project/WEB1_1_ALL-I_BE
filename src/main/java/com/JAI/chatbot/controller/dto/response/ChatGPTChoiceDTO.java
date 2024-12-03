@@ -9,6 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatGPTChoiceDTO {
+
     private int index;
     private ChatGPTMessageDTO message;
+
 }

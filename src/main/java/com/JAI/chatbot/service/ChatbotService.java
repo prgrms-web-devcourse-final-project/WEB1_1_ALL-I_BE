@@ -6,16 +6,22 @@ import com.JAI.chatbot.controller.dto.request.TokenReqDTO;
 import com.JAI.chatbot.controller.dto.response.ChatbotEventRespDTO;
 import com.JAI.chatbot.controller.dto.response.ChatbotResponseWrapper;
 import com.JAI.chatbot.controller.dto.response.ChatbotTodoRespDTO;
+import com.JAI.user.service.dto.CustomUserDetails;
+
+import java.util.List;
+import java.util.UUID;
 
 public interface ChatbotService {
+
 
     /**
      * intention, 카테고리, 프롬프트 레디스에 저장
      *
-     * @param request : ChatbotReq(intention, 카테고리, 프롬프트 입력)
+     * @param user : 현재 로그인 중인 유저
+     * @param request : ChatbotReq(intention, 카테고리, 프롬프트 입력
      * @return : 사용자 입력 데이터 저장된 레디스 토큰값 반환
     */
-    public TokenReqDTO saveRequest(ChatbotReqDTO request);
+    public TokenReqDTO saveRequest(CustomUserDetails user, ChatbotReqDTO request);
 
 
     /**
@@ -30,10 +36,11 @@ public interface ChatbotService {
      *
      * postMessage() - ChatGPT에 응답 생성 요청하는 메서드 호출
      *
+     * @param user : 현재 로그인 중인 유저
      * @param token : 레디스 키 토큰
      * @return : ChatbotEventRespDTO 혹은 ChatbotTodoRespDTO 반환
      */
-    public ChatbotResponseWrapper createResponseJson(TokenReqDTO token);
+    public ChatbotResponseWrapper createResponseJson(CustomUserDetails user,TokenReqDTO token);
 
 
     /**
@@ -44,9 +51,10 @@ public interface ChatbotService {
      *
      * 의도 추가됐다면 레디스에 저장
      *
+     * @param user : 현재 로그인 중인 유저
      * @param token : 레디스 키 토큰
      */
-    public void analyzeIntention(TokenReqDTO token);
+    public void analyzeIntention(CustomUserDetails user, TokenReqDTO token);
 
 
     /**
@@ -54,30 +62,42 @@ public interface ChatbotService {
      * 수락 -> saveEvent 혹은 saveTodo 호출
      * 거절 -> 레디스에서 데이터 삭제
      *
+     * @param user : 현재 로그인 중인 유저
      * @param accept : 수락, 거절 여부
      * @param alarm : 알람 on, off 여부
      * @param token : 레디스에 저장된 데이터 key값
      */
-    public void validateAcceptAlarm(Boolean accept, Boolean alarm, TokenReqDTO token);
+    public void validateAcceptAlarm(CustomUserDetails user, Boolean accept, Boolean alarm, TokenReqDTO token);
 
     /**
      * 일정 DB에 저장
      *
+     * @param user : 현재 로그인 중인 유저
      * @param chatbotRedisDataDTO : ChatGPT 응답 레디스에 저장한 거
      * @param alarm : 알람 on, off 여부
      * @param token : 레디스에 저장된 데이터 key값
      *
      * @return : 일정 저장 결과 반환
      */
-    public ChatbotEventRespDTO saveEvent(ChatbotRedisDataDTO chatbotRedisDataDTO, Boolean alarm, TokenReqDTO token);
+    public void saveEvent(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO, Boolean alarm, TokenReqDTO token);
 
     /**
      * 투두 DB에 저장
      *
+     * @param user : 현재 로그인 중인 유저
      * @param chatbotRedisDataDTO : ChatGPT 응답 레디스에 저장한 거
      * @param token : 레디스에 저장된 데이터 key값
      *
      * @return : 투두 저장 결과 반환
      */
-    public ChatbotTodoRespDTO saveTodo(ChatbotRedisDataDTO chatbotRedisDataDTO, TokenReqDTO token);
+    public void saveTodo(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO, Boolean alarm, TokenReqDTO token);
+
+    /**
+     * 현재 로그인한 유저랑 레디스에 저장된 유저가 동일한지 확인
+     *
+     * @param user : 현재 로그인 중인 유저
+     * @param chatbotRedisDataDTO : ChatGPT 응답 레디스에 저장한 거
+     */
+    public UUID validateUser(CustomUserDetails user, ChatbotRedisDataDTO chatbotRedisDataDTO);
+
 }

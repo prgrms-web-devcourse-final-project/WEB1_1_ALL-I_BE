@@ -31,4 +31,5 @@ public interface ChatGPTService {
      */
     public String findIntention(List<ChatGPTMessageDTO> message, TokenReqDTO token);
 
+
 }
