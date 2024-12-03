@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +30,11 @@ public class AlarmServiceImpl implements AlarmService {
     private final PersonalEventConverter personalEventConverter;
 
     // 추후 오버로딩 진행
-    public void createAlarm(PersonalEventDTO personalEventDTO) {
+    public void createPersonalEventAlarm(PersonalEventDTO personalEventDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
         LocalDateTime scheduledTime = Optional.ofNullable(personalEventDTO.getStartTime())
                 .map(startTime -> personalEventDTO.getStartDate().atTime(startTime))
-                .orElse(LocalDateTime.now());
+                .orElse(personalEventDTO.getStartDate().atTime(LocalTime.now()));
 
         // 알림 생성 후 저장
         Alarm alarm = Alarm.builder()
@@ -56,7 +58,7 @@ public class AlarmServiceImpl implements AlarmService {
 
     // 추후 오버로딩 진행
     @Override
-    public void updateAlarm(PersonalEventDTO personalEventDTO) {
+    public void updatePersonalEventAlarm(PersonalEventDTO personalEventDTO) {
         // 저장된 알림
         Alarm existedAlarm = alarmRepository.findByPersonalEvent_PersonalEventId(personalEventDTO.getPersonalEventId());
 
@@ -68,7 +70,7 @@ public class AlarmServiceImpl implements AlarmService {
         // 시작 시간 없는 경우 현재 시간으로 설정
         LocalDateTime scheduledTime = Optional.ofNullable(personalEventDTO.getStartTime())
                 .map(startTime -> personalEventDTO.getStartDate().atTime(startTime))
-                .orElse(LocalDateTime.now());
+                .orElse(personalEventDTO.getStartDate().atTime(LocalTime.now()));
 
         // 변경된 알림 생성 후 저장
         Alarm updatedAlarm = Alarm.builder()
@@ -87,10 +89,19 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     // 보내야 할 알림 찾기
+    // 친구 초대도 찾자...
     @Override
-    public List<AlarmResDTO> findPendingAlarms(LocalDateTime time) {
-        return alarmRepository.findPendingAlarmsBetween(time)
-                .stream()
+    public List<AlarmResDTO> findPendingAlarms(LocalDateTime start, LocalDateTime end) {
+        // 그룹 초대 알람 조회
+        List<Alarm> invitationAlarms = alarmRepository.findPendingInvitationAlarms(end);
+
+        // 일정 알람 조회
+        List<Alarm> personalEventAlarms = alarmRepository.findPendingEventAlarmsBetween(start, end);
+
+        return Stream.concat(
+                        invitationAlarms.stream(),
+                        personalEventAlarms.stream()
+                )
                 .map(alarmConverter::alarmResDTOToAlarm)
                 .collect(Collectors.toList());
     }

@@ -53,7 +53,7 @@ public class PersonalEventServiceImpl implements PersonalEventService {
         personalEventRepository.save(personalEvent);
 
         if (personalEvent.getIsAlarmed()) {
-            alarmService.createAlarm(personalEventConverter.personalEventToPersonalEventDTO(personalEvent));
+            alarmService.createPersonalEventAlarm(personalEventConverter.personalEventToPersonalEventDTO(personalEvent));
         }
     }
 
@@ -84,7 +84,7 @@ public class PersonalEventServiceImpl implements PersonalEventService {
         personalEventRepository.save(updatedPersonalEvent);
 
         if (updatedPersonalEvent.getIsAlarmed()) {
-            alarmService.updateAlarm(personalEventConverter.personalEventToPersonalEventDTO(updatedPersonalEvent));
+            alarmService.updatePersonalEventAlarm(personalEventConverter.personalEventToPersonalEventDTO(updatedPersonalEvent));
         }
 
         return personalEventConverter.personalEventToPersonalEventResDTO(updatedPersonalEvent);

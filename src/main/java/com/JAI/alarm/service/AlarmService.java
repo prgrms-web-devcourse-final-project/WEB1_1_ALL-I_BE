@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface AlarmService {
-    public void createAlarm(PersonalEventDTO personalEventDTO);
+    public void createPersonalEventAlarm(PersonalEventDTO personalEventDTO);
 
-    public void updateAlarm(PersonalEventDTO personalEventDTO);
+    public void updatePersonalEventAlarm(PersonalEventDTO personalEventDTO);
 
     private void deleteAlarm(UUID userId) {
 
@@ -19,7 +19,7 @@ public interface AlarmService {
 
     public void getAlarm(UUID alarmId, SseEmitter emitter);
 
-    public List<AlarmResDTO> findPendingAlarms(LocalDateTime time);
+    public List<AlarmResDTO> findPendingAlarms(LocalDateTime start, LocalDateTime end);
 
     public void markAlarmAsSent(AlarmResDTO alarmResDTO);
 }

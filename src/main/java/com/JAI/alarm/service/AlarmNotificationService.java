@@ -46,10 +46,15 @@ public class AlarmNotificationService {
     @Scheduled(fixedRate = 60000)
     public void sendScheduledAlarms() {
         log.info("Checking scheduled alarms...");
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime start = LocalDateTime.now()
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(1);
+        LocalDateTime end = LocalDateTime.now();
 
         // 현재 시간에 도달한 알림을 조회
-        alarmService.findPendingAlarms(now).forEach(alarmResDTO -> {
+        alarmService.findPendingAlarms(start, end).forEach(alarmResDTO -> {
 
             // 사용자 연결 여부 확인 후 전송
             if (userEmitters.containsKey(alarmResDTO.getUserId())) {
