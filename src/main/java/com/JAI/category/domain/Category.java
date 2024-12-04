@@ -6,6 +6,7 @@ import com.JAI.todo.domain.PersonalTodo;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.List;
 
@@ -42,7 +43,8 @@ public class Category {
     private Group group;
 
     @Builder
-    private Category(String name, String color, User user, Group group) {
+    private Category(UUID categoryId, String name, String color, User user, Group group) {
+        this.categoryId = categoryId;
         this.name = name;
         this.color = color;
         this.user = user;
