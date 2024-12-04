@@ -136,4 +136,14 @@ public class GroupSettingServiceImpl implements GroupSettingService {
             throw new GroupSettingDuplicatedException("이미 존재하는 멤버입니다.");
         }
     }
+
+    @Override
+    public boolean isGroupMemberExisted(UUID groupId, UUID userId) {
+        return groupSettingRepository.existsByGroup_GroupIdAndUser_UserId(groupId, userId);
+    }
+
+    @Override
+    public List<UUID> getGroupEventRelatedUsers(UUID groupEventId) {
+        return groupSettingRepository.findByGroupEventGroupId(groupEventId);
+    }
 }

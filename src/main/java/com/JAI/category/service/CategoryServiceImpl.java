@@ -3,6 +3,7 @@ package com.JAI.category.service;
 import com.JAI.category.DTO.CategoryCreateReqDTO;
 import com.JAI.category.DTO.CategoryResDTO;
 import com.JAI.category.DTO.CategoryUpdateReqDTO;
+import com.JAI.category.DTO.GroupCategoryResDTO;
 import com.JAI.category.exception.CategoryNotOwnerException;
 import com.JAI.category.mapper.CategoryConverter;
 import com.JAI.category.domain.Category;
@@ -125,5 +126,12 @@ public class CategoryServiceImpl implements CategoryService {
                         groupCategories.stream())
                 .map(categoryConverter::categoryToCategoryResDTO)
                 .toList();
+    }
+
+    @Override
+    public GroupCategoryResDTO getCategoryByGroupId(UUID groupId) {
+        // 그룹 카테고리 탐색
+        return categoryConverter.categoryToGroupCategoryResDTO(categoryRepository.findByGroup_GroupId(groupId)
+                .orElseThrow(() -> new CategoryNotFoundException("해당 그룹의 카테고리를 찾을 수 없습니다.")));
     }
 }
