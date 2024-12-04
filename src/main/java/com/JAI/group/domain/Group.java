@@ -52,7 +52,8 @@ public class Group {
                 .build();
     }
 
-    public void updateGroupDescription(String description) {
+    public void updateGroupInfo(String name, String description) {
+        this.name = name;
         this.description = description;
     }
 }

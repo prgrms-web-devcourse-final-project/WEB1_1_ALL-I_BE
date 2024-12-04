@@ -42,6 +42,6 @@ public class GroupController {
     @DeleteMapping("/{groupId}")
     public ApiResponse<String> deleteGroup(@PathVariable UUID groupId, @AuthenticationPrincipal CustomUserDetails user) {
         groupService.deleteGroup(groupId, user);
-        return ApiResponse.onDeleteSuccess("정상적으로 삭제되었습니다.");
+        return ApiResponse.onDeleteSuccess("그룹이 정상적으로 삭제되었습니다.");
     }
 }
