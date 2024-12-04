@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,8 +20,8 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public ApiResponse<?> getCategories(@AuthenticationPrincipal CustomUserDetails user) {
-        return null;
+    public ApiResponse<List<CategoryResDTO>> getCategories(@AuthenticationPrincipal CustomUserDetails user) {
+        return ApiResponse.onSuccess(categoryService.getCategory(user.getUserId()));
     }
 
     @PostMapping

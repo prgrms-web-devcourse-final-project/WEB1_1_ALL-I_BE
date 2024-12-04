@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryConverter categoryConverter;
 
     @Override
-    public Category getCategoryById(UUID categoryId) {
+    public Category getCategoryByCategoryId(UUID categoryId) {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new UserNotFoundException("해당 ID를 가진 카테고리를 찾을 수 없습니다.", categoryId));
     }
@@ -88,7 +89,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category updateCategory(CategoryUpdateReqDTO categoryUpdateReqDTO, UUID userId) {
+    public CategoryResDTO updateCategory(CategoryUpdateReqDTO categoryUpdateReqDTO, UUID userId) {
         return null;
     }
 
@@ -98,8 +99,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> getCategory(UUID userId) {
-        return List.of();
-    }
+    public List<CategoryResDTO> getCategory(UUID userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("해당 ID의 유저를 찾을 수 없습니다."));
 
+        // 사용자의 개인 카테고리
+        List<Category> personalCategories = categoryRepository.findByUser_UserId(userId);
+
+        // 그룹 카테고리
+        List<Category> groupCategories = categoryRepository.findGroupCategoriesByUserId(userId);
+
+        return Stream.concat(personalCategories.stream(),
+                        groupCategories.stream())
+                .map(categoryConverter::categoryToCategoryResDTO)
+                .toList();
+    }
 }
