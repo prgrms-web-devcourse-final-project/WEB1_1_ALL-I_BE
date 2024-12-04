@@ -24,4 +24,6 @@ public interface GroupSettingService {
     public boolean isGroupMemberExisted(UUID groupId, UUID userId);
 
     public List<UUID> getGroupEventRelatedUsers(UUID groupEventId);
+
+    public List<UUID> getGroupTodoRelatedUsers(UUID groupTodoId);
 }

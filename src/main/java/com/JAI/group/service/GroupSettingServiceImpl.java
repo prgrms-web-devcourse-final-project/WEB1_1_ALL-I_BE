@@ -146,4 +146,9 @@ public class GroupSettingServiceImpl implements GroupSettingService {
     public List<UUID> getGroupEventRelatedUsers(UUID groupEventId) {
         return groupSettingRepository.findByGroupEventGroupId(groupEventId);
     }
+
+    @Override
+    public List<UUID> getGroupTodoRelatedUsers(UUID groupTodoId){
+        return groupSettingRepository.findByGroupTodoGroupId(groupTodoId);
+    }
 }
