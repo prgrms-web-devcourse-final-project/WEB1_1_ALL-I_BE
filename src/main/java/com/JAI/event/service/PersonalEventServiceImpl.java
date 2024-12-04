@@ -43,7 +43,7 @@ public class PersonalEventServiceImpl implements PersonalEventService {
                 .orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자를 찾을 수 없습니다.", userId)));
 
         // categoryService를 통해 Category를 설정
-        personalEvent.setCategory(Optional.ofNullable(categoryService.getCategoryById(personalEventCreateReqDTO.getCategoryId()))
+        personalEvent.setCategory(Optional.ofNullable(categoryService.getCategoryByCategoryId(personalEventCreateReqDTO.getCategoryId()))
                 .map(category -> {
                     if (category.getUser().getUserId().equals(userId) && category.getGroup() != null) {
                         throw new CategoryNotOwnerException("다른 사용자의 카테고리를 사용할 수 없습니다.");
@@ -79,7 +79,7 @@ public class PersonalEventServiceImpl implements PersonalEventService {
 
         // categoryService를 통해 Category를 설정
         Optional.ofNullable(personalEventUpdateReqDTO.getCategoryId())
-                .map(categoryService::getCategoryById)
+                .map(categoryService::getCategoryByCategoryId)
                 .map(category -> {
                     if (!category.getUser().getUserId().equals(userId) && category.getGroup() != null) {
                         throw new CategoryNotOwnerException("다른 사용자의 카테고리를 사용할 수 없습니다.");

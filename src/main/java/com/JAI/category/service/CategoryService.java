@@ -22,5 +22,5 @@ public interface CategoryService {
 
     public void deleteCategory(UUID categoryId, UUID userId);
 
-    public List<CategoryResDTO> getCategory(UUID userId);
+    public List<CategoryResDTO> getCategoryByUserId(UUID userId);
 }

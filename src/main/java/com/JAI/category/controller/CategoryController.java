@@ -22,7 +22,7 @@ public class CategoryController {
 
     @GetMapping
     public ApiResponse<List<CategoryResDTO>> getCategories(@AuthenticationPrincipal CustomUserDetails user) {
-        return ApiResponse.onSuccess(categoryService.getCategory(user.getUserId()));
+        return ApiResponse.onSuccess(categoryService.getCategoryByUserId(user.getUserId()));
     }
 
     @PostMapping

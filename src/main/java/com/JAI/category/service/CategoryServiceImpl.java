@@ -78,10 +78,6 @@ public class CategoryServiceImpl implements CategoryService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("해당 ID의 유저를 찾을 수 없습니다."));
 
-        if (!userId.equals(categoryCreateReqDTO.getUserId())) {
-            throw new CategoryNotOwnerException("다른 사용자의 카테고리를 생성할 수 없습니다.");
-        }
-
         Category category = categoryConverter.categoryCreateReqDTOtoCategoryEntity(categoryCreateReqDTO, user);
         categoryRepository.save(category);
 
@@ -117,7 +113,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryResDTO> getCategory(UUID userId) {
+    public List<CategoryResDTO> getCategoryByUserId(UUID userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("해당 ID의 유저를 찾을 수 없습니다."));
 
