@@ -9,7 +9,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Data
+@Getter
 public class CategoryUpdateReqDTO {
     @NotNull(message = "category id must not be null")
     private UUID categoryId;

@@ -107,8 +107,13 @@ public class GroupSettingServiceImpl implements GroupSettingService {
                 .orElseThrow(() -> new GroupSettingNotFoundException("해당 그룹에 존재하지 않는 멤버입니다."));
     }
 
+    @Override
     public GroupSetting findGroupSettingByGroupIdAndUserId(UUID groupId, UUID userId){
         return groupSettingRepository.findByGroup_GroupIdAndUser_UserId(groupId, userId)
+                .map(s -> {
+                    System.out.println(groupSettingConverter.toGroupMemberListDTO(s, s.getUser().getNickname()));
+                    return s;
+                })
                 .orElseThrow(() -> new GroupSettingNotFoundException("해당 그룹에 존재하지 않는 멤버입니다."));
     }
 

@@ -57,13 +57,15 @@ public class GroupEvent {
     private Group group;
 
     @Builder
-    private GroupEvent(String title, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, Boolean isAlarmed, Group group) {
+    private GroupEvent(UUID groupEventId, String title, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, Boolean isAlarmed, LocalDateTime createdAt, Group group) {
+        this.groupEventId = groupEventId;
         this.title = title;
         this.startDate = startDate;
         this.startTime = startTime;
         this.endDate = endDate;
         this.endTime = endTime;
         this.isAlarmed = isAlarmed;
+        this.createdAt = createdAt;
         this.group = group;
     }
 
@@ -79,4 +81,10 @@ public class GroupEvent {
                 .build();
     }
 
+
+    public void updateGroup(Group group){
+        if (this.group == null) {
+            this.group = group;
+        }
+    }
 }

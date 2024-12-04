@@ -1,5 +1,6 @@
 package com.JAI.event.mapper;
 
+import com.JAI.event.DTO.request.GroupEventCreateReqDTO;
 import com.JAI.event.DTO.response.AllGroupSomeoneEventResDTO;
 import com.JAI.event.DTO.response.OneGroupAllEventResDTO;
 import com.JAI.event.DTO.response.OneGroupSomeoneEventResDTO;
@@ -45,6 +46,17 @@ public class GroupEventConverter {
                 .isAlarmed(groupEvent.getIsAlarmed())
                 .createdAt(groupEvent.getCreatedAt())
                 .groupId(groupEvent.getGroup().getGroupId())
+                .build();
+    }
+
+    public GroupEvent groupEventCreateReqDTOToGroupEvent(GroupEventCreateReqDTO groupEventCreateReqDTO) {
+        return GroupEvent.builder()
+                .title(groupEventCreateReqDTO.getTitle())
+                .startDate(groupEventCreateReqDTO.getStartDate())
+                .startTime(groupEventCreateReqDTO.getStartTime())
+                .endDate(groupEventCreateReqDTO.getEndDate())
+                .endTime(groupEventCreateReqDTO.getEndTime())
+                .isAlarmed(groupEventCreateReqDTO.getIsAlarmed())
                 .build();
     }
 }

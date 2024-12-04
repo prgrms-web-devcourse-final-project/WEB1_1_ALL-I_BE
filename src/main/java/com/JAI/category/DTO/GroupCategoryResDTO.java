@@ -8,7 +8,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Data
+@Getter
 public class GroupCategoryResDTO {
     private UUID categoryId;
 
