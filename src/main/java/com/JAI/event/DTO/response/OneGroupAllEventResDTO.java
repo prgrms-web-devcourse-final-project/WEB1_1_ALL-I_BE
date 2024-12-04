@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Data
-public class GroupEventResDTO {
+public class OneGroupAllEventResDTO {
     UUID groupEventId;
 
     String title;

@@ -4,7 +4,6 @@ import com.JAI.group.controller.response.GroupMemberListRes;
 import com.JAI.group.domain.GroupRole;
 import com.JAI.group.service.request.AddGroupMemberServiceReq;
 import com.JAI.group.service.response.GroupSettingRes;
-import com.JAI.user.domain.User;
 import com.JAI.user.service.dto.CustomUserDetails;
 
 import java.util.List;

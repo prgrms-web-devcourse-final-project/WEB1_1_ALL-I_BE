@@ -7,12 +7,12 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class GetOneGroupAllEventResDTO {
+public class GetOneGroupEventResDTO {
     private GroupListRes group;
     private GroupCategoryResDTO groupCategory;
-    private List<GroupEventResDTO> groupEvents;
+    private List<?> groupEvents;
 
-    public GetOneGroupAllEventResDTO(GroupListRes group, GroupCategoryResDTO groupCategory, List<GroupEventResDTO> groupEvents) {
+    public GetOneGroupEventResDTO(GroupListRes group, GroupCategoryResDTO groupCategory, List<?> groupEvents) {
         this.group = group;
         this.groupCategory = groupCategory;
         this.groupEvents = groupEvents;

@@ -1,8 +1,6 @@
 package com.JAI.group.repository;
 
-import com.JAI.group.domain.Group;
 import com.JAI.group.domain.GroupSetting;
-import com.JAI.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
