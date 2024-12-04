@@ -33,7 +33,6 @@ public class GroupTodoController {
 
     @GetMapping()
     public ApiResponse<MyGroupTodosRes> getMyGroupTodos(@RequestParam String year, @RequestParam String month, @AuthenticationPrincipal CustomUserDetails user){
-        groupTodoService.getMyGroupTodos(user.getUserId(), year, month);
-        return null;
+        return ApiResponse.onSuccess(groupTodoService.getMyGroupTodos(user.getUserId(), year, month));
     }
 }

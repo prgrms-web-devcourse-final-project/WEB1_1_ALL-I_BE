@@ -134,4 +134,15 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryConverter.categoryToGroupCategoryResDTO(categoryRepository.findByGroup_GroupId(groupId)
                 .orElseThrow(() -> new CategoryNotFoundException("해당 그룹의 카테고리를 찾을 수 없습니다.")));
     }
+
+    @Override
+    public List<CategoryResDTO> getOnlyGroupCategoryByUserId(UUID userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("해당 ID의 유저를 찾을 수 없습니다."));
+
+        return categoryRepository.findGroupCategoriesByUserId(userId)
+                .stream()
+                .map(categoryConverter::categoryToCategoryResDTO)
+                .toList();
+    }
 }

@@ -1,5 +1,6 @@
 package com.JAI.todo.service;
 
+import com.JAI.category.DTO.CategoryResDTO;
 import com.JAI.category.DTO.GroupCategoryResDTO;
 import com.JAI.category.service.CategoryService;
 import com.JAI.group.controller.response.GroupListRes;
@@ -9,10 +10,7 @@ import com.JAI.group.repository.GroupRepository;
 import com.JAI.group.service.GroupService;
 import com.JAI.group.service.GroupSettingService;
 import com.JAI.todo.controller.request.GroupTodoCreateReq;
-import com.JAI.todo.controller.response.AllGroupTodoRes;
-import com.JAI.todo.controller.response.GroupTodoCreateRes;
-import com.JAI.todo.controller.response.GroupTodoRes;
-import com.JAI.todo.controller.response.MyGroupTodosRes;
+import com.JAI.todo.controller.response.*;
 import com.JAI.todo.converter.GroupTodoConverter;
 import com.JAI.todo.domain.GroupTodo;
 import com.JAI.todo.repository.GroupTodoRepository;
@@ -89,7 +87,24 @@ public class GroupTodoServiceImpl implements GroupTodoService{
 
     @Override
     public MyGroupTodosRes getMyGroupTodos(UUID userId, String year, String month) {
-        return null;
+
+        // 조회할 일정의 범위 설정
+        LocalDate startDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        List<GroupListRes> groupDTOs = groupService.getGroupByUserId(userId);
+        List<CategoryResDTO> categoryResDTOs = categoryService.getOnlyGroupCategoryByUserId(userId);
+
+        List<GroupTodoByUserRes> groupTodos = groupTodoRepository.findByUserIdAndDateBetween(userId, startDate, endDate)
+                .stream()
+                .map(groupTodoConverter::toGroupTodoByUserResDTO)
+                .toList();
+
+        return MyGroupTodosRes.builder()
+                .groups(groupDTOs)
+                .groupCategories(categoryResDTOs)
+                .groupTodos(groupTodos)
+                .build();
     }
 
 }

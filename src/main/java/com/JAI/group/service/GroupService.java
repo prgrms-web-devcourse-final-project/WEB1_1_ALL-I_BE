@@ -5,6 +5,7 @@ import com.JAI.group.controller.request.GroupUpdateReq;
 import com.JAI.group.controller.response.GroupCreateRes;
 import com.JAI.group.controller.response.GroupListRes;
 import com.JAI.group.controller.response.GroupUpdateRes;
+import com.JAI.group.domain.Group;
 import com.JAI.user.service.dto.CustomUserDetails;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface GroupService {
     GroupUpdateRes updateGroupInfo(UUID groupId, GroupUpdateReq req, CustomUserDetails user);
     void deleteGroup(UUID groupId, CustomUserDetails user);
     public GroupListRes getGroupById(UUID groupId);
+    public List<GroupListRes> getGroupByUserId(UUID userId);
+    public Group findGroupEntityById(UUID groupId);
 }
