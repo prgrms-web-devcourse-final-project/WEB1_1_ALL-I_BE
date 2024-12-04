@@ -15,7 +15,6 @@ import com.JAI.user.exception.UserNotFoundException;
 import com.JAI.user.repository.UserRepository;
 import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -144,6 +143,6 @@ public class GroupSettingServiceImpl implements GroupSettingService {
 
     @Override
     public List<UUID> getGroupEventRelatedUsers(UUID groupEventId) {
-        return groupSettingRepository.findByGroupEventGroupId(groupEventId);
+        return groupSettingRepository.findUserIdByGroupEventGroupId(groupEventId);
     }
 }

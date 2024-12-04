@@ -20,4 +20,6 @@ public interface GroupService {
     void deleteGroup(UUID groupId, CustomUserDetails user);
 
     public GroupListRes getGroupById(UUID groupId);
+
+    public List<GroupListRes> getGroupByUserId(UUID userId);
 }

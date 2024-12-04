@@ -127,4 +127,12 @@ public class GroupServiceImpl implements GroupService {
                 groupRepository.findById(groupId)
                         .orElseThrow(() -> new GroupNotFoundException("해당 ID의 그룹을 찾을 수 없습니다.")));
     }
+
+    @Override
+    public List<GroupListRes> getGroupByUserId(UUID userId) {
+        return groupRepository.findGroupByUserId(userId)
+                .stream()
+                .map(groupConverter::toGroupListDTO)
+                .toList();
+    }
 }

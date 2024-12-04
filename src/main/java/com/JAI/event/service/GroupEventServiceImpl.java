@@ -1,11 +1,10 @@
 package com.JAI.event.service;
 
+import com.JAI.category.DTO.CategoryResDTO;
 import com.JAI.category.DTO.GroupCategoryResDTO;
 import com.JAI.category.service.CategoryService;
 import com.JAI.event.DTO.request.GroupEventCreateReqDTO;
-import com.JAI.event.DTO.response.GetOneGroupEventResDTO;
-import com.JAI.event.DTO.response.OneGroupAllEventResDTO;
-import com.JAI.event.DTO.response.OneGroupSomeoneEventResDTO;
+import com.JAI.event.DTO.response.*;
 import com.JAI.event.mapper.GroupEventConverter;
 import com.JAI.event.repository.GroupEventRepository;
 import com.JAI.group.controller.response.GroupListRes;
@@ -55,7 +54,7 @@ public class GroupEventServiceImpl implements GroupEventService {
     }
 
     @Override
-    public GetOneGroupEventResDTO getGroupSomeOneEvents(UUID groupId, UUID someoneUserId, UUID userId, String year, String month){
+    public GetOneGroupEventResDTO getGroupSomeOneEvents(UUID groupId, UUID someoneUserId, UUID userId, String year, String month) {
         System.out.println("groupId : " + groupId + " someoneUserId : " + someoneUserId + " userId : " + userId);
         if (!groupSettingService.isGroupMemberExisted(groupId, someoneUserId)) {
             throw new GroupNotFoundException("찾고자 하는 사용자는 해당 그룹에 속하지 않습니다.");
@@ -80,8 +79,19 @@ public class GroupEventServiceImpl implements GroupEventService {
     }
 
     @Override
-    public GetOneGroupEventResDTO getGroupMyEvents(UUID userId, String year, String month) {
-        return null;
+    public GetAllGroupSomeoneEventResDTO getGroupMyEvents(UUID userId, String year, String month) {
+        // 조회할 일정의 범위 설정
+        LocalDate startDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        List<GroupListRes> groupDTOs = groupService.getGroupByUserId(userId);
+        List<CategoryResDTO> categoryResDTOs = categoryService.getOnlyGroupCategoryByUserId(userId);
+        List<AllGroupSomeoneEventResDTO> groupEventDTOs = groupEventRepository.findByUserIdAndStartDateBetween(userId, startDate, endDate)
+                .stream()
+                .map(groupEventConverter::groupEventToAllGroupSomeoneEventResDTO)
+                .toList();
+
+        return new GetAllGroupSomeoneEventResDTO(groupDTOs, categoryResDTOs, groupEventDTOs);
     }
 
     @Override

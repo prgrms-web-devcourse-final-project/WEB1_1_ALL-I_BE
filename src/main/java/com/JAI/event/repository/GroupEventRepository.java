@@ -19,4 +19,12 @@ public interface GroupEventRepository extends JpaRepository<GroupEvent, UUID> {
             "AND gs.group.groupId = :groupId " +
             "AND ge.startDate BETWEEN :startDate AND :endDate")
     List<GroupEvent> findByGroupIdAndUserIdAndStartDateBetween(UUID groupId, UUID someoneUserId, LocalDate startDate, LocalDate endDate);
+
+    @Query("SELECT ge " +
+            "FROM GroupEvent ge " +
+            "JOIN GroupEventMapping gem ON ge.groupEventId = gem.groupEvent.groupEventId " +
+            "JOIN GroupSetting gs ON gs.groupSettingId = gem.groupSetting.groupSettingId " +
+            "WHERE gs.user.userId = :userId " +
+            "AND ge.startDate BETWEEN :startDate AND :endDate")
+    List<GroupEvent> findByUserIdAndStartDateBetween(UUID userId, LocalDate startDate, LocalDate endDate);
 }

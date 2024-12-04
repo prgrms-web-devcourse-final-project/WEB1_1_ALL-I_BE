@@ -9,7 +9,9 @@ import java.util.List;
 @Getter
 public class GetOneGroupEventResDTO {
     private GroupListRes group;
+
     private GroupCategoryResDTO groupCategory;
+
     private List<?> groupEvents;
 
     public GetOneGroupEventResDTO(GroupListRes group, GroupCategoryResDTO groupCategory, List<?> groupEvents) {
