@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackages = {"com.JAI.event","com.JAI.todo"})
+@RestControllerAdvice(basePackages = {"com.JAI.event", "com.JAI.todo", "com.JAI.category"})
 public class CategoryExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

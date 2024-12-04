@@ -32,6 +32,10 @@ public class ApiResponse<T> {
         return new ApiResponse<>(SuccessStatus.OK.getHttpStatus() , SuccessStatus.OK.getMessage(), result);
     }
 
+    public static <T> ApiResponse<T> onSuccess(){
+        return new ApiResponse<>(SuccessStatus.OK.getHttpStatus() , SuccessStatus.OK.getMessage());
+    }
+
     // 생성 성공
     public static <T> ApiResponse<T> onCreateSuccess(T result){
         return new ApiResponse<>(SuccessStatus.CREATE_SUCCESS.getHttpStatus(), SuccessStatus.CREATE_SUCCESS.getMessage(), result);
