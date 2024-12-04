@@ -107,4 +107,26 @@ public class GroupTodoServiceImpl implements GroupTodoService{
                 .build();
     }
 
+    @Override
+    public MemberGroupTodosRes getGroupMemberGroupTodos(UUID groupId, UUID groupMemberId, UUID userId, String year, String month) {
+
+        // 조회할 일정의 범위 설정
+        LocalDate startDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        GroupCategoryResDTO groupCategory = categoryService.getCategoryByGroupId(groupId);
+        GroupListRes group = groupService.getGroupById(groupId);
+
+        List<GroupTodoByUserRes> groupTodos = groupTodoRepository.findByGroupIdAndUserIdAndDateBetween(groupId, userId, startDate, endDate)
+                .stream()
+                .map(groupTodoConverter::toGroupTodoByUserResDTO)
+                .toList();
+
+        return MemberGroupTodosRes.builder()
+                .group(group)
+                .groupCategory(groupCategory)
+                .groupTodos(groupTodos)
+                .build();
+    }
+
 }

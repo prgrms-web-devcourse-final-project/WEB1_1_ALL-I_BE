@@ -4,6 +4,7 @@ import com.JAI.global.controller.ApiResponse;
 import com.JAI.todo.controller.request.GroupTodoCreateReq;
 import com.JAI.todo.controller.response.AllGroupTodoRes;
 import com.JAI.todo.controller.response.GroupTodoCreateRes;
+import com.JAI.todo.controller.response.MemberGroupTodosRes;
 import com.JAI.todo.controller.response.MyGroupTodosRes;
 import com.JAI.todo.service.GroupTodoService;
 import com.JAI.user.service.dto.CustomUserDetails;
@@ -34,5 +35,10 @@ public class GroupTodoController {
     @GetMapping()
     public ApiResponse<MyGroupTodosRes> getMyGroupTodos(@RequestParam String year, @RequestParam String month, @AuthenticationPrincipal CustomUserDetails user){
         return ApiResponse.onSuccess(groupTodoService.getMyGroupTodos(user.getUserId(), year, month));
+    }
+    ///group-todos/{group_id}/todos/{user_id}?year={year}&month={month}
+    @GetMapping("/{groupId}/todos/{userId}")
+    public ApiResponse<MemberGroupTodosRes> getGroupMemberGroupTodos(@PathVariable("groupId") UUID groupId, @PathVariable("userId") UUID groupMemberId, @RequestParam String year, @RequestParam String month, @AuthenticationPrincipal CustomUserDetails user){
+        return ApiResponse.onSuccess(groupTodoService.getGroupMemberGroupTodos(groupId, groupMemberId, user.getUserId(), year, month));
     }
 }
