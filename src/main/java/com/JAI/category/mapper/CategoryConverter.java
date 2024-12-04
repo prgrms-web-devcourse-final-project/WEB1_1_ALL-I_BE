@@ -2,6 +2,7 @@ package com.JAI.category.mapper;
 
 import com.JAI.category.DTO.CategoryCreateReqDTO;
 import com.JAI.category.DTO.CategoryResDTO;
+import com.JAI.category.DTO.CategoryUpdateReqDTO;
 import com.JAI.category.domain.Category;
 import com.JAI.category.service.request.CreateGroupCategoryServiceReq;
 import com.JAI.group.domain.Group;
@@ -48,6 +49,16 @@ public class CategoryConverter {
                 .color(category.getColor())
                 .userId(category.getUser().getUserId())
                 .groupId(category.getGroup() == null ? null : category.getGroup().getGroupId())
+                .build();
+    }
+
+    public Category categoryUpdateReqDTOToCategory(CategoryUpdateReqDTO categoryUpdateReqDTO, Category category) {
+        return Category.builder()
+                .categoryId(category.getCategoryId())
+                .name(categoryUpdateReqDTO.getName() != null ? categoryUpdateReqDTO.getName() : category.getName())
+                .color(categoryUpdateReqDTO.getColor() != null ? categoryUpdateReqDTO.getColor() : category.getColor())
+                .user(category.getUser())
+                .group(category.getGroup())
                 .build();
     }
 }

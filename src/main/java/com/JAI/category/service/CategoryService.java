@@ -18,9 +18,9 @@ public interface CategoryService {
 
     public CategoryResDTO createCategory(CategoryCreateReqDTO categoryCreateReqDTO, UUID userId);
 
-    public CategoryResDTO updateCategory(CategoryUpdateReqDTO categoryUpdateReqDTO, UUID userId);
+    public CategoryResDTO updateCategory(UUID categoryId, CategoryUpdateReqDTO categoryUpdateReqDTO, UUID userId);
 
-    public void deleteCategory(UUID categoryId);
+    public void deleteCategory(UUID categoryId, UUID userId);
 
     public List<CategoryResDTO> getCategory(UUID userId);
 }

@@ -89,13 +89,31 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResDTO updateCategory(CategoryUpdateReqDTO categoryUpdateReqDTO, UUID userId) {
-        return null;
+    public CategoryResDTO updateCategory(UUID categoryId, CategoryUpdateReqDTO categoryUpdateReqDTO, UUID userId) {
+        Category exiestedCategory = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException("해당 Id의 카테고리를 찾을 수 없습니다."));
+
+        if (!exiestedCategory.getUser().getUserId().equals(userId)) {
+            throw new CategoryNotOwnerException("다른 사용자의 카테고리를 수정할 수 없습니다.");
+        }
+
+        Category updatedCategory = categoryConverter.categoryUpdateReqDTOToCategory(categoryUpdateReqDTO, exiestedCategory);
+        categoryRepository.save(updatedCategory);
+
+        return categoryConverter.categoryToCategoryResDTO(updatedCategory);
     }
 
+    // 새로 카테고리0 만들어서 거기에 해당 투두, 일정 할당하기
     @Override
-    public void deleteCategory(UUID categoryId) {
+    public void deleteCategory(UUID categoryId, UUID userId) {
+        Category exiestedCategory = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException("해당 Id의 카테고리를 찾을 수 없습니다."));
 
+        if (!exiestedCategory.getUser().getUserId().equals(userId)) {
+            throw new CategoryNotOwnerException("다른 사용자의 카테고리를 수정할 수 없습니다.");
+        }
+
+        categoryRepository.deleteById(categoryId);
     }
 
     @Override
