@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -44,7 +45,7 @@ public class GroupTodo {
     // 객체 생성 시 JPA에서 생성 시간 자동 기입
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME")
-    private LocalTime createdAt;
+    private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", referencedColumnName = "group_id",nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
