@@ -20,4 +20,8 @@ public interface GroupSettingService {
     GroupSettingRes findGroupIdAndRole(UUID groupId, UUID userId);
     void quitGroupMember(UUID groupSettingId, CustomUserDetails user);
     void ejectionGroupMember(UUID groupSettingId, CustomUserDetails user);
+
+    public boolean isGroupMemberExisted(UUID groupId, UUID userId);
+
+    public List<UUID> getGroupEventRelatedUsers(UUID groupEventId);
 }

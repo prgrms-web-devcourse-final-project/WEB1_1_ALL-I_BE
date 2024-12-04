@@ -15,4 +15,5 @@ public interface GroupService {
     List<GroupListRes> getGroupList(CustomUserDetails user);
     GroupUpdateRes updateGroupInfo(UUID groupId, GroupUpdateReq req, CustomUserDetails user);
     void deleteGroup(UUID groupId, CustomUserDetails user);
+    public GroupListRes getGroupById(UUID groupId);
 }
