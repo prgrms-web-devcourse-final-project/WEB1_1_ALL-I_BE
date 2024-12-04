@@ -2,6 +2,7 @@ package com.JAI.group.controller;
 
 import com.JAI.global.controller.ApiResponse;
 import com.JAI.group.controller.response.GroupMemberListRes;
+import com.JAI.group.service.GroupCheckService;
 import com.JAI.group.service.GroupSettingService;
 import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @RequestMapping("/groups-setting")
 public class GroupSettingController {
     private final GroupSettingService groupSettingService;
+    private final GroupCheckService groupCheckService;
 
     // TODO :: 그룹원 조회
     @GetMapping("/{groupId}")
@@ -24,10 +26,10 @@ public class GroupSettingController {
     }
 
     //본인 탈퇴
-    @DeleteMapping("/{groupSettingId}/quit")
-    public ApiResponse<String> quitGroupMember(@PathVariable UUID groupSettingId, @AuthenticationPrincipal CustomUserDetails user) {
-        groupSettingService.quitGroupMember(groupSettingId, user);
-        return ApiResponse.onDeleteSuccess("그룹 탈퇴에 성공하였습니다.");
+    @DeleteMapping("/{groupId}/quit")
+    public ApiResponse<String> quitGroupMember(@PathVariable UUID groupId, @AuthenticationPrincipal CustomUserDetails user) {
+        String returnMessage = groupCheckService.checkRoleAndHandleQuit(groupId, user);
+        return ApiResponse.onDeleteSuccess(returnMessage);
     }
 
     //팀장이 강퇴

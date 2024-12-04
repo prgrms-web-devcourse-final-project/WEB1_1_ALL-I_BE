@@ -9,11 +9,13 @@ import com.JAI.group.exception.*;
 import com.JAI.group.repository.GroupRepository;
 import com.JAI.group.repository.GroupSettingRepository;
 import com.JAI.group.service.request.AddGroupMemberServiceReq;
+import com.JAI.group.service.response.GroupSettingRes;
 import com.JAI.user.domain.User;
 import com.JAI.user.exception.UserNotFoundException;
 import com.JAI.user.repository.UserRepository;
 import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,10 +75,7 @@ public class GroupSettingServiceImpl implements GroupSettingService {
     public void quitGroupMember(UUID groupSettingId, CustomUserDetails user) {
         //해당 멤버 정보 찾기
         GroupSetting deleteMember = findGroupMemberById(groupSettingId);
-        //리더면 탈퇴 못함
-        if(deleteMember.getRole() == GroupRole.LEADER){
-            throw new GroupSettingAccessDeniedException("그룹 리더는 탈퇴가 불가능 합니다.");
-        }
+
         //본인인지 확인
         if(!deleteMember.getUser().getUserId().equals(user.getUser().getUserId())){
             throw new GroupSettingNotOwnerException("유저 본인만 탈퇴 가능합니다.");
@@ -92,7 +91,6 @@ public class GroupSettingServiceImpl implements GroupSettingService {
         GroupSetting deleteMember = findGroupMemberById(groupSettingId);
 
         UUID groupId = deleteMember.getGroup().getGroupId();
-
         //리더 정보
         GroupSetting leader = findGroupSettingByGroupIdAndUserId(groupId, user.getUser().getUserId());
 
@@ -121,6 +119,16 @@ public class GroupSettingServiceImpl implements GroupSettingService {
                 .orElseThrow(() -> new GroupSettingNotOwnerException("해당 그룹 멤버가 아닙니다."));
         return groupSetting.getRole();
     }
+
+    public GroupSettingRes findGroupIdAndRole(UUID groupId, UUID userId){
+        GroupSetting groupSetting = groupSettingRepository.findByGroup_GroupIdAndUser_UserId(groupId, userId)
+                .orElseThrow(() -> new GroupSettingNotOwnerException("해당 그룹 멤버가 아닙니다."));
+        return GroupSettingRes.builder()
+                .groupSettingId(groupSetting.getGroupSettingId())
+                .role(groupSetting.getRole())
+                .build();
+    }
+
 
     @Override
     public void findGroupMemberExisted(UUID groupId, UUID userId) {
