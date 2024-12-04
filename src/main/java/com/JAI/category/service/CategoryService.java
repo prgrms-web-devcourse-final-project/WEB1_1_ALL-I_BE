@@ -11,5 +11,5 @@ public interface CategoryService {
 
     UUID addGroupCategory(CreateGroupCategoryServiceReq req);
 
-    void updateGroupCategoryColor(UUID groupId, String color);
+    void updateGroupCategoryColor(UUID groupId, String name, String color);
 }

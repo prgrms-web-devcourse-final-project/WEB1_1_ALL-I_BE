@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class GroupUpdateReq {
+    String name;
+
     String description;
 
     String color;

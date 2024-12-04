@@ -90,11 +90,11 @@ public class GroupServiceImpl implements GroupService {
         //현재 유저가 해당 그룹 인지 체크, leader인지 체크
         checkGroupLeader(groupId, user.getUser().getUserId());
 
-        //그룹 카테고리 색상 변경 -->
-        categoryService.updateGroupCategoryColor(group.getGroupId(), req.getColor());
+        //그룹 카테고리 이름, 색상 변경 -->
+        categoryService.updateGroupCategoryColor(group.getGroupId(), req.getName(), req.getColor());
 
         //그룹 설명 변경
-        group.updateGroupDescription(req.getDescription());
+        group.updateGroupInfo(req.getName(), req.getDescription());
         groupRepository.save(group);
 
         //바뀐 정보들로 DTO 구성

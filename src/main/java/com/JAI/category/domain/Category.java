@@ -58,7 +58,9 @@ public class Category {
                 .build();
     }
 
-    public void updateCategoryColor(String color){
+    public void updateCategoryInfo(String name, String color){
+        this.name = name;
         this.color = color;
     }
+
 }
