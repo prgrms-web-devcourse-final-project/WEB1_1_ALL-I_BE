@@ -35,17 +35,12 @@ public class PersonalEventServiceImpl implements PersonalEventService {
 
     @Override
     public void createPersonalEvent(PersonalEventCreateReqDTO personalEventCreateReqDTO, UUID userId) {
-        // 본인 외 다른 사용자의 개인 일정 생성 요청 시 에러 처리
-        if (!personalEventCreateReqDTO.getUserId().equals(userId)) {
-            throw new PersonalEventNotOwnerException("다른 사용자의 개인 일정을 생성할 수 없습니다.");
-        }
-
         // 개인 일정 생성 요청 DTO 엔티티와 매핑
         PersonalEvent personalEvent = personalEventConverter.personalCreateReqEventDTOToPersonalEvent(personalEventCreateReqDTO);
 
         // userService를 통해 User를 가져오고 null 확인 및 예외 처리
-        personalEvent.setUser(Optional.ofNullable(userService.getUserById(personalEventCreateReqDTO.getUserId()))
-                .orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자를 찾을 수 없습니다.", personalEventCreateReqDTO.getUserId())));
+        personalEvent.setUser(Optional.ofNullable(userService.getUserById(userId))
+                .orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자를 찾을 수 없습니다.", userId)));
 
         // categoryService를 통해 Category를 설정
         personalEvent.setCategory(Optional.ofNullable(categoryService.getCategoryById(personalEventCreateReqDTO.getCategoryId()))
