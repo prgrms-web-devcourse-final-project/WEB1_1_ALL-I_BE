@@ -102,7 +102,7 @@ public class ChatbotMapper {
     }
 
     public PersonalEventCreateReqDTO toPersonalEventCreateReqDTO (
-            UUID userId, UUID categoryId, Boolean alarm,
+            UUID categoryId, Boolean alarm,
             ChatbotEventRespDTO chatbotEventRespDTO
             ) {
 
@@ -113,7 +113,6 @@ public class ChatbotMapper {
                 .startTime(chatbotEventRespDTO.getStartTime())
                 .endTime(chatbotEventRespDTO.getEndTime())
                 .isAlarmed(alarm)
-                .userId(userId)
                 .categoryId(categoryId)
                 .build();
 

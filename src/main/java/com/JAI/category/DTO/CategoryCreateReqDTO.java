@@ -16,7 +16,4 @@ public class CategoryCreateReqDTO {
 
     @NotNull(message = "color must not be null")
     private String color;
-
-    @NotNull(message = "user id must not be null")
-    private UUID userId;
 }
