@@ -1,7 +1,7 @@
 package com.JAI.group.domain;
-// TODO :: 그룹 멤버
-public enum Status {
-    ACCEPT,
+
+public enum InvitationStatus {
+    ACCEPTED,
     DECLINED,
     PENDING
 }

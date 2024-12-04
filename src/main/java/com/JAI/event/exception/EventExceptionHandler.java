@@ -23,7 +23,7 @@ public class EventExceptionHandler {
     @ExceptionHandler(PersonalEventNotOwnerException.class)
     public ApiResponse<Object> handlePersonalEventNotOwner(PersonalEventNotOwnerException e) {
         return ApiResponse.onFailure(
-                ErrorStatus.PERSONAL_EVENT_NOT_OWNER_FOUND,
+                ErrorStatus.PERSONAL_EVENT_NOT_OWNER,
                 e.getMessage(),
                 e.getData());
     }

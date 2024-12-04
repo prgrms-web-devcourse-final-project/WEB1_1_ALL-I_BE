@@ -1,6 +1,6 @@
 package com.JAI.group.service;
 
-import com.JAI.category.converter.CategoryConverter;
+import com.JAI.category.mapper.CategoryConverter;
 import com.JAI.category.service.CategoryService;
 import com.JAI.category.service.request.CreateGroupCategoryServiceReq;
 import com.JAI.group.controller.request.GroupCreateReq;

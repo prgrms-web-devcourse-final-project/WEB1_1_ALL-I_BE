@@ -230,7 +230,7 @@ public class ChatbotServiceImpl implements ChatbotService {
         // 개인 일정 DB에 삽입
         for (ChatbotEventRespDTO chatbotEventRespDTO : chatbotEventRespDTOs) {
             PersonalEventCreateReqDTO personalEventCreateReqDTO =
-                    chatbotMapper.toPersonalEventCreateReqDTO(currUserId, categoryId, alarm, chatbotEventRespDTO);
+                    chatbotMapper.toPersonalEventCreateReqDTO(categoryId, alarm, chatbotEventRespDTO);
 
             personalEventService.createPersonalEvent(personalEventCreateReqDTO, currUserId);
         }

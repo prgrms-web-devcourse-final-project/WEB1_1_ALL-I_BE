@@ -1,6 +1,6 @@
 package com.JAI.group.controller.response;
 
-import com.JAI.group.domain.Status;
+import com.JAI.group.domain.InvitationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +20,5 @@ public class GroupMemberInviteRes {
 
     UUID groupId;
 
-    Status stats;
+    InvitationStatus stats;
 }

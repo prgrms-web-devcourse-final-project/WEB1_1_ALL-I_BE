@@ -29,9 +29,6 @@ public class PersonalEventCreateReqDTO {
     @NotNull(message = "is alarmed must not be null")
     Boolean isAlarmed;
 
-    @NotNull(message = "User Id must not be null")
-    UUID userId;
-
     @NotNull(message = "Category Id must not be null")
     UUID categoryId;
 }

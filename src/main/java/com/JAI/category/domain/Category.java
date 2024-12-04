@@ -6,6 +6,7 @@ import com.JAI.todo.domain.PersonalTodo;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.List;
 
@@ -31,10 +32,10 @@ public class Category {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<PersonalTodo> personalTodos;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<PersonalEvent> personalEvents;
 
     @OneToOne
@@ -42,7 +43,8 @@ public class Category {
     private Group group;
 
     @Builder
-    private Category(String name, String color, User user, Group group) {
+    private Category(UUID categoryId, String name, String color, User user, Group group) {
+        this.categoryId = categoryId;
         this.name = name;
         this.color = color;
         this.user = user;

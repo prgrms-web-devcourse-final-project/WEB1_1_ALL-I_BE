@@ -1,4 +1,5 @@
 package com.JAI.event.domain;
+import com.JAI.alarm.domain.Alarm;
 import com.JAI.group.domain.Group;
 import com.JAI.group.domain.GroupSetting;
 import jakarta.persistence.*;
@@ -24,6 +25,9 @@ public class GroupEventMapping {
     @ManyToOne
     @JoinColumn(name = "group_setting_id", referencedColumnName = "group_setting_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private GroupSetting groupSetting;
+
+    @OneToOne (mappedBy = "groupEventMapping", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Alarm alarm;
 
     @Builder
     private GroupEventMapping(GroupSetting groupSetting, GroupEvent groupEvent) {

@@ -4,10 +4,7 @@ import com.JAI.group.controller.request.GroupMemberInviteReq;
 import com.JAI.group.controller.response.GroupMemberInviteRes;
 import com.JAI.group.converter.GroupInvitationConverter;
 import com.JAI.group.converter.GroupSettingConverter;
-import com.JAI.group.domain.Group;
-import com.JAI.group.domain.GroupInvitation;
-import com.JAI.group.domain.GroupRole;
-import com.JAI.group.domain.Status;
+import com.JAI.group.domain.*;
 import com.JAI.group.exception.*;
 import com.JAI.group.repository.GroupInvitationRepository;
 import com.JAI.group.repository.GroupRepository;
@@ -76,7 +73,7 @@ public class GroupInvitationServiceImpl implements GroupInvitationService{
         checkUserAuthority(groupInvitation.getUser().getUserId(), user.getUser().getUserId());
 
         //상태를 수락으로 변경
-        groupInvitation.updateStatus(Status.ACCEPT);
+        groupInvitation.updateStatus(InvitationStatus.ACCEPTED);
         groupInvitationRepository.save(groupInvitation);
 
         //그룹 멤버로 DB에 저장
@@ -96,7 +93,7 @@ public class GroupInvitationServiceImpl implements GroupInvitationService{
         checkUserAuthority(groupInvitation.getUser().getUserId(), user.getUser().getUserId());
 
         //상태를 거절로 변경
-        groupInvitation.updateStatus(Status.DECLINED);
+        groupInvitation.updateStatus(InvitationStatus.DECLINED);
         groupInvitationRepository.save(groupInvitation);
     }
 
@@ -117,7 +114,7 @@ public class GroupInvitationServiceImpl implements GroupInvitationService{
 
 
     public void alreadyInvited(UUID groupId, UUID userId) {
-        if(groupInvitationRepository.existsByUser_UserIdAndGroup_GroupIdAndStatus(userId, groupId, Status.PENDING)){
+        if(groupInvitationRepository.existsByUser_UserIdAndGroup_GroupIdAndStatus(userId, groupId, InvitationStatus.PENDING)){
             throw new GroupInvitationDuplicatedException("이미 요청된 초대입니다.");
         }
     }
