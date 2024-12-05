@@ -1,10 +1,10 @@
 package com.JAI.event.controller;
 
 import com.JAI.event.DTO.request.GroupEventCreateReqDTO;
+import com.JAI.event.DTO.request.GroupEventUpdateReqDTO;
 import com.JAI.event.DTO.response.GetOneGroupEventResDTO;
 import com.JAI.event.service.GroupEventService;
 import com.JAI.global.controller.ApiResponse;
-import com.JAI.group.controller.request.GroupCreateReq;
 import com.JAI.user.service.dto.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +36,17 @@ public class GroupEventController {
 
     @PostMapping("/{group_id}/events")
     public ApiResponse<?> createGroupEvents(@PathVariable("group_id") UUID groupId, @Valid @RequestBody GroupEventCreateReqDTO groupEventCreateReqDTO, @AuthenticationPrincipal CustomUserDetails user) {
-        return ApiResponse.onSuccess(groupEventService.createGroupEvent(groupEventCreateReqDTO, groupId, user.getUserId()));
+        return ApiResponse.onCreateSuccess(groupEventService.createGroupEvent(groupEventCreateReqDTO, groupId, user.getUserId()));
+    }
+
+    @PatchMapping("/{group_id}/events/{group_event_id}")
+    public ApiResponse<?> updateGroupEvents(@PathVariable("group_id") UUID groupId, @PathVariable("group_event_id") UUID groupEventId, @Valid @RequestBody GroupEventUpdateReqDTO groupEventUpdateReqDTO, @AuthenticationPrincipal CustomUserDetails user) {
+        return ApiResponse.onSuccess(groupEventService.updateGroupEvent(groupId, groupEventId, groupEventUpdateReqDTO, user.getUserId()));
+    }
+
+    @DeleteMapping("/{group_id}/events/{group_event_id}")
+    public ApiResponse<?> deleteGroupEvents(@PathVariable("group_id") UUID groupId, @PathVariable("group_event_id") UUID groupEventId, @Valid @RequestBody GroupEventUpdateReqDTO groupEventUpdateReqDTO, @AuthenticationPrincipal CustomUserDetails user) {
+        groupEventService.deleteGroupEvent(groupId, groupEventId, user.getUserId());
+        return ApiResponse.onSuccess();
     }
 }

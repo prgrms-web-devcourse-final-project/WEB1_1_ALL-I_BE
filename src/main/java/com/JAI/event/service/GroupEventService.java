@@ -1,6 +1,7 @@
 package com.JAI.event.service;
 
 import com.JAI.event.DTO.request.GroupEventCreateReqDTO;
+import com.JAI.event.DTO.request.GroupEventUpdateReqDTO;
 import com.JAI.event.DTO.response.GetAllGroupSomeoneEventResDTO;
 import com.JAI.event.DTO.response.GetOneGroupEventResDTO;
 import com.JAI.event.DTO.response.OneGroupAllEventResDTO;
@@ -16,7 +17,7 @@ public interface GroupEventService {
 
     public OneGroupAllEventResDTO createGroupEvent(GroupEventCreateReqDTO groupEventCreateReqDTO, UUID groupId, UUID userId);
 
-    public GetOneGroupEventResDTO updateGroupEvent(GroupEventCreateReqDTO groupEventCreateReqDTO, UUID groupId, UUID groupEventId, UUID userId);
+    public OneGroupAllEventResDTO updateGroupEvent(UUID groupId, UUID groupEventId, GroupEventUpdateReqDTO groupEventCreateReqDTO, UUID userId);
 
     public void deleteGroupEvent(UUID groupId, UUID groupEventId, UUID userId);
 }

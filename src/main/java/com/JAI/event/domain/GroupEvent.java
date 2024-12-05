@@ -49,7 +49,7 @@ public class GroupEvent {
     @Column(name = "created_at", updatable = false, columnDefinition = "DATETIME")
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "groupEvent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "groupEvent", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<GroupEventMapping> groupEventMappings;
 
     @ManyToOne

@@ -4,9 +4,11 @@ import com.JAI.category.DTO.CategoryResDTO;
 import com.JAI.category.DTO.GroupCategoryResDTO;
 import com.JAI.category.service.CategoryService;
 import com.JAI.event.DTO.request.GroupEventCreateReqDTO;
+import com.JAI.event.DTO.request.GroupEventUpdateReqDTO;
 import com.JAI.event.DTO.response.*;
 import com.JAI.event.domain.GroupEvent;
 import com.JAI.event.domain.GroupEventMapping;
+import com.JAI.event.exception.GroupEventNotFoundException;
 import com.JAI.event.mapper.GroupEventConverter;
 import com.JAI.event.repository.GroupEventMappingRepository;
 import com.JAI.event.repository.GroupEventRepository;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -102,7 +105,7 @@ public class GroupEventServiceImpl implements GroupEventService {
     public OneGroupAllEventResDTO createGroupEvent(GroupEventCreateReqDTO groupEventCreateReqDTO, UUID groupId, UUID userId) {
         // 사용자가 해당 그룹에 속하지 않는 에러 처리
         if (!groupSettingService.isGroupMemberExisted(groupId, userId)) {
-            throw new GroupNotFoundException("사용자는 해당 그룹에 속하지 않습니다.");
+            throw new GroupNotFoundException(userId + "사용자는 해당 그룹에 속하지 않습니다.");
         }
 
         GroupEvent groupEvent = groupEventConverter.groupEventCreateReqDTOToGroupEvent(groupEventCreateReqDTO);
@@ -125,8 +128,52 @@ public class GroupEventServiceImpl implements GroupEventService {
     }
 
     @Override
-    public GetOneGroupEventResDTO updateGroupEvent(GroupEventCreateReqDTO groupEventCreateReqDTO, UUID groupId, UUID groupEventId, UUID userId) {
-        return null;
+    public OneGroupAllEventResDTO updateGroupEvent(UUID groupId, UUID groupEventId, GroupEventUpdateReqDTO groupEventUpdateReqDTO, UUID userId) {
+        // 사용자가 해당 그룹에 속하지 않는 에러 처리
+        if (!groupSettingService.isGroupMemberExisted(groupId, userId)) {
+            throw new GroupNotFoundException(userId + "사용자는 해당 그룹에 속하지 않습니다.");
+        }
+
+        GroupEvent existedGroupEvent = groupEventRepository.findById(groupEventId)
+                .orElseThrow(() -> new GroupEventNotFoundException(groupEventId + "인 그룹 일정을 찾을 수 없습니다."));
+
+        GroupEvent updateGroupEvent = groupEventConverter.groupEventUpdateReqDTOToGroupEvent(groupEventUpdateReqDTO, existedGroupEvent);
+        updateGroupEvent.updateGroup(groupService.findGroupEntityById(groupId));
+
+        groupEventRepository.save(updateGroupEvent);
+
+        List<UUID> existedAssignedMemberList = groupSettingService.getGroupEventRelatedUsers(updateGroupEvent.getGroupEventId());
+
+        // 할당된 멤버 변경에 따른 그룹 일정 매핑 변경
+        if (groupEventUpdateReqDTO.getAssignedMemberList() != null) {
+            List<UUID> needToBeDeleteMember = existedAssignedMemberList.stream()
+                    .filter(uuid -> !groupEventUpdateReqDTO.getAssignedMemberList().contains(uuid))
+                    .toList();
+            System.out.println("need to be delete : " + needToBeDeleteMember);
+
+            List<UUID> needToBeAddMember = groupEventUpdateReqDTO.getAssignedMemberList().stream()
+                    .filter(uuid -> !existedAssignedMemberList.contains(uuid))
+                    .toList();
+            System.out.println("need to be add : " + needToBeAddMember);
+
+            needToBeDeleteMember.forEach(uuid -> {
+                groupEventMappingRepository.deleteByGroupSettingId(groupSettingService.findGroupSettingByGroupIdAndUserId(groupId, uuid).getGroupSettingId());
+            });
+
+            needToBeAddMember.forEach(uuid -> {
+                GroupEventMapping groupEventMapping = GroupEventMapping.builder()
+                        .groupEvent(updateGroupEvent)
+                        .groupSetting(groupSettingService.findGroupSettingByGroupIdAndUserId(groupId, uuid))
+                        .build();
+
+                groupEventMappingRepository.save(groupEventMapping);
+            });
+        }
+
+        OneGroupAllEventResDTO groupEventDTO = groupEventConverter.groupEventToOneGroupAllEventResDTO(updateGroupEvent);
+        groupEventDTO.updateUserIds(groupSettingService.getGroupEventRelatedUsers(updateGroupEvent.getGroupEventId()));
+
+        return groupEventDTO;
     }
 
     @Override
