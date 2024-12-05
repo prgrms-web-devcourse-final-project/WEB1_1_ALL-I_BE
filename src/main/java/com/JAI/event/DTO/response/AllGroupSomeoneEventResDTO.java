@@ -30,4 +30,6 @@ public class AllGroupSomeoneEventResDTO {
     LocalDateTime createdAt;
 
     UUID groupId;
+
+    UUID categoryId;
 }

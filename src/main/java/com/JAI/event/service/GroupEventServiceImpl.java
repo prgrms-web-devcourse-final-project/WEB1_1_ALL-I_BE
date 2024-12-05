@@ -1,6 +1,5 @@
 package com.JAI.event.service;
 
-import com.JAI.category.DTO.CategoryResDTO;
 import com.JAI.category.DTO.GroupCategoryResDTO;
 import com.JAI.category.service.CategoryService;
 import com.JAI.event.DTO.request.GroupEventCreateReqDTO;
@@ -20,9 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +33,9 @@ public class GroupEventServiceImpl implements GroupEventService {
     private final GroupService groupService;
     private final GroupEventConverter groupEventConverter;
 
+    // 특정 그룹의 특정 달 내에 모든 그룹 일정
     @Override
-    public GetOneGroupEventResDTO getGroupEvents(UUID groupId, UUID userId, String year, String month) {
+    public GetGroupEventResDTO getGroupEvents(UUID groupId, UUID userId, String year, String month) {
         if (!groupSettingService.isGroupMemberExisted(groupId, userId)) {
             throw new GroupNotFoundException("사용자는 해당 그룹에 속하지 않습니다.");
         }
@@ -46,22 +46,32 @@ public class GroupEventServiceImpl implements GroupEventService {
 
         GroupCategoryResDTO groupCategory = categoryService.getCategoryByGroupId(groupId);
         GroupListRes group = groupService.getGroupById(groupId);
-        List<OneGroupAllEventResDTO> groupDTOs = groupEventRepository.findByGroup_GroupIdAndStartDateBetween(groupId, startDate, endDate)
+
+        // groupCategory를 리스트로 생성 / 반환값 통일을 위함
+        List<GroupCategoryResDTO> groupCategoryList = new ArrayList<>();
+        groupCategoryList.add(groupCategory);
+
+        // group을 리스트로 생성 / 반환값 통일을 위함
+        List<GroupListRes> groupList = new ArrayList<>();
+        groupList.add(group);
+
+        // 그룹 일정 리스트
+        List<GroupEventResDTO> groupDTOs = groupEventRepository.findByGroup_GroupIdAndStartDateBetween(groupId, startDate, endDate)
                 .stream()
                 .map(groupEvent -> {
-            // groupEvent를 DTO로 변환
-            OneGroupAllEventResDTO groupDTO = groupEventConverter.groupEventToOneGroupAllEventResDTO(groupEvent);
+                    // groupEvent를 DTO로 변환
+                    GroupEventResDTO groupDTO = groupEventConverter.groupEventToGroupEventResDTO(groupEvent);
                     groupDTO.updateUserIds(groupSettingService.getGroupEventRelatedUsers(groupDTO.getGroupEventId()));
 
-            return groupDTO;
-        })
+                    return groupDTO;
+                })
                 .toList();
 
-        return new GetOneGroupEventResDTO(group, groupCategory, groupDTOs);
+        return new GetGroupEventResDTO(groupList, groupCategoryList, groupDTOs);
     }
 
     @Override
-    public GetOneGroupEventResDTO getGroupSomeOneEvents(UUID groupId, UUID someoneUserId, UUID userId, String year, String month) {
+    public GetGroupEventResDTO getGroupSomeOneEvents(UUID groupId, UUID someoneUserId, UUID userId, String year, String month) {
         if (!groupSettingService.isGroupMemberExisted(groupId, someoneUserId)) {
             throw new GroupNotFoundException("찾고자 하는 사용자는 해당 그룹에 속하지 않습니다.");
         }
@@ -76,32 +86,53 @@ public class GroupEventServiceImpl implements GroupEventService {
 
         GroupCategoryResDTO groupCategory = categoryService.getCategoryByGroupId(groupId);
         GroupListRes group = groupService.getGroupById(groupId);
-        List<OneGroupSomeoneEventResDTO> groupEventDTOs = groupEventRepository.findByGroupIdAndUserIdAndStartDateBetween(groupId, someoneUserId, startDate, endDate)
+
+        // groupCategory를 리스트로 생성 / 반환값 통일을 위함
+        List<GroupCategoryResDTO> groupCategoryList = new ArrayList<>();
+        groupCategoryList.add(groupCategory);
+
+        // group을 리스트로 생성 / 반환값 통일을 위함
+        List<GroupListRes> groupList = new ArrayList<>();
+        groupList.add(group);
+
+        List<GroupEventResDTO> groupEventDTOs = groupEventRepository.findByGroupIdAndUserIdAndStartDateBetween(groupId, someoneUserId, startDate, endDate)
                 .stream()
-                .map(groupEventConverter::groupEventToOneGroupSomeoneEventResDTO)
+                .map(groupEvent -> {
+                    // groupEvent를 DTO로 변환
+                    GroupEventResDTO groupDTO = groupEventConverter.groupEventToGroupEventResDTO(groupEvent);
+                    groupDTO.updateUserIds(groupSettingService.getGroupEventRelatedUsers(groupDTO.getGroupEventId()));
+
+                    return groupDTO;
+                })
                 .toList();
 
-        return new GetOneGroupEventResDTO(group, groupCategory, groupEventDTOs);
+        return new GetGroupEventResDTO(groupList, groupCategoryList, groupEventDTOs);
     }
 
     @Override
-    public GetAllGroupSomeoneEventResDTO getGroupMyEvents(UUID userId, String year, String month) {
+    public GetGroupEventResDTO getGroupMyEvents(UUID userId, String year, String month) {
         // 조회할 일정의 범위 설정
         LocalDate startDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
         List<GroupListRes> groupDTOs = groupService.getGroupByUserId(userId);
-        List<CategoryResDTO> categoryResDTOs = categoryService.getOnlyGroupCategoryByUserId(userId);
-        List<AllGroupSomeoneEventResDTO> groupEventDTOs = groupEventRepository.findByUserIdAndStartDateBetween(userId, startDate, endDate)
+        List<GroupCategoryResDTO> categoryResDTOs = categoryService.getOnlyGroupCategoryByUserId(userId);
+        List<GroupEventResDTO> groupEventDTOs = groupEventRepository.findByUserIdAndStartDateBetween(userId, startDate, endDate)
                 .stream()
-                .map(groupEventConverter::groupEventToAllGroupSomeoneEventResDTO)
+                .map(groupEvent -> {
+                    // groupEvent를 DTO로 변환
+                    GroupEventResDTO groupDTO = groupEventConverter.groupEventToGroupEventResDTO(groupEvent);
+                    groupDTO.updateUserIds(groupSettingService.getGroupEventRelatedUsers(groupDTO.getGroupEventId()));
+
+                    return groupDTO;
+                })
                 .toList();
 
-        return new GetAllGroupSomeoneEventResDTO(groupDTOs, categoryResDTOs, groupEventDTOs);
+        return new GetGroupEventResDTO(groupDTOs, categoryResDTOs, groupEventDTOs);
     }
 
     @Override
-    public OneGroupAllEventResDTO createGroupEvent(GroupEventCreateReqDTO groupEventCreateReqDTO, UUID groupId, UUID userId) {
+    public GroupEventResDTO createGroupEvent(GroupEventCreateReqDTO groupEventCreateReqDTO, UUID groupId, UUID userId) {
         // 사용자가 해당 그룹에 속하지 않는 에러 처리
         if (!groupSettingService.isGroupMemberExisted(groupId, userId)) {
             throw new GroupNotFoundException(userId + "사용자는 해당 그룹에 속하지 않습니다.");
@@ -120,14 +151,14 @@ public class GroupEventServiceImpl implements GroupEventService {
             groupEventMappingRepository.save(groupEventMapping);
         });
 
-        OneGroupAllEventResDTO groupEventDTO = groupEventConverter.groupEventToOneGroupAllEventResDTO(savedGroupEvent);
+        GroupEventResDTO groupEventDTO = groupEventConverter.groupEventToGroupEventResDTO(savedGroupEvent);
         groupEventDTO.updateUserIds(groupSettingService.getGroupEventRelatedUsers(savedGroupEvent.getGroupEventId()));
 
         return groupEventDTO;
     }
 
     @Override
-    public OneGroupAllEventResDTO updateGroupEvent(UUID groupId, UUID groupEventId, GroupEventUpdateReqDTO groupEventUpdateReqDTO, UUID userId) {
+    public GroupEventResDTO updateGroupEvent(UUID groupId, UUID groupEventId, GroupEventUpdateReqDTO groupEventUpdateReqDTO, UUID userId) {
         // 사용자가 해당 그룹에 속하지 않는 에러 처리
         if (!groupSettingService.isGroupMemberExisted(groupId, userId)) {
             throw new GroupNotFoundException(userId + "사용자는 해당 그룹에 속하지 않습니다.");
@@ -167,7 +198,7 @@ public class GroupEventServiceImpl implements GroupEventService {
             });
         }
 
-        OneGroupAllEventResDTO groupEventDTO = groupEventConverter.groupEventToOneGroupAllEventResDTO(updateGroupEvent);
+        GroupEventResDTO groupEventDTO = groupEventConverter.groupEventToGroupEventResDTO(updateGroupEvent);
         groupEventDTO.updateUserIds(groupSettingService.getGroupEventRelatedUsers(updateGroupEvent.getGroupEventId()));
 
         return groupEventDTO;

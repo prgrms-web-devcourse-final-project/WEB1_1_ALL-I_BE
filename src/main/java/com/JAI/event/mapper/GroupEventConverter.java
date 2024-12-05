@@ -3,15 +3,15 @@ package com.JAI.event.mapper;
 import com.JAI.event.DTO.request.GroupEventCreateReqDTO;
 import com.JAI.event.DTO.request.GroupEventUpdateReqDTO;
 import com.JAI.event.DTO.response.AllGroupSomeoneEventResDTO;
-import com.JAI.event.DTO.response.OneGroupAllEventResDTO;
+import com.JAI.event.DTO.response.GroupEventResDTO;
 import com.JAI.event.DTO.response.OneGroupSomeoneEventResDTO;
 import com.JAI.event.domain.GroupEvent;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GroupEventConverter {
-    public OneGroupAllEventResDTO groupEventToOneGroupAllEventResDTO(GroupEvent groupEvent) {
-        return OneGroupAllEventResDTO.builder()
+    public GroupEventResDTO groupEventToGroupEventResDTO(GroupEvent groupEvent) {
+        return GroupEventResDTO.builder()
                 .groupEventId(groupEvent.getGroupEventId())
                 .title(groupEvent.getTitle())
                 .startDate(groupEvent.getStartDate())
@@ -20,6 +20,8 @@ public class GroupEventConverter {
                 .endTime(groupEvent.getEndTime())
                 .isAlarmed(groupEvent.getIsAlarmed())
                 .createdAt(groupEvent.getCreatedAt())
+                .groupId(groupEvent.getGroupEventId())
+                .categoryId(groupEvent.getGroup().getCategory().getCategoryId())
                 .build();
     }
 
@@ -47,6 +49,7 @@ public class GroupEventConverter {
                 .isAlarmed(groupEvent.getIsAlarmed())
                 .createdAt(groupEvent.getCreatedAt())
                 .groupId(groupEvent.getGroup().getGroupId())
+                .categoryId(groupEvent.getGroup().getCategory().getCategoryId())
                 .build();
     }
 

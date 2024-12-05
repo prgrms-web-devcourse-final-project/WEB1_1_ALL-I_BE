@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Getter
-public class OneGroupAllEventResDTO {
+public class GroupEventResDTO {
     UUID groupEventId;
 
     String title;
@@ -30,9 +30,13 @@ public class OneGroupAllEventResDTO {
 
     LocalDateTime createdAt;
 
-    List<UUID> userIds;
+    UUID groupId;
 
-    public void updateUserIds(List<UUID> userIds) {
-        this.userIds = userIds;
+    UUID categoryId;
+
+    List<UUID> assignedUserIds;
+
+    public void updateUserIds(List<UUID> assignedUserIds) {
+        this.assignedUserIds = assignedUserIds;
     }
 }

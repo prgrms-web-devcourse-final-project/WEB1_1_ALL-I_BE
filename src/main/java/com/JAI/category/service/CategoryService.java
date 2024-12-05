@@ -27,5 +27,5 @@ public interface CategoryService {
 
     public GroupCategoryResDTO getCategoryByGroupId(UUID groupId);
 
-    public List<CategoryResDTO> getOnlyGroupCategoryByUserId(UUID userId);
+    public List<GroupCategoryResDTO> getOnlyGroupCategoryByUserId(UUID userId);
 }

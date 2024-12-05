@@ -138,13 +138,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryResDTO> getOnlyGroupCategoryByUserId(UUID userId) {
+    public List<GroupCategoryResDTO> getOnlyGroupCategoryByUserId(UUID userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("해당 ID의 유저를 찾을 수 없습니다."));
 
         return categoryRepository.findGroupCategoriesByUserId(userId)
                 .stream()
-                .map(categoryConverter::categoryToCategoryResDTO)
+                .map(categoryConverter::categoryToGroupCategoryResDTO)
                 .toList();
     }
 }
