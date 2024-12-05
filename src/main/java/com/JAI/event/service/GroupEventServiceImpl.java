@@ -178,6 +178,11 @@ public class GroupEventServiceImpl implements GroupEventService {
 
     @Override
     public void deleteGroupEvent(UUID groupId, UUID groupEventId, UUID userId) {
+        // 사용자가 해당 그룹에 속하지 않는 에러 처리
+        if (!groupSettingService.isGroupMemberExisted(groupId, userId)) {
+            throw new GroupNotFoundException(userId + "사용자는 해당 그룹에 속하지 않습니다.");
+        }
 
+        groupEventRepository.deleteById(groupEventId);
     }
 }
