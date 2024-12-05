@@ -11,8 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Data
-public class MyGroupTodosRes {
+public class GroupTodoInfoRes {
     List<GroupListRes> groups;
     List<CategoryResDTO> groupCategories;
-    List<GroupTodoByUserRes> groupTodos;
+    List<GroupTodoRes> groupTodos;
 }

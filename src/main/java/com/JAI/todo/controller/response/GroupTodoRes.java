@@ -29,10 +29,22 @@ public class GroupTodoRes {
 
     LocalDateTime createdAt;
 
-    List<UUID> userIdList;
+    UUID groupId;
 
-    public void updateUserIds(List<UUID> userIdList) {
+    UUID categoryId;
+
+    List<GroupMemberStateRes> userIdList;
+
+    public void updateCategoryId(UUID categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public void updateUserIdList(List<GroupMemberStateRes> userIdList) {
         this.userIdList = userIdList;
+    }
+
+    public void toGroupMappingDone(boolean done) {
+        this.done = done;
     }
 
 }

@@ -75,4 +75,11 @@ public class GroupTodo {
                 .build();
     }
 
+    //투두 상태 변경
+    public void updateGroupTodoState(boolean done){
+        if(this.done != done){
+            this.done = done;
+        }
+    }
+
 }

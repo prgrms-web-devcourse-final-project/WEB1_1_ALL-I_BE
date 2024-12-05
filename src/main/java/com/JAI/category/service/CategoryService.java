@@ -26,7 +26,9 @@ public interface CategoryService {
 
     public void updateGroupCategoryColor(UUID groupId, String name, String color);
 
-    public GroupCategoryResDTO getCategoryByGroupId(UUID groupId);
+    //public GroupCategoryResDTO getCategoryByGroupId(UUID groupId);
+
+    public CategoryResDTO getCategoryByGroupId(UUID groupId);
 
     public List<CategoryResDTO> getOnlyGroupCategoryByUserId(UUID userId);
 }

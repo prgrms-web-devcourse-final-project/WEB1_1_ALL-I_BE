@@ -92,7 +92,7 @@ public class GroupSettingServiceImpl implements GroupSettingService {
 
         UUID groupId = deleteMember.getGroup().getGroupId();
         //리더 정보
-        GroupSetting leader = findGroupSettingByGroupIdAndUserId(groupId, user.getUser().getUserId());
+        GroupSetting leader = findByGroupIdAndUserId(groupId, user.getUser().getUserId());
 
         //리더만 가능
         if(leader.getRole() != GroupRole.LEADER){
@@ -108,9 +108,16 @@ public class GroupSettingServiceImpl implements GroupSettingService {
                 .orElseThrow(() -> new GroupSettingNotFoundException("해당 그룹에 존재하지 않는 멤버입니다."));
     }
 
-    public GroupSetting findGroupSettingByGroupIdAndUserId(UUID groupId, UUID userId){
+    public GroupSetting findByGroupIdAndUserId(UUID groupId, UUID userId){
         return groupSettingRepository.findByGroup_GroupIdAndUser_UserId(groupId, userId)
                 .orElseThrow(() -> new GroupSettingNotFoundException("해당 그룹에 존재하지 않는 멤버입니다."));
+    }
+
+    @Override
+    public UUID findIdByGroupIdAndUserId(UUID groupId, UUID userId){
+        GroupSetting groupSetting =  groupSettingRepository.findByGroup_GroupIdAndUser_UserId(groupId, userId)
+                                        .orElseThrow(() -> new GroupSettingNotFoundException("해당 그룹에 존재하지 않는 멤버입니다."));
+        return groupSetting.getGroupSettingId();
     }
 
     @Override
