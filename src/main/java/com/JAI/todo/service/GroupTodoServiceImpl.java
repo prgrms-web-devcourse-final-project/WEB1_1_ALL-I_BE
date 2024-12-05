@@ -17,6 +17,7 @@ import com.JAI.todo.converter.GroupTodoConverter;
 import com.JAI.todo.converter.GroupTodoMappingConverter;
 import com.JAI.todo.domain.GroupTodo;
 import com.JAI.todo.domain.GroupTodoMapping;
+import com.JAI.todo.exception.GroupTodoNotFoundException;
 import com.JAI.todo.repository.GroupTodoMappingRepository;
 import com.JAI.todo.repository.GroupTodoRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,15 +41,16 @@ public class GroupTodoServiceImpl implements GroupTodoService{
     private final GroupService groupService;
     private final GroupSettingService groupSettingService;
     private final CategoryService categoryService;
-    private final GroupTodoMappingRepository groupTodoMappingRepository;
 
     @Override
     @Transactional
-    public GroupTodoCreateRes createGroupTodo(GroupTodoCreateReq req, UUID groupId) {
-        // TODO :: 현재 로그인 된 유저를 검증해야할까..
+    public GroupTodoCreateRes createGroupTodo(GroupTodoCreateReq req, UUID groupId, UUID userId) {
+        //그룹 멤버인지 검증
+        validateGroupMember(groupId, userId);
+
         //그룹 아이디로 그룹
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("해당 Id웅앵ㅇ우"));
+                .orElseThrow(() -> new GroupNotFoundException("해당 ID의 그룹을 찾을 수 없습니다."));
 
         GroupTodo groupTodo = groupTodoConverter.toGroupTodoEntity(req, group);
         //투두 생성
@@ -58,20 +60,15 @@ public class GroupTodoServiceImpl implements GroupTodoService{
         List<UUID> groupTodoMappingIds =
             groupTodoMappingService.createGroupTodoMapping(groupTodo.getGroupTodoId(), req.getUserIdList());
 
-        return GroupTodoCreateRes.builder()
-                .groupTodoId(groupTodo.getGroupTodoId())
-                .groupTodoMappingId(groupTodoMappingIds)
-                .build();
+        return groupTodoConverter.toGroupTodoCreateDTO(groupTodo.getGroupTodoId(), groupTodoMappingIds);
     }
 
     @Override
     @Transactional(readOnly = true)
     public GroupTodoInfoRes getGroupTodos(UUID groupId, UUID userId, String year, String month) {
 
-        //그룹 유효한 지
-        if(!groupSettingService.isGroupMemberExisted(groupId, userId)) {
-            throw new GroupNotFoundException("사용자는 해당 그룹에 속하지 않습니다");
-        }
+        //그룹 멤버인지 검증
+        validateGroupMember(groupId, userId);
 
         // 조회할 일정의 범위 설정
         LocalDate startDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
@@ -96,16 +93,13 @@ public class GroupTodoServiceImpl implements GroupTodoService{
                         })
                         .toList();
 
-        return GroupTodoInfoRes.builder()
-                .groups(groupDTOs)
-                .groupCategories(categoryResDTOs)
-                .groupTodos(groupTodoResList)
-                .build();
+        return groupTodoConverter.toGroupTodoInfoDTO(groupDTOs, categoryResDTOs, groupTodoResList);
     }
 
     @Override
     @Transactional(readOnly = true)
     public GroupTodoInfoRes getMyGroupTodos(UUID userId, String year, String month) {
+
 
         // 조회할 일정의 범위 설정
         LocalDate startDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
@@ -129,16 +123,15 @@ public class GroupTodoServiceImpl implements GroupTodoService{
                 })
                 .toList();
 
-        return GroupTodoInfoRes.builder()
-                .groups(groupDTOs)
-                .groupCategories(categoryResDTOs)
-                .groupTodos(groupTodos)
-                .build();
+        return groupTodoConverter.toGroupTodoInfoDTO(groupDTOs, categoryResDTOs, groupTodos);
     }
 
     @Override
     @Transactional(readOnly = true)
     public GroupTodoInfoRes getGroupMemberGroupTodos(UUID groupId, UUID groupMemberId, UUID userId, String year, String month) {
+
+        //그룹 멤버인지 검증
+        validateGroupMember(groupId, userId);
 
         // 조회할 일정의 범위 설정
         LocalDate startDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
@@ -161,39 +154,34 @@ public class GroupTodoServiceImpl implements GroupTodoService{
                 })
                 .toList();
 
-        return GroupTodoInfoRes.builder()
-                .groups(groupDTOs)
-                .groupCategories(categoryResDTOs)
-                .groupTodos(groupTodos)
-                .build();
+        return groupTodoConverter.toGroupTodoInfoDTO(groupDTOs, categoryResDTOs, groupTodos);
     }
 
     @Override
     @Transactional
-    public void updateGroupTodoState(UUID groupTodoId) {
+    public GroupTodoRes updateGroupTodoState(UUID groupTodoId) {
         //그룹 투두 아이디로 현재 그룹 투두 조회
         GroupTodo groupTodo = groupTodoRepository.findById(groupTodoId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 ID 입니다."));
+                .orElseThrow(() -> new GroupTodoNotFoundException("해당 ID의 그룹 투두가 존재하지 않습니다."));
 
         //모든 할당자가 완료했는지 체크
         groupTodo.updateGroupTodoState(groupTodoMappingService.checkGroupTodoState(groupTodoId));
 
         //현재 사항 DB에 저장
         groupTodoRepository.save(groupTodo);
+
+        return groupTodoConverter.toGroupTodoResDTO(groupTodo);
     }
 
     @Override
     @Transactional
     public GroupTodoUpdateRes updateGroupTodoInfo(GroupTodoUpdateReq req, UUID groupTodoId, UUID groupId, UUID userId) {
-        //GroupTodo info 변경
-        //그룹 유효한 지
-        if(!groupSettingService.isGroupMemberExisted(groupId, userId)) {
-            throw new GroupNotFoundException("사용자는 해당 그룹에 속하지 않습니다");
-        }
+        //그룹 멤버인지 검증
+        validateGroupMember(groupId, userId);
 
         //기존 값 가져오기
         GroupTodo groupTodoEntity = groupTodoRepository.findById(groupTodoId)
-                .orElseThrow(() -> new RuntimeException("해당 ID의 그룹 투두를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GroupTodoNotFoundException("해당 ID의 그룹 투두를 찾을 수 없습니다."));
 
         groupTodoEntity.updateGroupTodoInfo(req.getTitle(), req.getDate(), req.getStartTime());
 
@@ -210,14 +198,19 @@ public class GroupTodoServiceImpl implements GroupTodoService{
     @Transactional
     public void deleteGroupTodo(UUID groupTodoId, UUID groupId, UUID userId) {
 
-        if(!groupSettingService.isGroupMemberExisted(groupId, userId)) {
-            throw new GroupNotFoundException("사용자는 해당 그룹에 속하지 않습니다");
-        }
+        //그룹 멤버인지 검증
+        validateGroupMember(groupId, userId);
 
         GroupTodo deleteTodo = groupTodoRepository.findById(groupTodoId)
-                .orElseThrow(() -> new RuntimeException("읎어"));
+                .orElseThrow(() -> new GroupTodoNotFoundException("해당 ID의 그룹 투두를 찾을 수 없습니다."));
 
         groupTodoRepository.delete(deleteTodo);
+    }
+
+    public void validateGroupMember(UUID groupId, UUID userId) {
+        if(!groupSettingService.isGroupMemberExisted(groupId, userId)) {
+            throw new GroupNotFoundException("해당 그룹의 멤버가 아닙니다.");
+        }
     }
 
 }

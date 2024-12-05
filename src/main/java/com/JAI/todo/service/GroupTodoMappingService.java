@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface GroupTodoMappingService {
     List<UUID> createGroupTodoMapping(UUID groupTodoId, List<UUID> userIdList);
 
-    void updateGroupTodoMappingState(GroupTodoStateReq req, UUID groupId, UUID groupTodoId, UUID userId);
+    GroupMemberStateRes updateGroupTodoMappingState(GroupTodoStateReq req, UUID groupId, UUID groupTodoId, UUID userId);
 
     List<UUID> updateGroupTodoMappingUser(List<GroupMemberStateRes> userIdList, UUID groupTodoId, UUID groupId);
 

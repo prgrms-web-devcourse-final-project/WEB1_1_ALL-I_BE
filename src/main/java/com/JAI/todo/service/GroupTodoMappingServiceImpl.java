@@ -10,6 +10,8 @@ import com.JAI.todo.controller.response.GroupMemberStateRes;
 import com.JAI.todo.converter.GroupTodoMappingConverter;
 import com.JAI.todo.domain.GroupTodo;
 import com.JAI.todo.domain.GroupTodoMapping;
+import com.JAI.todo.exception.GroupTodoMappingNotOwnerException;
+import com.JAI.todo.exception.GroupTodoNotFoundException;
 import com.JAI.todo.repository.GroupTodoMappingRepository;
 import com.JAI.todo.repository.GroupTodoRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +32,10 @@ public class GroupTodoMappingServiceImpl implements GroupTodoMappingService{
     private final GroupSettingService groupSettingService;
 
     @Override
+    @Transactional
     public List<UUID> createGroupTodoMapping(UUID groupTodoId, List<UUID> userIdList) {
         GroupTodo groupTodo = groupTodoRepository.findById(groupTodoId)
-                .orElseThrow(() -> new RuntimeException("이걸 왜 다시 찾아야하느지.."));
+                .orElseThrow(() -> new GroupTodoNotFoundException("해당 ID의 그룹 투두가 존재하지 않습니다."));
 
         UUID groupId = groupTodo.getGroup().getGroupId();
 
@@ -57,7 +60,8 @@ public class GroupTodoMappingServiceImpl implements GroupTodoMappingService{
     }
 
     @Override
-    public void updateGroupTodoMappingState(GroupTodoStateReq req, UUID groupId, UUID groupTodoId, UUID userId) {
+    @Transactional
+    public GroupMemberStateRes updateGroupTodoMappingState(GroupTodoStateReq req, UUID groupId, UUID groupTodoId, UUID userId) {
         // 현재 유저가 해당 그룹 멤버인지
         //이거 두개로 그룹 셋팅 아이디 받아와 --> 해당 그룹에 속해있다 검증 완
         UUID groupSettingId =  groupSettingService.findIdByGroupIdAndUserId(groupId, userId);
@@ -65,18 +69,24 @@ public class GroupTodoMappingServiceImpl implements GroupTodoMappingService{
         // 그룹 셋팅 아이디랑 그룹 투두 아이디만 있으면 찾을 수 있음 -> 해당 투두에 할당 되어있다 검증 완
         GroupTodoMapping groupTodoMapping =
                 groupTodoMappingRepository.findByGroupSetting_GroupSettingIdAndGroupTodo_GroupTodoId(groupSettingId, groupTodoId)
-                    .orElseThrow(()-> new RuntimeException("할당되지 않은 사용자 입니다."));
+                    .orElseThrow(()-> new GroupTodoMappingNotOwnerException("그룹 투두가 할당되지 않은 사용자 입니다."));
 
         //상태 변경
         groupTodoMapping.updateGroupTodoMappingState(req.isState());
 
         groupTodoMappingRepository.save(groupTodoMapping);
+
+        return groupTodoMappingConverter.toGroupMemberStateDTO(
+                groupTodoMapping.getGroupSetting().getUser().getUserId()
+                , groupTodoMapping.isDone()
+        );
     }
 
     @Override
+    @Transactional
     public List<UUID> updateGroupTodoMappingUser(List<GroupMemberStateRes> userIdList, UUID groupTodoId, UUID groupId) {
         GroupTodo groupTodo = groupTodoRepository.findById(groupTodoId)
-                .orElseThrow(() -> new RuntimeException("해당 투두 없어"));
+                .orElseThrow(() -> new GroupTodoNotFoundException("해당 ID의 그룹 투두가 존재하지 않습니다."));
 
         //해당 투두 아이디에 맵핑된 값들 찾아오기
         List<GroupTodoMapping> mappingList = groupTodoMappingRepository.findByGroupTodoId(groupTodoId);
@@ -101,7 +111,7 @@ public class GroupTodoMappingServiceImpl implements GroupTodoMappingService{
         //레포지토리에 저장
         toAdd.forEach(groupSettingId -> {
             GroupSetting groupSetting = groupSettingRepository.findById(groupSettingId)
-                    .orElseThrow(() -> new GroupNotFoundException("존재하지 않는 ID 입니다."));
+                    .orElseThrow(() -> new GroupSettingNotFoundException("존재하지 않는 ID 입니다."));
             groupTodoMappingRepository.save(groupTodoMappingConverter.toGroupTodoMappingEntity(groupTodo, groupSetting));
         });
 
@@ -130,6 +140,7 @@ public class GroupTodoMappingServiceImpl implements GroupTodoMappingService{
     }
 
     @Override
+    @Transactional
     public boolean checkGroupTodoState(UUID groupTodoId) {
         //할당자 수 카운트
         int totalTodoCnt = groupTodoMappingRepository.countByGroupTodoId(groupTodoId);

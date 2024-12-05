@@ -5,6 +5,7 @@ import com.JAI.todo.controller.request.GroupTodoCreateReq;
 import com.JAI.todo.controller.request.GroupTodoStateReq;
 import com.JAI.todo.controller.request.GroupTodoUpdateReq;
 import com.JAI.todo.controller.response.*;
+import com.JAI.todo.converter.GroupTodoConverter;
 import com.JAI.todo.service.GroupTodoMappingService;
 import com.JAI.todo.service.GroupTodoService;
 import com.JAI.user.service.dto.CustomUserDetails;
@@ -22,10 +23,11 @@ public class GroupTodoController {
 
     private final GroupTodoService groupTodoService;
     private final GroupTodoMappingService groupTodoMappingService;
+    private final GroupTodoConverter groupTodoConverter;
 
     @PostMapping("/{groupId}/todo")
-    public ApiResponse<GroupTodoCreateRes> createGroupTodo(@RequestBody @Valid GroupTodoCreateReq req, @PathVariable UUID groupId){
-        return ApiResponse.onCreateSuccess(groupTodoService.createGroupTodo(req, groupId));
+    public ApiResponse<GroupTodoCreateRes> createGroupTodo(@RequestBody @Valid GroupTodoCreateReq req, @PathVariable UUID groupId, @AuthenticationPrincipal CustomUserDetails user){
+        return ApiResponse.onCreateSuccess(groupTodoService.createGroupTodo(req, groupId, user.getUserId()));
     }
 
     @GetMapping("/{groupId}")
@@ -44,13 +46,14 @@ public class GroupTodoController {
     }
 
     @PatchMapping("/{groupId}/todos/{groupTodoId}/state")
-    public ApiResponse<?> updateGroupTodoState(@RequestBody GroupTodoStateReq req, @PathVariable UUID groupId, @PathVariable UUID groupTodoId, @AuthenticationPrincipal CustomUserDetails user){
+    public ApiResponse<GroupTodoStateRes> updateGroupTodoState(@RequestBody GroupTodoStateReq req, @PathVariable UUID groupId, @PathVariable UUID groupTodoId, @AuthenticationPrincipal CustomUserDetails user){
         //그룹 투두 맵핑에서 각 done 값 변경
-        groupTodoMappingService.updateGroupTodoMappingState(req, groupId, groupTodoId, user.getUserId());
+        GroupMemberStateRes groupMemberStateRes =
+                groupTodoMappingService.updateGroupTodoMappingState(req, groupId, groupTodoId, user.getUserId());
         //그룹 투두에서 그룹 투두 아이디로 현재 done 상태 체크
-        groupTodoService.updateGroupTodoState(groupTodoId);
-        // TODO :: 리턴 값 뭐 보내지? 그룹 투두 id랑 boolean 값?
-        return ApiResponse.onSuccess();
+        GroupTodoRes groupTodoRes = groupTodoService.updateGroupTodoState(groupTodoId);
+
+        return ApiResponse.onSuccess(GroupTodoStateRes.builder().groupTodoRes(groupTodoRes).groupMemberStateRes(groupMemberStateRes).build());
     }
 
     @PatchMapping("/{groupId}/todos/{groupTodoId}/info")
