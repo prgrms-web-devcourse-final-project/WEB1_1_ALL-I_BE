@@ -62,7 +62,6 @@ public class GroupEventServiceImpl implements GroupEventService {
 
     @Override
     public GetOneGroupEventResDTO getGroupSomeOneEvents(UUID groupId, UUID someoneUserId, UUID userId, String year, String month) {
-        System.out.println("groupId : " + groupId + " someoneUserId : " + someoneUserId + " userId : " + userId);
         if (!groupSettingService.isGroupMemberExisted(groupId, someoneUserId)) {
             throw new GroupNotFoundException("찾고자 하는 사용자는 해당 그룹에 속하지 않습니다.");
         }
@@ -149,12 +148,10 @@ public class GroupEventServiceImpl implements GroupEventService {
             List<UUID> needToBeDeleteMember = existedAssignedMemberList.stream()
                     .filter(uuid -> !groupEventUpdateReqDTO.getAssignedMemberList().contains(uuid))
                     .toList();
-            System.out.println("need to be delete : " + needToBeDeleteMember);
 
             List<UUID> needToBeAddMember = groupEventUpdateReqDTO.getAssignedMemberList().stream()
                     .filter(uuid -> !existedAssignedMemberList.contains(uuid))
                     .toList();
-            System.out.println("need to be add : " + needToBeAddMember);
 
             needToBeDeleteMember.forEach(uuid -> {
                 groupEventMappingRepository.deleteByGroupSettingId(groupSettingService.findGroupSettingByGroupIdAndUserId(groupId, uuid).getGroupSettingId());
