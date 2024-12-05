@@ -12,7 +12,10 @@ public interface GroupTodoMappingService {
 
     void updateGroupTodoMappingState(GroupTodoStateReq req, UUID groupId, UUID groupTodoId, UUID userId);
 
+    List<UUID> updateGroupTodoMappingUser(List<GroupMemberStateRes> userIdList, UUID groupTodoId, UUID groupId);
+
     List<GroupMemberStateRes> getMemberStateByGroupTodoId(UUID groupTodoId);
 
     boolean checkGroupTodoState(UUID groupTodoId);
+
 }

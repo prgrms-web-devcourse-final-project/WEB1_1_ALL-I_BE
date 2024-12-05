@@ -82,4 +82,10 @@ public class GroupTodo {
         }
     }
 
+    public void updateGroupTodoInfo(String title, LocalDate date, LocalTime startTime){
+        this.title = title;
+        this.date = date;
+        this.startTime = startTime;
+    }
+
 }

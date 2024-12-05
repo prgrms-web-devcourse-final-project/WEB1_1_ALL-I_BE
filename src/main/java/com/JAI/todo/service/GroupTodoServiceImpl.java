@@ -11,6 +11,7 @@ import com.JAI.group.service.GroupService;
 import com.JAI.group.service.GroupSettingService;
 import com.JAI.todo.controller.request.GroupTodoCreateReq;
 import com.JAI.todo.controller.request.GroupTodoStateReq;
+import com.JAI.todo.controller.request.GroupTodoUpdateReq;
 import com.JAI.todo.controller.response.*;
 import com.JAI.todo.converter.GroupTodoConverter;
 import com.JAI.todo.converter.GroupTodoMappingConverter;
@@ -179,7 +180,44 @@ public class GroupTodoServiceImpl implements GroupTodoService{
 
         //현재 사항 DB에 저장
         groupTodoRepository.save(groupTodo);
+    }
 
+    @Override
+    @Transactional
+    public GroupTodoUpdateRes updateGroupTodoInfo(GroupTodoUpdateReq req, UUID groupTodoId, UUID groupId, UUID userId) {
+        //GroupTodo info 변경
+        //그룹 유효한 지
+        if(!groupSettingService.isGroupMemberExisted(groupId, userId)) {
+            throw new GroupNotFoundException("사용자는 해당 그룹에 속하지 않습니다");
+        }
+
+        //기존 값 가져오기
+        GroupTodo groupTodoEntity = groupTodoRepository.findById(groupTodoId)
+                .orElseThrow(() -> new RuntimeException("해당 ID의 그룹 투두를 찾을 수 없습니다."));
+
+        groupTodoEntity.updateGroupTodoInfo(req.getTitle(), req.getDate(), req.getStartTime());
+
+        //변경된 값 저장
+        groupTodoRepository.save(groupTodoEntity);
+
+        //할당자 변경
+        List<UUID> userIdList = groupTodoMappingService.updateGroupTodoMappingUser(req.getUserIdList(), groupTodoId, groupId);
+
+        return groupTodoConverter.toGroupTodoUpdateDTO(groupTodoEntity, userIdList);
+    }
+
+    @Override
+    @Transactional
+    public void deleteGroupTodo(UUID groupTodoId, UUID groupId, UUID userId) {
+
+        if(!groupSettingService.isGroupMemberExisted(groupId, userId)) {
+            throw new GroupNotFoundException("사용자는 해당 그룹에 속하지 않습니다");
+        }
+
+        GroupTodo deleteTodo = groupTodoRepository.findById(groupTodoId)
+                .orElseThrow(() -> new RuntimeException("읎어"));
+
+        groupTodoRepository.delete(deleteTodo);
     }
 
 }

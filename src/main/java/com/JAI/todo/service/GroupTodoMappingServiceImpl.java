@@ -16,9 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -73,6 +71,48 @@ public class GroupTodoMappingServiceImpl implements GroupTodoMappingService{
         groupTodoMapping.updateGroupTodoMappingState(req.isState());
 
         groupTodoMappingRepository.save(groupTodoMapping);
+    }
+
+    @Override
+    public List<UUID> updateGroupTodoMappingUser(List<GroupMemberStateRes> userIdList, UUID groupTodoId, UUID groupId) {
+        GroupTodo groupTodo = groupTodoRepository.findById(groupTodoId)
+                .orElseThrow(() -> new RuntimeException("해당 투두 없어"));
+
+        //해당 투두 아이디에 맵핑된 값들 찾아오기
+        List<GroupTodoMapping> mappingList = groupTodoMappingRepository.findByGroupTodoId(groupTodoId);
+        Set<UUID> currentSettingIds = mappingList.stream()
+                .map(mapping -> mapping.getGroupSetting().getGroupSettingId())
+                .collect(Collectors.toSet());
+
+        //req에서 userId로 groupSetting 찾아옴
+        Set<UUID> newSettingIds = userIdList.stream()
+                .map(user -> groupSettingService.findIdByGroupIdAndUserId(groupId, user.getUserId()))
+                .collect(Collectors.toSet());
+
+        //추가 할 ID들
+        Set<UUID> toAdd = new HashSet<>(newSettingIds);
+        toAdd.removeAll(currentSettingIds);
+
+        //제거할 ID들
+        Set<UUID> toRemove = new HashSet<>(currentSettingIds);
+        toRemove.removeAll(newSettingIds);
+
+
+        //레포지토리에 저장
+        toAdd.forEach(groupSettingId -> {
+            GroupSetting groupSetting = groupSettingRepository.findById(groupSettingId)
+                    .orElseThrow(() -> new GroupNotFoundException("존재하지 않는 ID 입니다."));
+            groupTodoMappingRepository.save(groupTodoMappingConverter.toGroupTodoMappingEntity(groupTodo, groupSetting));
+        });
+
+        toRemove.forEach(groupSettingId -> {
+            groupTodoMappingRepository.deleteByGroupTodoIdAndGroupSettingId(groupTodoId, groupSettingId);
+        });
+
+        List<UUID> updatedUserIds = groupTodoMappingRepository.findByGroupTodoId(groupTodoId).stream()
+                .map(mapping -> mapping.getGroupSetting().getUser().getUserId())
+                .collect(Collectors.toList());
+        return updatedUserIds;
     }
 
 

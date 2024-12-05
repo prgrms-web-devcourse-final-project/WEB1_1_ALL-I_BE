@@ -3,6 +3,7 @@ package com.JAI.todo.controller;
 import com.JAI.global.controller.ApiResponse;
 import com.JAI.todo.controller.request.GroupTodoCreateReq;
 import com.JAI.todo.controller.request.GroupTodoStateReq;
+import com.JAI.todo.controller.request.GroupTodoUpdateReq;
 import com.JAI.todo.controller.response.*;
 import com.JAI.todo.service.GroupTodoMappingService;
 import com.JAI.todo.service.GroupTodoService;
@@ -42,13 +43,24 @@ public class GroupTodoController {
         return ApiResponse.onSuccess(groupTodoService.getGroupMemberGroupTodos(groupId, groupMemberId, user.getUserId(), year, month));
     }
 
-    @PatchMapping("/{groupId}/todos/{groupTodoId}")
+    @PatchMapping("/{groupId}/todos/{groupTodoId}/state")
     public ApiResponse<?> updateGroupTodoState(@RequestBody GroupTodoStateReq req, @PathVariable UUID groupId, @PathVariable UUID groupTodoId, @AuthenticationPrincipal CustomUserDetails user){
         //그룹 투두 맵핑에서 각 done 값 변경
         groupTodoMappingService.updateGroupTodoMappingState(req, groupId, groupTodoId, user.getUserId());
         //그룹 투두에서 그룹 투두 아이디로 현재 done 상태 체크
         groupTodoService.updateGroupTodoState(groupTodoId);
-        // TODO :: 리턴 값 뭐 보내지?
+        // TODO :: 리턴 값 뭐 보내지? 그룹 투두 id랑 boolean 값?
         return ApiResponse.onSuccess();
+    }
+
+    @PatchMapping("/{groupId}/todos/{groupTodoId}/info")
+    public ApiResponse<GroupTodoUpdateRes> updateGroupTodoInfo(@RequestBody GroupTodoUpdateReq req, @PathVariable UUID groupId, @PathVariable UUID groupTodoId, @AuthenticationPrincipal CustomUserDetails user){
+        return ApiResponse.onSuccess(groupTodoService.updateGroupTodoInfo(req, groupTodoId, groupId, user.getUserId()));
+    }
+
+    @DeleteMapping("/{groupId}/todos/{groupTodoId}")
+    public ApiResponse<String> deleteGroupTodo(@PathVariable UUID groupTodoId,@PathVariable UUID groupId, @AuthenticationPrincipal CustomUserDetails user){
+        groupTodoService.deleteGroupTodo(groupTodoId, groupId, user.getUserId());
+        return ApiResponse.onDeleteSuccess("그룹 투두가 성공적으로 삭제되었습니다.");
     }
 }
