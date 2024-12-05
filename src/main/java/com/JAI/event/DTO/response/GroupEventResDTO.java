@@ -1,12 +1,11 @@
-package com.JAI.event.DTO;
+package com.JAI.event.DTO.response;
 
-import com.JAI.category.domain.Category;
-import com.JAI.user.domain.User;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -14,8 +13,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Getter
-public class PersonalEventDTO {
-    UUID personalEventId;
+public class GroupEventResDTO {
+    UUID groupEventId;
 
     String title;
 
@@ -31,7 +30,15 @@ public class PersonalEventDTO {
 
     LocalDateTime createdAt;
 
-    Category category;
+    UUID groupId;
 
-    User user;
+    UUID categoryId;
+
+    List<UUID> assignedUserIds;
+
+    public void updateUserIds(List<UUID> assignedUserIds) {
+        if (this.assignedUserIds == null) {
+            this.assignedUserIds = assignedUserIds;
+        }
+    }
 }

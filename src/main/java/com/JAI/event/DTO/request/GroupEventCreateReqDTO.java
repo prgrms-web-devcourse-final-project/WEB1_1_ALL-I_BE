@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -12,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Getter
-public class PersonalEventCreateReqDTO {
+public class GroupEventCreateReqDTO {
     @NotNull(message = "title must not be null")
     String title;
 
@@ -29,6 +30,9 @@ public class PersonalEventCreateReqDTO {
     @NotNull(message = "is alarmed must not be null")
     Boolean isAlarmed;
 
-    @NotNull(message = "Category Id must not be null")
-    UUID categoryId;
+    @NotNull(message = "group Id must not be null")
+    UUID groupId;
+
+    @NotNull(message = "assigned member list must not be null")
+    List<UUID> assignedMemberList;
 }

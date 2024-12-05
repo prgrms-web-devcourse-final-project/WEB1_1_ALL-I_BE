@@ -15,7 +15,6 @@ import com.JAI.user.exception.UserNotFoundException;
 import com.JAI.user.repository.UserRepository;
 import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -108,6 +107,7 @@ public class GroupSettingServiceImpl implements GroupSettingService {
                 .orElseThrow(() -> new GroupSettingNotFoundException("해당 그룹에 존재하지 않는 멤버입니다."));
     }
 
+    @Override
     public GroupSetting findGroupSettingByGroupIdAndUserId(UUID groupId, UUID userId){
         return groupSettingRepository.findByGroup_GroupIdAndUser_UserId(groupId, userId)
                 .orElseThrow(() -> new GroupSettingNotFoundException("해당 그룹에 존재하지 않는 멤버입니다."));
@@ -135,5 +135,15 @@ public class GroupSettingServiceImpl implements GroupSettingService {
         if(groupSettingRepository.existsByGroup_GroupIdAndUser_UserId(groupId, userId)){
             throw new GroupSettingDuplicatedException("이미 존재하는 멤버입니다.");
         }
+    }
+
+    @Override
+    public boolean isGroupMemberExisted(UUID groupId, UUID userId) {
+        return groupSettingRepository.existsByGroup_GroupIdAndUser_UserId(groupId, userId);
+    }
+
+    @Override
+    public List<UUID> getGroupEventRelatedUsers(UUID groupEventId) {
+        return groupSettingRepository.findUserIdByGroupEventGroupId(groupEventId);
     }
 }

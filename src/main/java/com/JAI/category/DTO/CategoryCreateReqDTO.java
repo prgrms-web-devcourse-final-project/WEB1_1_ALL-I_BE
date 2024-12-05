@@ -9,7 +9,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Data
+@Getter
 public class CategoryCreateReqDTO {
     @NotNull(message = "name must not be null")
     private String name;

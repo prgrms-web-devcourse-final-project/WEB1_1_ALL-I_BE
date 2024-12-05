@@ -15,7 +15,10 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
     List<Category> findByUser_UserId(UUID userId);
 
-    @Query("SELECT c FROM Category c WHERE c.group.groupId IN " +
-            "(SELECT gs.group.groupId FROM GroupSetting gs WHERE gs.user.userId = :userId)")
+    @Query("SELECT c " +
+            "FROM Category c " +
+            "JOIN Group g ON g.groupId = c.group.groupId " +
+            "JOIN GroupSetting gs ON gs.group.groupId = g.groupId " +
+            "WHERE gs.user.userId = :userId")
     List<Category> findGroupCategoriesByUserId(UUID userId);
 }

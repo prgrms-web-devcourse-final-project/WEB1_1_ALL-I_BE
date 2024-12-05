@@ -67,8 +67,9 @@ public class Alarm {
     private GroupInvitation groupInvitation;
 
     @Builder
-    private Alarm(AlarmType type, String description, LocalDateTime scheduledTime, LocalDateTime createdAt, User user,
+    private Alarm(UUID alarmId, AlarmType type, String description, LocalDateTime scheduledTime, LocalDateTime createdAt, User user,
                   GroupEventMapping groupEventMapping, PersonalEvent personalEvent, GroupInvitation groupInvitation) {
+        this.alarmId = alarmId;
         this.type = type;
         this.description = description;
         this.isRead = false;

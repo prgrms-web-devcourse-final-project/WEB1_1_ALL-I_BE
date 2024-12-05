@@ -2,9 +2,9 @@ package com.JAI.group.service;
 
 import com.JAI.group.controller.response.GroupMemberListRes;
 import com.JAI.group.domain.GroupRole;
+import com.JAI.group.domain.GroupSetting;
 import com.JAI.group.service.request.AddGroupMemberServiceReq;
 import com.JAI.group.service.response.GroupSettingRes;
-import com.JAI.user.domain.User;
 import com.JAI.user.service.dto.CustomUserDetails;
 
 import java.util.List;
@@ -20,4 +20,10 @@ public interface GroupSettingService {
     GroupSettingRes findGroupIdAndRole(UUID groupId, UUID userId);
     void quitGroupMember(UUID groupSettingId, CustomUserDetails user);
     void ejectionGroupMember(UUID groupSettingId, CustomUserDetails user);
+
+    public boolean isGroupMemberExisted(UUID groupId, UUID userId);
+
+    public List<UUID> getGroupEventRelatedUsers(UUID groupEventId);
+
+    public GroupSetting findGroupSettingByGroupIdAndUserId(UUID groupId, UUID userId);
 }

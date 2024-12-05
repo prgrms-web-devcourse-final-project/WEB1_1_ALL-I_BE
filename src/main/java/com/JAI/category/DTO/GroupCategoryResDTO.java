@@ -1,6 +1,5 @@
 package com.JAI.category.DTO;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.UUID;
@@ -10,11 +9,14 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Getter
-public class CategoryUpdateReqDTO {
-    @NotNull(message = "category id must not be null")
+public class GroupCategoryResDTO {
     private UUID categoryId;
 
     private String name;
 
     private String color;
+
+    private UUID leaderUserId;
+
+    private UUID groupId;
 }

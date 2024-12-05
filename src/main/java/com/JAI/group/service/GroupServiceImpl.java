@@ -121,4 +121,24 @@ public class GroupServiceImpl implements GroupService {
             throw new GroupNotOwnerException("접근 권한이 없습니다.");
         }
     }
+
+    public GroupListRes getGroupById(UUID groupId) {
+        return groupConverter.toGroupListDTO(
+                groupRepository.findById(groupId)
+                        .orElseThrow(() -> new GroupNotFoundException("해당 ID의 그룹을 찾을 수 없습니다.")));
+    }
+
+    @Override
+    public List<GroupListRes> getGroupByUserId(UUID userId) {
+        return groupRepository.findGroupByUserId(userId)
+                .stream()
+                .map(groupConverter::toGroupListDTO)
+                .toList();
+    }
+
+    @Override
+    public Group findGroupEntityById(UUID groupId) {
+        return groupRepository.findById(groupId)
+                .orElseThrow(() -> new GroupNotFoundException("해당 ID의 그룹을 찾을 수 없습니다."));
+    }
 }

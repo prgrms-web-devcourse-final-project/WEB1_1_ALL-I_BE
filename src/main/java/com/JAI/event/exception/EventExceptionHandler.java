@@ -36,4 +36,13 @@ public class EventExceptionHandler {
                 e.getMessage(),
                 e.getData());
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(GroupEventNotFoundException.class)
+    public ApiResponse<Object> handleGroupEventNotFound(GroupEventNotFoundException e) {
+        return ApiResponse.onFailure(
+                ErrorStatus.GROUP_EVENT_NOT_FOUND,
+                e.getMessage(),
+                e.getData());
+    }
 }

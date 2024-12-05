@@ -11,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Data
+@Getter
 public class PersonalEventUpdateReqDTO {
     @NotNull(message = "Personal Event ID must not be null")
     UUID personalEventId;
