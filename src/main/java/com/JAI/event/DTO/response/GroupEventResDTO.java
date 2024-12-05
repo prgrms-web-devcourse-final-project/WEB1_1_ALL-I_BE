@@ -37,6 +37,8 @@ public class GroupEventResDTO {
     List<UUID> assignedUserIds;
 
     public void updateUserIds(List<UUID> assignedUserIds) {
-        this.assignedUserIds = assignedUserIds;
+        if (this.assignedUserIds == null) {
+            this.assignedUserIds = assignedUserIds;
+        }
     }
 }

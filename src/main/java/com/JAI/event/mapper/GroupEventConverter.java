@@ -1,10 +1,9 @@
 package com.JAI.event.mapper;
 
+import com.JAI.event.DTO.GroupEventForAlarmDTO;
 import com.JAI.event.DTO.request.GroupEventCreateReqDTO;
 import com.JAI.event.DTO.request.GroupEventUpdateReqDTO;
-import com.JAI.event.DTO.response.AllGroupSomeoneEventResDTO;
 import com.JAI.event.DTO.response.GroupEventResDTO;
-import com.JAI.event.DTO.response.OneGroupSomeoneEventResDTO;
 import com.JAI.event.domain.GroupEvent;
 import org.springframework.stereotype.Component;
 
@@ -21,34 +20,6 @@ public class GroupEventConverter {
                 .isAlarmed(groupEvent.getIsAlarmed())
                 .createdAt(groupEvent.getCreatedAt())
                 .groupId(groupEvent.getGroupEventId())
-                .categoryId(groupEvent.getGroup().getCategory().getCategoryId())
-                .build();
-    }
-
-    public OneGroupSomeoneEventResDTO groupEventToOneGroupSomeoneEventResDTO(GroupEvent groupEvent) {
-        return OneGroupSomeoneEventResDTO.builder()
-                .groupEventId(groupEvent.getGroupEventId())
-                .title(groupEvent.getTitle())
-                .startDate(groupEvent.getStartDate())
-                .endDate(groupEvent.getEndDate())
-                .startTime(groupEvent.getStartTime())
-                .endTime(groupEvent.getEndTime())
-                .isAlarmed(groupEvent.getIsAlarmed())
-                .createdAt(groupEvent.getCreatedAt())
-                .build();
-    }
-
-    public AllGroupSomeoneEventResDTO groupEventToAllGroupSomeoneEventResDTO(GroupEvent groupEvent) {
-        return AllGroupSomeoneEventResDTO.builder()
-                .groupEventId(groupEvent.getGroupEventId())
-                .title(groupEvent.getTitle())
-                .startDate(groupEvent.getStartDate())
-                .endDate(groupEvent.getEndDate())
-                .startTime(groupEvent.getStartTime())
-                .endTime(groupEvent.getEndTime())
-                .isAlarmed(groupEvent.getIsAlarmed())
-                .createdAt(groupEvent.getCreatedAt())
-                .groupId(groupEvent.getGroup().getGroupId())
                 .categoryId(groupEvent.getGroup().getCategory().getCategoryId())
                 .build();
     }
@@ -74,6 +45,37 @@ public class GroupEventConverter {
                 .endTime(groupEventUpdateReqDTO.getEndTime() == null ? existedGroupEvent.getEndTime() : groupEventUpdateReqDTO.getEndTime())
                 .createdAt(existedGroupEvent.getCreatedAt())
                 .isAlarmed(groupEventUpdateReqDTO.getIsAlarmed() == null ? existedGroupEvent.getIsAlarmed() : groupEventUpdateReqDTO.getIsAlarmed())
+                .build();
+    }
+
+    public GroupEventForAlarmDTO groupEventToGroupEventDTO(GroupEvent groupEvent) {
+        return GroupEventForAlarmDTO.builder()
+                .groupEventId(groupEvent.getGroupEventId())
+                .title(groupEvent.getTitle())
+                .startDate(groupEvent.getStartDate())
+                .startTime(groupEvent.getStartTime())
+                .endDate(groupEvent.getEndDate())
+                .endTime(groupEvent.getEndTime())
+                .isAlarmed(groupEvent.getIsAlarmed())
+                .createdAt(groupEvent.getCreatedAt())
+                .group(groupEvent.getGroup())
+                .categoryId(groupEvent.getGroup().getCategory().getCategoryId())
+                .build();
+    }
+
+    public GroupEventResDTO GroupEventForAlarmDTOTogroupEventResDTO(GroupEventForAlarmDTO groupEventForAlarmDTO) {
+        return GroupEventResDTO.builder()
+                .groupEventId(groupEventForAlarmDTO.getGroupEventId())
+                .title(groupEventForAlarmDTO.getTitle())
+                .startDate(groupEventForAlarmDTO.getStartDate())
+                .endDate(groupEventForAlarmDTO.getEndDate())
+                .startTime(groupEventForAlarmDTO.getStartTime())
+                .endTime(groupEventForAlarmDTO.getEndTime())
+                .isAlarmed(groupEventForAlarmDTO.getIsAlarmed())
+                .createdAt(groupEventForAlarmDTO.getCreatedAt())
+                .groupId(groupEventForAlarmDTO.getGroupEventId())
+                .categoryId(groupEventForAlarmDTO.getGroup().getCategory().getCategoryId())
+                .assignedUserIds(groupEventForAlarmDTO.getAssignedUserIds())
                 .build();
     }
 }

@@ -34,7 +34,6 @@ public class CategoryController {
 
     @PatchMapping("{category_id}")
     public ApiResponse<CategoryResDTO> updateCategory(@PathVariable("category_id") UUID categoryId, @RequestBody @Valid CategoryUpdateReqDTO categoryUpdateReqDTO, @AuthenticationPrincipal CustomUserDetails user) {
-        System.out.println(categoryUpdateReqDTO);
         return ApiResponse.onSuccess(categoryService.updateCategory(categoryId, categoryUpdateReqDTO, user.getUserId()));
     }
 

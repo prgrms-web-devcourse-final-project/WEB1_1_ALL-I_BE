@@ -11,6 +11,7 @@ public class AlarmConverter {
                 .alarmId(alarm.getAlarmId())
                 .type(alarm.getType())
                 .description(alarm.getDescription())
+                .isRead(alarm.getIsRead())
                 .userId(alarm.getUser().getUserId())
                 .build();
     }

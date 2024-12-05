@@ -1,5 +1,6 @@
-package com.JAI.event.DTO.response;
+package com.JAI.event.DTO;
 
+import com.JAI.group.domain.Group;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Getter
-public class OneGroupSomeoneEventResDTO {
+public class GroupEventForAlarmDTO {
     UUID groupEventId;
 
     String title;
@@ -29,4 +30,16 @@ public class OneGroupSomeoneEventResDTO {
     Boolean isAlarmed;
 
     LocalDateTime createdAt;
+
+    Group group;
+
+    UUID categoryId;
+
+    List<UUID> assignedUserIds;
+
+    public void updateUserIds(List<UUID> assignedUserIds) {
+        if (this.assignedUserIds == null) {
+            this.assignedUserIds = assignedUserIds;
+        }
+    }
 }

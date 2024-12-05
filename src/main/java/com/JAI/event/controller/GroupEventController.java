@@ -3,7 +3,6 @@ package com.JAI.event.controller;
 import com.JAI.event.DTO.request.GroupEventCreateReqDTO;
 import com.JAI.event.DTO.request.GroupEventUpdateReqDTO;
 import com.JAI.event.DTO.response.GetGroupEventResDTO;
-import com.JAI.event.DTO.response.GetOneGroupEventResDTO;
 import com.JAI.event.DTO.response.GroupEventResDTO;
 import com.JAI.event.service.GroupEventService;
 import com.JAI.global.controller.ApiResponse;
@@ -47,7 +46,7 @@ public class GroupEventController {
     }
 
     @DeleteMapping("/{group_id}/events/{group_event_id}")
-    public ApiResponse deleteGroupEvents(@PathVariable("group_id") UUID groupId, @PathVariable("group_event_id") UUID groupEventId, @Valid @RequestBody GroupEventUpdateReqDTO groupEventUpdateReqDTO, @AuthenticationPrincipal CustomUserDetails user) {
+    public ApiResponse<?> deleteGroupEvents(@PathVariable("group_id") UUID groupId, @PathVariable("group_event_id") UUID groupEventId, @AuthenticationPrincipal CustomUserDetails user) {
         groupEventService.deleteGroupEvent(groupId, groupEventId, user.getUserId());
         return ApiResponse.onSuccess();
     }

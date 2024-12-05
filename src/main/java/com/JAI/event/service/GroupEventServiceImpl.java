@@ -1,7 +1,9 @@
 package com.JAI.event.service;
 
+import com.JAI.alarm.service.AlarmService;
 import com.JAI.category.DTO.GroupCategoryResDTO;
 import com.JAI.category.service.CategoryService;
+import com.JAI.event.DTO.GroupEventForAlarmDTO;
 import com.JAI.event.DTO.request.GroupEventCreateReqDTO;
 import com.JAI.event.DTO.request.GroupEventUpdateReqDTO;
 import com.JAI.event.DTO.response.*;
@@ -31,6 +33,7 @@ public class GroupEventServiceImpl implements GroupEventService {
     private final GroupSettingService groupSettingService;
     private final CategoryService categoryService;
     private final GroupService groupService;
+    private final AlarmService alarmService;
     private final GroupEventConverter groupEventConverter;
 
     // 특정 그룹의 특정 달 내에 모든 그룹 일정
@@ -151,10 +154,20 @@ public class GroupEventServiceImpl implements GroupEventService {
             groupEventMappingRepository.save(groupEventMapping);
         });
 
-        GroupEventResDTO groupEventDTO = groupEventConverter.groupEventToGroupEventResDTO(savedGroupEvent);
-        groupEventDTO.updateUserIds(groupSettingService.getGroupEventRelatedUsers(savedGroupEvent.getGroupEventId()));
+        List<UUID> assignedMemberUserIds = groupSettingService.getGroupEventRelatedUsers(savedGroupEvent.getGroupEventId());
 
-        return groupEventDTO;
+        GroupEventResDTO groupEventResDTO = groupEventConverter.groupEventToGroupEventResDTO(savedGroupEvent);
+        groupEventResDTO.updateUserIds(assignedMemberUserIds);
+
+        // 알림 저장
+        if (groupEventResDTO.getIsAlarmed()) {
+            GroupEventForAlarmDTO groupEventForAlarmDTO = groupEventConverter.groupEventToGroupEventDTO(savedGroupEvent);
+            groupEventForAlarmDTO.updateUserIds(assignedMemberUserIds);
+
+            alarmService.createGroupEventAlarm(groupEventForAlarmDTO);
+        }
+
+        return groupEventResDTO;
     }
 
     @Override
@@ -167,12 +180,12 @@ public class GroupEventServiceImpl implements GroupEventService {
         GroupEvent existedGroupEvent = groupEventRepository.findById(groupEventId)
                 .orElseThrow(() -> new GroupEventNotFoundException(groupEventId + "인 그룹 일정을 찾을 수 없습니다."));
 
-        GroupEvent updateGroupEvent = groupEventConverter.groupEventUpdateReqDTOToGroupEvent(groupEventUpdateReqDTO, existedGroupEvent);
-        updateGroupEvent.updateGroup(groupService.findGroupEntityById(groupId));
+        GroupEvent updatedGroupEvent = groupEventConverter.groupEventUpdateReqDTOToGroupEvent(groupEventUpdateReqDTO, existedGroupEvent);
+        updatedGroupEvent.updateGroup(groupService.findGroupEntityById(groupId));
 
-        groupEventRepository.save(updateGroupEvent);
+        groupEventRepository.save(updatedGroupEvent);
 
-        List<UUID> existedAssignedMemberList = groupSettingService.getGroupEventRelatedUsers(updateGroupEvent.getGroupEventId());
+        List<UUID> existedAssignedMemberList = groupSettingService.getGroupEventRelatedUsers(updatedGroupEvent.getGroupEventId());
 
         // 할당된 멤버 변경에 따른 그룹 일정 매핑 변경
         if (groupEventUpdateReqDTO.getAssignedMemberList() != null) {
@@ -190,7 +203,7 @@ public class GroupEventServiceImpl implements GroupEventService {
 
             needToBeAddMember.forEach(uuid -> {
                 GroupEventMapping groupEventMapping = GroupEventMapping.builder()
-                        .groupEvent(updateGroupEvent)
+                        .groupEvent(updatedGroupEvent)
                         .groupSetting(groupSettingService.findGroupSettingByGroupIdAndUserId(groupId, uuid))
                         .build();
 
@@ -198,10 +211,20 @@ public class GroupEventServiceImpl implements GroupEventService {
             });
         }
 
-        GroupEventResDTO groupEventDTO = groupEventConverter.groupEventToGroupEventResDTO(updateGroupEvent);
-        groupEventDTO.updateUserIds(groupSettingService.getGroupEventRelatedUsers(updateGroupEvent.getGroupEventId()));
+        List<UUID> assignedMemberUserIds = groupSettingService.getGroupEventRelatedUsers(updatedGroupEvent.getGroupEventId());
 
-        return groupEventDTO;
+        GroupEventResDTO groupEventResDTO = groupEventConverter.groupEventToGroupEventResDTO(updatedGroupEvent);
+        groupEventResDTO.updateUserIds(groupSettingService.getGroupEventRelatedUsers(updatedGroupEvent.getGroupEventId()));
+
+        // 알림 저장
+        if (groupEventResDTO.getIsAlarmed()) {
+            GroupEventForAlarmDTO groupEventForAlarmDTO = groupEventConverter.groupEventToGroupEventDTO(updatedGroupEvent);
+            groupEventForAlarmDTO.updateUserIds(assignedMemberUserIds);
+
+            alarmService.updateGroupEventAlarm(groupEventForAlarmDTO);
+        }
+
+        return groupEventResDTO;
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.JAI.event.service;
 import com.JAI.event.DTO.request.GroupEventCreateReqDTO;
 import com.JAI.event.DTO.request.GroupEventUpdateReqDTO;
 import com.JAI.event.DTO.response.GetGroupEventResDTO;
-import com.JAI.event.DTO.response.GetOneGroupEventResDTO;
 import com.JAI.event.DTO.response.GroupEventResDTO;
 
 import java.util.UUID;

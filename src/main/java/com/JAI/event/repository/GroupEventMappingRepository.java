@@ -15,4 +15,12 @@ public interface GroupEventMappingRepository extends JpaRepository<GroupEventMap
     @Modifying
     @Transactional
     void deleteByGroupSettingId(UUID groupSettingId);
+
+    @Query("SELECT gem " +
+            "FROM GroupEventMapping gem " +
+            "JOIN GroupSetting gs ON gs.groupSettingId = gem.groupSetting.groupSettingId " +
+            "WHERE gs.group.groupId = :groupId " +
+            "AND gs.user.userId = :userId " +
+            "AND gem.groupEvent.groupEventId = :groupEventId")
+    GroupEventMapping findById(UUID groupEventId, UUID groupId, UUID userId);
 }
