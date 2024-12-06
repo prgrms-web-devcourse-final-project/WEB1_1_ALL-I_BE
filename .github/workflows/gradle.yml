@@ -26,6 +26,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: develop
+          
+      - name: Ensure resources directory exists
+        run: mkdir -p ./src/main/resources
         
     # (2) YAML 파일 생성 
       - name: Create application.yaml from Secrets
