@@ -1,6 +1,12 @@
 package com.JAI.user.service;
 
+import com.JAI.category.DTO.CategoryCreateReqDTO;
+import com.JAI.category.DTO.CategoryResDTO;
+import com.JAI.category.domain.Category;
+import com.JAI.category.mapper.CategoryConverter;
+import com.JAI.category.service.CategoryService;
 import com.JAI.user.controller.request.UserSignupReq;
+import com.JAI.user.controller.response.UserSignupRes;
 import com.JAI.user.converter.UserConverter;
 import com.JAI.user.domain.User;
 import com.JAI.user.exception.UserNotFoundException;
@@ -17,10 +23,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserConverter userConverter;
+    private final CategoryService categoryService;
+    private final CategoryConverter categoryConverter;
 
     @Override
     @Transactional
-    public void signup(UserSignupReq userSignupReq) {
+    public UserSignupRes signup(UserSignupReq userSignupReq) {
 
         //이메일 중복 확인
         if(userRepository.existsByEmail(userSignupReq.getEmail())) {
@@ -30,9 +38,18 @@ public class UserServiceImpl implements UserService {
         if(userRepository.existsByNickname(userSignupReq.getNickname())) {
             throw new IllegalArgumentException("이미 사용중인 닉네임입니다.");
         }
-
         //Repo에 저장
-        userRepository.save(userConverter.toUserEntity(userSignupReq));
+        User user = userRepository.save(userConverter.toUserEntity(userSignupReq));
+
+        //기본 카테고리 생성
+        CategoryCreateReqDTO categoryCreateReqDTO = CategoryCreateReqDTO.builder()
+                .name("카테고리 1")
+                .color("#97cdbd")
+                .build();
+
+        CategoryResDTO categoryResDTO = categoryService.createCategory(categoryCreateReqDTO, user.getUserId());
+
+        return userConverter.toUserSignupDTO(user.getUserId(), user.getNickname(), categoryResDTO.getCategoryId());
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.JAI.user.controller;
 
 import com.JAI.global.controller.ApiResponse;
 import com.JAI.user.controller.request.UserSignupReq;
+import com.JAI.user.controller.response.UserSignupRes;
 import com.JAI.user.jwt.JWTService;
 import com.JAI.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -22,9 +24,8 @@ public class UserController {
 
     // 회원가입(이메일, 비밀번호, 닉네임(중복확인))
     @PostMapping("/signup")
-    public ApiResponse<String> signup(@RequestBody @Valid UserSignupReq userSignupReq) {
-        userService.signup(userSignupReq);
-        return ApiResponse.onSuccess("success");
+    public ApiResponse<UserSignupRes> signup(@Valid @RequestBody UserSignupReq userSignupReq) {
+        return ApiResponse.onSuccess( userService.signup(userSignupReq));
     }
     //회원 정보 수정(프로필 사진, 닉네임(중복확인), 마감시간)
     @PatchMapping("")
