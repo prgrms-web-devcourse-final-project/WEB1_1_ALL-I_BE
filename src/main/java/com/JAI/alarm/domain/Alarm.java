@@ -62,7 +62,7 @@ public class Alarm {
     @JoinColumn(name = "personal_event_id", referencedColumnName = "personal_event_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private PersonalEvent personalEvent;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "group_invitation_id", referencedColumnName = "group_invitation_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private GroupInvitation groupInvitation;
 
