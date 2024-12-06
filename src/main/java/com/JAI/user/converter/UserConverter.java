@@ -6,6 +6,7 @@ import com.JAI.user.controller.response.UserSignupRes;
 import com.JAI.user.controller.response.UserUpdateRes;
 import com.JAI.user.domain.Provider;
 import com.JAI.user.domain.User;
+import com.JAI.user.service.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -52,6 +53,14 @@ public class UserConverter {
                 .nickname(user.getNickname())
                 .imageUrl(user.getImageUrl())
                 .endTime(user.getEndTime())
+                .build();
+    }
+
+    public UserDTO toUserDTO(User user){
+        return UserDTO.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .nickname(user.getNickname())
                 .build();
     }
 }
