@@ -195,7 +195,6 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Scheduled(fixedRate = 60000)
-    @Transactional
     protected void deleteAlarm() {
         log.info("Checking alarms need to be deleted...");
 
