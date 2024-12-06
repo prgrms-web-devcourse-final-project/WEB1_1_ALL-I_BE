@@ -39,7 +39,10 @@ jobs:
     
     # (3) gradlew 권한 추가
       - name: Build with Gradle Wrapper
-        run: chmod +x gradlew build
+        run: chmod +x gradlew
+
+      - name: Build project
+        run: ./gradlew build
 
     # (4) JDK 17 설정
       - name: Set up JDK 17
