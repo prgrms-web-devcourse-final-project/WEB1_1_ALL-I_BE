@@ -128,13 +128,6 @@ public class CategoryServiceImpl implements CategoryService {
                 .toList();
     }
 
-//    @Override
-//    public GroupCategoryResDTO getCategoryByGroupId(UUID groupId) {
-//        // 그룹 카테고리 탐색
-//        return categoryConverter.categoryToGroupCategoryResDTO(categoryRepository.findByGroup_GroupId(groupId)
-//                .orElseThrow(() -> new CategoryNotFoundException("해당 그룹의 카테고리를 찾을 수 없습니다.")));
-//    }
-
     @Override
     public CategoryResDTO getCategoryByGroupId(UUID groupId) {
         // 그룹 카테고리 탐색

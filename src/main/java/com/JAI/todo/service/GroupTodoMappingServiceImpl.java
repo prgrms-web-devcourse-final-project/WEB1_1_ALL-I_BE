@@ -86,7 +86,7 @@ public class GroupTodoMappingServiceImpl implements GroupTodoMappingService{
     @Transactional
     public List<UUID> updateGroupTodoMappingUser(List<GroupMemberStateRes> userIdList, UUID groupTodoId, UUID groupId) {
         GroupTodo groupTodo = groupTodoRepository.findById(groupTodoId)
-                .orElseThrow(() -> new GroupTodoNotFoundException("해당 ID의 그룹 투두가 존재하지 않습니다."));
+                .orElseThrow(() -> new GroupTodoNotFoundException("해당 ID의 그룹 투두를 찾을 수 없습니다."));
 
         //해당 투두 아이디에 맵핑된 값들 찾아오기
         List<GroupTodoMapping> mappingList = groupTodoMappingRepository.findByGroupTodoId(groupTodoId);

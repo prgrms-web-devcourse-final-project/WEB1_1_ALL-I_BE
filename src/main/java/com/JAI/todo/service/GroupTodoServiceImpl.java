@@ -6,6 +6,7 @@ import com.JAI.category.service.CategoryService;
 import com.JAI.group.controller.response.GroupListRes;
 import com.JAI.group.domain.Group;
 import com.JAI.group.exception.GroupNotFoundException;
+import com.JAI.group.exception.GroupSettingNotFoundException;
 import com.JAI.group.repository.GroupRepository;
 import com.JAI.group.service.GroupService;
 import com.JAI.group.service.GroupSettingService;
@@ -211,7 +212,7 @@ public class GroupTodoServiceImpl implements GroupTodoService{
 
     public void validateGroupMember(UUID groupId, UUID userId) {
         if(!groupSettingService.isGroupMemberExisted(groupId, userId)) {
-            throw new GroupNotFoundException("해당 그룹의 멤버가 아닙니다.");
+            throw new GroupSettingNotFoundException("해당 그룹의 멤버가 아닙니다.");
         }
     }
 
