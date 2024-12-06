@@ -100,8 +100,6 @@ public class AlarmServiceImpl implements AlarmService {
         groupInvitationResDTO.updateGroup(groupConverter.toGroupListDTO(groupInvitationForAlarmDTO.getGroup()));
         groupInvitationResDTO.updateReceiver(userConverter.toUserDTO(groupInvitationForAlarmDTO.getReceiver()));
 
-        System.out.println(groupInvitationResDTO);
-
         // 알림 생성 후 저장
         Alarm alarm = Alarm.builder()
                 .type(AlarmType.INVITATION)
