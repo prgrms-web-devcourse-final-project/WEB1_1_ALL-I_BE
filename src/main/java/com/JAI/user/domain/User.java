@@ -88,4 +88,10 @@ public class User {
                 .endTime(LocalTime.of(11,59,0))
                 .build();
     }
+
+    public void updateUserInfo(String nickname, String imageUrl, LocalTime endTime) {
+        this.nickname = nickname;
+        this.imageUrl = imageUrl;
+        this.endTime = endTime;
+    }
 }

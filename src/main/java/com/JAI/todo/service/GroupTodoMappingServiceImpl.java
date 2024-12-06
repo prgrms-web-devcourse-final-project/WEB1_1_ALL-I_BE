@@ -84,7 +84,7 @@ public class GroupTodoMappingServiceImpl implements GroupTodoMappingService{
 
     @Override
     @Transactional
-    public List<UUID> updateGroupTodoMappingUser(List<GroupMemberStateRes> userIdList, UUID groupTodoId, UUID groupId) {
+    public List<UUID> updateGroupTodoMappingUser(List<UUID> userIdList, UUID groupTodoId, UUID groupId) {
         GroupTodo groupTodo = groupTodoRepository.findById(groupTodoId)
                 .orElseThrow(() -> new GroupTodoNotFoundException("해당 ID의 그룹 투두를 찾을 수 없습니다."));
 
@@ -96,7 +96,7 @@ public class GroupTodoMappingServiceImpl implements GroupTodoMappingService{
 
         //req에서 userId로 groupSetting 찾아옴
         Set<UUID> newSettingIds = userIdList.stream()
-                .map(user -> groupSettingService.findIdByGroupIdAndUserId(groupId, user.getUserId()))
+                .map(user -> groupSettingService.findIdByGroupIdAndUserId(groupId, user))//user.getUserId()))
                 .collect(Collectors.toSet());
 
         //추가 할 ID들

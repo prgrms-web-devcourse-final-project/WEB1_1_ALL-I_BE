@@ -24,5 +24,5 @@ public class GroupTodoUpdateReq {
 
     LocalTime startTime;
 
-    List<GroupMemberStateRes> userIdList;
+    List<UUID> userIdList;
 }

@@ -1,6 +1,7 @@
 package com.JAI.user.service;
 
 import com.JAI.user.domain.User;
+import com.JAI.user.exception.UserNotFoundException;
 import com.JAI.user.repository.UserRepository;
 import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         User userEntity = userRepository.findByEmail(username)
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException("해당 이메일을 찾을 수 없습니다."));
 
         return new CustomUserDetails(userEntity);
 

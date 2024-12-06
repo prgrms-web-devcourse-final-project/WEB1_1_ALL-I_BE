@@ -188,11 +188,13 @@ public class GroupTodoServiceImpl implements GroupTodoService{
 
         groupTodoEntity.updateGroupTodoInfo(req.getTitle(), req.getDate(), req.getStartTime());
 
-        //변경된 값 저장
-        groupTodoRepository.save(groupTodoEntity);
-
         //할당자 변경
         List<UUID> userIdList = groupTodoMappingService.updateGroupTodoMappingUser(req.getUserIdList(), groupTodoId, groupId);
+
+        groupTodoEntity.updateGroupTodoState(groupTodoMappingService.checkGroupTodoState(groupTodoId));
+
+        //변경된 값 저장
+        groupTodoRepository.save(groupTodoEntity);
 
         return groupTodoConverter.toGroupTodoUpdateDTO(groupTodoEntity, userIdList);
     }
