@@ -25,4 +25,12 @@ public interface GroupSettingRepository extends JpaRepository<GroupSetting, UUID
             "JOIN GroupEvent ge ON gem.groupEvent.groupEventId = ge.groupEventId " +
             "WHERE ge.groupEventId = :groupEventId")
     List<UUID> findUserIdByGroupEventGroupId(UUID groupEventId);
+
+    @Query("SELECT gs.user.userId " +
+            "FROM GroupSetting gs " +
+            "JOIN GroupTodoMapping gem ON gs.groupSettingId = gem.groupSetting.groupSettingId " +
+            "JOIN GroupTodo ge ON gem.groupTodo.groupTodoId = ge.groupTodoId " +
+            "WHERE ge.groupTodoId = :groupTodoId")
+    List<UUID> findByGroupTodoGroupId(@Param("groupTodoId") UUID groupTodoId);
+
 }
