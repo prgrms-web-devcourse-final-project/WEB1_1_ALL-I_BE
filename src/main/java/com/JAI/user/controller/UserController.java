@@ -3,16 +3,21 @@ package com.JAI.user.controller;
 
 import com.JAI.global.controller.ApiResponse;
 import com.JAI.user.controller.request.UserSignupReq;
+import com.JAI.user.controller.response.UserInfoRes;
 import com.JAI.user.controller.response.UserSignupRes;
 import com.JAI.user.jwt.JWTService;
 import com.JAI.user.service.UserService;
+import com.JAI.user.service.dto.CustomUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -36,9 +41,9 @@ public class UserController {
 
     //회원 정보 조회(마이페이지)
     //프로필 사진, 닉네임, 이메일
-    @GetMapping()
-    public ApiResponse<String> getUserInfo(){
-        return null;
+    @GetMapping("/myPage")
+    public ApiResponse<UserInfoRes> getUserInfo(@AuthenticationPrincipal CustomUserDetails user){
+        return ApiResponse.onSuccess(userService.getUserInfo(user.getUserId()));
     }
 
     //액세스 토큰 재발급
@@ -46,6 +51,11 @@ public class UserController {
     public ApiResponse<String> reissue(HttpServletRequest request, HttpServletResponse response){
         jwtService.reissue(request, response);
         return ApiResponse.onSuccess("Reissue Access Token Successfully");
+    }
+
+    @GetMapping("/{userId}")
+    public ApiResponse<String> getUserNickname(@PathVariable UUID userId){
+        return ApiResponse.onSuccess(userService.getUserNickname(userId));
     }
 
 }

@@ -6,6 +6,7 @@ import com.JAI.category.domain.Category;
 import com.JAI.category.mapper.CategoryConverter;
 import com.JAI.category.service.CategoryService;
 import com.JAI.user.controller.request.UserSignupReq;
+import com.JAI.user.controller.response.UserInfoRes;
 import com.JAI.user.controller.response.UserSignupRes;
 import com.JAI.user.converter.UserConverter;
 import com.JAI.user.domain.User;
@@ -24,7 +25,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserConverter userConverter;
     private final CategoryService categoryService;
-    private final CategoryConverter categoryConverter;
 
     @Override
     @Transactional
@@ -56,5 +56,21 @@ public class UserServiceImpl implements UserService {
     public User getUserById(UUID userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("해당 ID를 가진 사용자를 찾을 수 없습니다.", userId));
+    }
+
+    @Override
+    public UserInfoRes getUserInfo(UUID userId) {
+        //유저 아이디 유효한지
+        User user = getUserById(userId);
+
+        //엔티티 값 DTO로
+        return userConverter.toUserInfoDTO(user);
+    }
+
+    @Override
+    public String getUserNickname(UUID userId) {
+        User user = getUserById(userId);
+        String nickname = user.getNickname();
+        return nickname;
     }
 }

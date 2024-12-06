@@ -1,6 +1,7 @@
 package com.JAI.user.service;
 
 import com.JAI.user.controller.request.UserSignupReq;
+import com.JAI.user.controller.response.UserInfoRes;
 import com.JAI.user.controller.response.UserSignupRes;
 import com.JAI.user.domain.User;
 
@@ -10,4 +11,8 @@ public interface UserService {
     UserSignupRes signup(UserSignupReq userSignupReq);
 
     User getUserById(UUID userId);
+
+    UserInfoRes getUserInfo(UUID userId);
+
+    String getUserNickname(UUID userId);
 }

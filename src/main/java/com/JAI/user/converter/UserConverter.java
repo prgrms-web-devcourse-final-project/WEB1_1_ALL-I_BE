@@ -1,6 +1,7 @@
 package com.JAI.user.converter;
 
 import com.JAI.user.controller.request.UserSignupReq;
+import com.JAI.user.controller.response.UserInfoRes;
 import com.JAI.user.controller.response.UserSignupRes;
 import com.JAI.user.domain.Provider;
 import com.JAI.user.domain.User;
@@ -33,6 +34,15 @@ public class UserConverter {
                 .userId(userId)
                 .nickname(nickname)
                 .categoryId(categoryId)
+                .build();
+    }
+
+    public UserInfoRes toUserInfoDTO(User user){
+        return UserInfoRes.builder()
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .imageUrl(user.getImageUrl())
+                .endTime(user.getEndTime())
                 .build();
     }
 }
