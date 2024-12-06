@@ -1,6 +1,5 @@
 package com.JAI.group.service;
 
-import com.JAI.alarm.service.AlarmService;
 import com.JAI.group.controller.request.GroupMemberInviteReq;
 import com.JAI.group.controller.response.GroupMemberInviteRes;
 import com.JAI.group.converter.GroupInvitationConverter;
@@ -29,7 +28,6 @@ public class GroupInvitationServiceImpl implements GroupInvitationService{
     private final GroupRepository groupRepository;
     //Service
     private final GroupSettingService groupSettingService;
-    private final AlarmService alarmService;
     private final UserRepository userRepository;
     private final GroupInvitationConverter groupInvitationConverter;
     private final GroupSettingConverter groupSettingConverter;
@@ -59,8 +57,7 @@ public class GroupInvitationServiceImpl implements GroupInvitationService{
         GroupInvitation groupInvitation = groupInvitationConverter.toGroupInvitationEntity(group, userEntity);
         groupInvitationRepository.save(groupInvitation);
 
-        //알림 메서드 호출
-        alarmService.createGroupInvitationAlarm(groupInvitationConverter.toGroupInvitationDTO(groupInvitation));
+        //알림 메서드 호출 부
 
         //등록내용 반환
         return groupInvitationConverter.toGroupMemberInviteDTO(groupInvitation, req.getNickname());
