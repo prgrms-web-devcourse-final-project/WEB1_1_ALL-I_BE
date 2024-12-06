@@ -3,8 +3,10 @@ package com.JAI.user.controller;
 
 import com.JAI.global.controller.ApiResponse;
 import com.JAI.user.controller.request.UserSignupReq;
+import com.JAI.user.controller.request.UserUpdateReq;
 import com.JAI.user.controller.response.UserInfoRes;
 import com.JAI.user.controller.response.UserSignupRes;
+import com.JAI.user.controller.response.UserUpdateRes;
 import com.JAI.user.jwt.JWTService;
 import com.JAI.user.service.UserService;
 import com.JAI.user.service.dto.CustomUserDetails;
@@ -33,14 +35,12 @@ public class UserController {
         return ApiResponse.onSuccess( userService.signup(userSignupReq));
     }
     //회원 정보 수정(프로필 사진, 닉네임(중복확인), 마감시간)
-    @PatchMapping("")
-    public ApiResponse<?> updateUserInfo(){
-        return null;
+    @PatchMapping("/myPage")
+    public ApiResponse<UserUpdateRes> updateUserInfo(@Valid @RequestBody UserUpdateReq req, @AuthenticationPrincipal CustomUserDetails user){
+        return ApiResponse.onSuccess(userService.updateUserInfo(req, user.getUserId()));
     }
 
-
     //회원 정보 조회(마이페이지)
-    //프로필 사진, 닉네임, 이메일
     @GetMapping("/myPage")
     public ApiResponse<UserInfoRes> getUserInfo(@AuthenticationPrincipal CustomUserDetails user){
         return ApiResponse.onSuccess(userService.getUserInfo(user.getUserId()));

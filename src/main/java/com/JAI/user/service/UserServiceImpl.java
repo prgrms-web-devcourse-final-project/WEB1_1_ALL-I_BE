@@ -6,8 +6,10 @@ import com.JAI.category.domain.Category;
 import com.JAI.category.mapper.CategoryConverter;
 import com.JAI.category.service.CategoryService;
 import com.JAI.user.controller.request.UserSignupReq;
+import com.JAI.user.controller.request.UserUpdateReq;
 import com.JAI.user.controller.response.UserInfoRes;
 import com.JAI.user.controller.response.UserSignupRes;
+import com.JAI.user.controller.response.UserUpdateRes;
 import com.JAI.user.converter.UserConverter;
 import com.JAI.user.domain.User;
 import com.JAI.user.exception.UserNotFoundException;
@@ -56,6 +58,23 @@ public class UserServiceImpl implements UserService {
     public User getUserById(UUID userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("해당 ID를 가진 사용자를 찾을 수 없습니다.", userId));
+    }
+
+    @Override
+    public UserUpdateRes updateUserInfo(UserUpdateReq req, UUID userId) {
+        //유저 아이디 유효한지
+        User user = getUserById(userId);
+
+        //닉네임 중복 확인
+        if((!user.getNickname().equals(req.getNickname()))&&(userRepository.existsByNickname(req.getNickname()))) {
+            throw new IllegalArgumentException("이미 사용중인 닉네임입니다.");
+        }
+
+        user.updateUserInfo(req.getNickname(), req.getImageUrl(), req.getEndTime());
+
+        userRepository.save(user);
+
+        return userConverter.toUserUpdateDTO(user);
     }
 
     @Override
