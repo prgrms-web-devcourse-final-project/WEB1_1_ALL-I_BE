@@ -36,4 +36,41 @@ public class TodoExceptionHandler {
                 e.getMessage(),
                 e.getData());
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(GroupTodoNotFoundException.class)
+    public ApiResponse<Object> handleGroupTodoNotFound(GroupTodoNotFoundException e){
+        return ApiResponse.onFailure(
+                ErrorStatus.PERSONAL_TODO_NOT_FOUND,
+                e.getMessage(),
+                e.getData());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(GroupTodoNotOwnerException.class)
+    public ApiResponse<Object> handleGroupTodoNotOwner(GroupTodoNotOwnerException e){
+        return ApiResponse.onFailure(
+                ErrorStatus.PERSONAL_TODO_NOT_OWNER_FOUND,
+                e.getMessage(),
+                e.getData());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(GroupTodoBadRequestException.class)
+    public ApiResponse<Object> handleGroupTodoBadRequest(GroupTodoBadRequestException e){
+        return ApiResponse.onFailure(
+                ErrorStatus.PERSONAL_TODO_BAD_REQUEST,
+                e.getMessage(),
+                e.getData());
+    }
+
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(GroupTodoMappingNotOwnerException.class)
+    public ApiResponse<Object> handleGroupTodoMappingNotOwner(GroupTodoMappingNotOwnerException e){
+        return ApiResponse.onFailure(
+                ErrorStatus.PERSONAL_TODO_NOT_OWNER_FOUND,
+                e.getMessage(),
+                e.getData());
+    }
 }

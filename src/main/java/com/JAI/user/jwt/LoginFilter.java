@@ -73,6 +73,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 + "\"access_token\": \"" + "Bearer " + access + "\","
                 + "\"refresh_token\": \"" + refresh + "\""
                 + "}";
+        // TODO :: deveolp 올릴때 아래 껄로
+//                String jsonResponse = "{"
+//                + "\"message\": \"ok\","
+//                + "\"access_token\": \"" + access + "\","
+//                + "\"refresh_token\": \"" + refresh + "\""
+//                + "}";
 
         // 응답 본문에 JSON을 작성하여 보내기
         try {

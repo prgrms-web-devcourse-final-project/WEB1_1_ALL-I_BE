@@ -114,6 +114,13 @@ public class GroupSettingServiceImpl implements GroupSettingService {
     }
 
     @Override
+    public UUID findIdByGroupIdAndUserId(UUID groupId, UUID userId){
+        GroupSetting groupSetting =  groupSettingRepository.findByGroup_GroupIdAndUser_UserId(groupId, userId)
+                                        .orElseThrow(() -> new GroupSettingNotFoundException("해당 그룹에 존재하지 않는 멤버입니다."));
+        return groupSetting.getGroupSettingId();
+    }
+
+    @Override
     public GroupRole findGroupMemberRole(UUID groupId, UUID userId){
         GroupSetting groupSetting = groupSettingRepository.findByGroup_GroupIdAndUser_UserId(groupId, userId)
                 .orElseThrow(() -> new GroupSettingNotOwnerException("해당 그룹 멤버가 아닙니다."));
@@ -140,6 +147,11 @@ public class GroupSettingServiceImpl implements GroupSettingService {
     @Override
     public boolean isGroupMemberExisted(UUID groupId, UUID userId) {
         return groupSettingRepository.existsByGroup_GroupIdAndUser_UserId(groupId, userId);
+    }
+
+    @Override
+    public List<UUID> getGroupTodoRelatedUsers(UUID groupTodoId){
+        return groupSettingRepository.findByGroupTodoGroupId(groupTodoId);
     }
 
     @Override

@@ -21,9 +21,13 @@ public interface GroupSettingService {
     void quitGroupMember(UUID groupSettingId, CustomUserDetails user);
     void ejectionGroupMember(UUID groupSettingId, CustomUserDetails user);
 
+    public UUID findIdByGroupIdAndUserId(UUID groupId, UUID userId);
+
     public boolean isGroupMemberExisted(UUID groupId, UUID userId);
 
     public List<UUID> getGroupEventRelatedUsers(UUID groupEventId);
+
+    public List<UUID> getGroupTodoRelatedUsers(UUID groupTodoId);
 
     public GroupSetting findGroupSettingByGroupIdAndUserId(UUID groupId, UUID userId);
 }

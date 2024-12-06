@@ -10,7 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface GroupRepository extends JpaRepository<Group, UUID> {
-
     @Query("SELECT g " +
             "FROM Group g " +
             "JOIN GroupSetting gs ON gs.group.groupId = g.groupId " +

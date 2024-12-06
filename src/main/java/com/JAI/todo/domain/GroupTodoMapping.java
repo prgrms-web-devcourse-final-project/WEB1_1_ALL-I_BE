@@ -43,4 +43,10 @@ public class GroupTodoMapping {
                 .groupSetting(groupSetting)
                 .build();
     }
+
+    public void updateGroupTodoMappingState(boolean done){
+        if(this.done != done){
+            this.done = done;
+        }
+    }
 }
