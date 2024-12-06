@@ -37,7 +37,8 @@ public class GroupInvitation {
 
 
     @Builder
-    private GroupInvitation(InvitationStatus status, Group group, User user) {
+    private GroupInvitation(UUID groupInvitationId, InvitationStatus status, Group group, User user) {
+        this.groupInvitationId = groupInvitationId;
         this.status = status;
         this.group = group;
         this.user = user;

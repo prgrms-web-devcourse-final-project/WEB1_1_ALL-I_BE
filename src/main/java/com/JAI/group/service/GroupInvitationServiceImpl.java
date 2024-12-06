@@ -1,5 +1,6 @@
 package com.JAI.group.service;
 
+import com.JAI.alarm.service.AlarmService;
 import com.JAI.group.controller.request.GroupMemberInviteReq;
 import com.JAI.group.controller.response.GroupMemberInviteRes;
 import com.JAI.group.converter.GroupInvitationConverter;
@@ -9,10 +10,12 @@ import com.JAI.group.exception.*;
 import com.JAI.group.repository.GroupInvitationRepository;
 import com.JAI.group.repository.GroupRepository;
 import com.JAI.group.service.request.AddGroupMemberServiceReq;
+import com.JAI.user.converter.UserConverter;
 import com.JAI.user.domain.User;
 import com.JAI.user.exception.UserNotFoundException;
 import com.JAI.user.repository.UserRepository;
 import com.JAI.user.service.dto.CustomUserDetails;
+import com.JAI.user.service.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +31,11 @@ public class GroupInvitationServiceImpl implements GroupInvitationService{
     private final GroupRepository groupRepository;
     //Service
     private final GroupSettingService groupSettingService;
+    private final AlarmService alarmService;
     private final UserRepository userRepository;
     private final GroupInvitationConverter groupInvitationConverter;
     private final GroupSettingConverter groupSettingConverter;
+    private final UserConverter userConverter;
 
     // 그룹 멤버 초대
     @Override
@@ -57,7 +62,14 @@ public class GroupInvitationServiceImpl implements GroupInvitationService{
         GroupInvitation groupInvitation = groupInvitationConverter.toGroupInvitationEntity(group, userEntity);
         groupInvitationRepository.save(groupInvitation);
 
-        //알림 메서드 호출 부
+        //알림 메서드 호출
+        UserDTO sender = UserDTO.builder()
+                .userId(user.getUser().getUserId())
+                .nickname(user.getUser().getNickname())
+                .email(user.getUser().getEmail())
+                .build();
+
+        alarmService.createGroupInvitationAlarm(groupInvitationConverter.toGroupInvitationDTO(groupInvitation, sender));
 
         //등록내용 반환
         return groupInvitationConverter.toGroupMemberInviteDTO(groupInvitation, req.getNickname());

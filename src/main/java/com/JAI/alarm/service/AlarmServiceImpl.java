@@ -11,6 +11,11 @@ import com.JAI.event.DTO.PersonalEventDTO;
 import com.JAI.event.mapper.GroupEventConverter;
 import com.JAI.event.mapper.PersonalEventConverter;
 import com.JAI.event.service.GroupEventMappingService;
+import com.JAI.group.converter.GroupConverter;
+import com.JAI.group.converter.GroupInvitationConverter;
+import com.JAI.group.service.response.GroupInvitationForAlarmDTO;
+import com.JAI.group.service.response.GroupInvitationResDTO;
+import com.JAI.user.converter.UserConverter;
 import com.JAI.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +41,9 @@ public class AlarmServiceImpl implements AlarmService {
     private final GroupEventMappingService groupEventMappingService;
     private final PersonalEventConverter personalEventConverter;
     private final GroupEventConverter groupEventConverter;
+    private final GroupInvitationConverter groupInvitationConverter;
+    private final GroupConverter groupConverter;
+    private final UserConverter userConverter;
 
     public void createPersonalEventAlarm(PersonalEventDTO personalEventDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
@@ -74,12 +82,37 @@ public class AlarmServiceImpl implements AlarmService {
                     .user(userService.getUserById(assignedUserId))
                     .groupEventMapping(groupEventMappingService.findById(
                             groupEventForAlarmDTO.getGroupEventId(),
-                            groupEventForAlarmDTO.getGroup().getGroupId()
-                            , assignedUserId))
+                            groupEventForAlarmDTO.getGroup().getGroupId(),
+                            assignedUserId))
                     .build();
 
             alarmRepository.save(alarm);
         });
+    }
+
+    @Override
+    @Transactional
+    public void createGroupInvitationAlarm(GroupInvitationForAlarmDTO groupInvitationForAlarmDTO) {
+        // 시작 시간 없는 경우 현재 시간으로 설정
+        LocalDateTime scheduledTime = LocalDateTime.now();
+
+        GroupInvitationResDTO groupInvitationResDTO = groupInvitationConverter.toGroupInvitationResDTO(groupInvitationForAlarmDTO);
+        groupInvitationResDTO.updateGroup(groupConverter.toGroupListDTO(groupInvitationForAlarmDTO.getGroup()));
+        groupInvitationResDTO.updateReceiver(userConverter.toUserDTO(groupInvitationForAlarmDTO.getReceiver()));
+
+        System.out.println(groupInvitationResDTO);
+
+        // 알림 생성 후 저장
+        Alarm alarm = Alarm.builder()
+                .type(AlarmType.INVITATION)
+                .scheduledTime(scheduledTime)
+                .description(groupInvitationResDTO.toString())
+                .user(groupInvitationForAlarmDTO.getReceiver())
+                .groupInvitation(groupInvitationConverter
+                        .toGroupInvitation(groupInvitationForAlarmDTO))
+                .build();
+
+        alarmRepository.save(alarm);
     }
 
     @Override
