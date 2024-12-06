@@ -46,7 +46,7 @@ public class PersonalEventConverter {
                 .isAlarmed(personalEvent.getIsAlarmed())
                 .createdAt(personalEvent.getCreatedAt())
                 .categoryId(personalEvent.getCategory().getCategoryId())
-                .personalEventId(personalEvent.getUser().getUserId())
+                .userId(personalEvent.getUser().getUserId())
                 .build();
     }
 
