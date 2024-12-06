@@ -24,6 +24,8 @@ jobs:
     # (1) 기본 체크아웃
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: develop
         
     # (2) YAML 파일 생성 
       - name: Create application.yaml from Secrets
