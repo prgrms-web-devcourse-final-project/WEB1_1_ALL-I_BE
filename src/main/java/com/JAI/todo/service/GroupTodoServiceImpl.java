@@ -119,6 +119,8 @@ public class GroupTodoServiceImpl implements GroupTodoService{
                     UUID categoryId = groupIdToCategoryIdMap.get(groupTodoRes.getGroupId());
                     groupTodoRes.updateCategoryId(categoryId);
                     //groupTodoRes.updateUserIds(groupSettingService.getGroupTodoRelatedUsers(groupTodoRes.getGroupTodoId()));
+                    List<GroupMemberStateRes> memberState = groupTodoMappingService.getMemberStateByGroupTodoId(groupTodoRes.getGroupTodoId());
+                    groupTodoRes.updateUserIdList(memberState);
                     return groupTodoRes;
                 })
                 .toList();
