@@ -11,9 +11,6 @@ import com.JAI.event.DTO.PersonalEventDTO;
 import com.JAI.event.mapper.GroupEventConverter;
 import com.JAI.event.mapper.PersonalEventConverter;
 import com.JAI.event.service.GroupEventMappingService;
-import com.JAI.group.converter.GroupInvitationConverter;
-import com.JAI.group.service.response.GroupInvitationDTO;
-import com.JAI.group.service.response.GroupInvitationForAlarmDTO;
 import com.JAI.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +36,6 @@ public class AlarmServiceImpl implements AlarmService {
     private final GroupEventMappingService groupEventMappingService;
     private final PersonalEventConverter personalEventConverter;
     private final GroupEventConverter groupEventConverter;
-    private final GroupInvitationConverter groupInvitationConverter;
 
     public void createPersonalEventAlarm(PersonalEventDTO personalEventDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
@@ -84,29 +80,6 @@ public class AlarmServiceImpl implements AlarmService {
 
             alarmRepository.save(alarm);
         });
-    }
-
-    @Override
-    @Transactional
-    public void createGroupInvitationAlarm(GroupInvitationDTO groupInvitationDTO) {
-        // 시작 시간 없는 경우 현재 시간으로 설정
-        LocalDateTime scheduledTime = LocalDateTime.now();
-
-        // 알림 생성 후 저장
-        Alarm alarm = Alarm.builder()
-                .type(AlarmType.INVITATION)
-                .scheduledTime(scheduledTime)
-                .description(groupInvitationConverter
-                        .toGroupInvitationForAlarmDTO(groupInvitationDTO)
-                        .toString())
-                .user(groupInvitationDTO.getUser())
-                .groupInvitation(groupInvitationConverter
-                        .toGroupInvitationEntity(
-                                groupInvitationDTO.getGroup(),
-                                groupInvitationDTO.getUser()))
-                .build();
-
-        alarmRepository.save(alarm);
     }
 
     @Override
