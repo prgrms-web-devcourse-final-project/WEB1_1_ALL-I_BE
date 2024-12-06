@@ -15,6 +15,9 @@ public enum ErrorStatus {
 
     // 사용자 에러
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER404"),
+    USER_DUPLICATED(HttpStatus.CONFLICT,"USER409"),
+    USER_NOT_OWNER_FOUND(HttpStatus.FORBIDDEN, "USER403"),
+    USER_BAD_REQUEST(HttpStatus.BAD_REQUEST, "USER400"),
 
     // 카테고리 에러
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY404"),
