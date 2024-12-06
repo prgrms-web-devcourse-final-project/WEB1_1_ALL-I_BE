@@ -12,6 +12,7 @@ import com.JAI.user.controller.response.UserSignupRes;
 import com.JAI.user.controller.response.UserUpdateRes;
 import com.JAI.user.converter.UserConverter;
 import com.JAI.user.domain.User;
+import com.JAI.user.exception.UserDuplicatedException;
 import com.JAI.user.exception.UserNotFoundException;
 import com.JAI.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,11 +35,11 @@ public class UserServiceImpl implements UserService {
 
         //이메일 중복 확인
         if(userRepository.existsByEmail(userSignupReq.getEmail())) {
-            throw new IllegalArgumentException("이미 존재하는 회원입니다.");
+            throw new UserDuplicatedException("이미 존재하는 회원입니다.");
         }
         //닉네임 중복 확인
         if(userRepository.existsByNickname(userSignupReq.getNickname())) {
-            throw new IllegalArgumentException("이미 사용중인 닉네임입니다.");
+            throw new UserDuplicatedException("이미 사용중인 닉네임입니다.");
         }
         //Repo에 저장
         User user = userRepository.save(userConverter.toUserEntity(userSignupReq));
@@ -67,7 +68,7 @@ public class UserServiceImpl implements UserService {
 
         //닉네임 중복 확인
         if((!user.getNickname().equals(req.getNickname()))&&(userRepository.existsByNickname(req.getNickname()))) {
-            throw new IllegalArgumentException("이미 사용중인 닉네임입니다.");
+            throw new UserDuplicatedException("이미 사용중인 닉네임입니다.");
         }
 
         user.updateUserInfo(req.getNickname(), req.getImageUrl(), req.getEndTime());
