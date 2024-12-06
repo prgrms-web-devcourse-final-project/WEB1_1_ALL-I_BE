@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackages = {"com.JAI.category", "com.JAI.event"})
+@RestControllerAdvice(basePackages = {"com.JAI.category", "com.JAI.event", "com.JAI.group"})
 public class GroupExceptionHandler {
     //Group
     @ResponseStatus(HttpStatus.NOT_FOUND)

@@ -15,7 +15,5 @@ public class UserDTO {
 
     private String nickname;
 
-    private Role role;
-
     private String email;
 }

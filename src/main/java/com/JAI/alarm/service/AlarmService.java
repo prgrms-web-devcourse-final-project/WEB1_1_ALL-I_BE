@@ -3,7 +3,6 @@ package com.JAI.alarm.service;
 import com.JAI.alarm.DTO.AlarmResDTO;
 import com.JAI.event.DTO.GroupEventForAlarmDTO;
 import com.JAI.event.DTO.PersonalEventDTO;
-import com.JAI.group.service.response.GroupInvitationDTO;
 import com.JAI.group.service.response.GroupInvitationForAlarmDTO;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ public interface AlarmService {
 
     public void createGroupEventAlarm(GroupEventForAlarmDTO groupEventForAlarmDTO);
 
-    public void createGroupInvitationAlarm(GroupInvitationDTO groupInvitationDTO);
+    public void createGroupInvitationAlarm(GroupInvitationForAlarmDTO groupInvitationForAlarmDTO);
 
     public void updatePersonalEventAlarm(PersonalEventDTO personalEventDTO);
 
