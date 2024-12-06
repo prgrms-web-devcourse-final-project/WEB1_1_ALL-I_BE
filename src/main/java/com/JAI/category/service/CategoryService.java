@@ -15,7 +15,6 @@ public interface CategoryService {
 
     public UUID addGroupCategory(CreateGroupCategoryServiceReq req);
 
-
     public CategoryResDTO createCategory(CategoryCreateReqDTO categoryCreateReqDTO, UUID userId);
 
     public CategoryResDTO updateCategory(UUID categoryId, CategoryUpdateReqDTO categoryUpdateReqDTO, UUID userId);
@@ -26,9 +25,7 @@ public interface CategoryService {
 
     public void updateGroupCategoryColor(UUID groupId, String name, String color);
 
-    //public GroupCategoryResDTO getCategoryByGroupId(UUID groupId);
+    public GroupCategoryResDTO getCategoryByGroupId(UUID groupId);
 
-    public CategoryResDTO getCategoryByGroupId(UUID groupId);
-
-    public List<CategoryResDTO> getOnlyGroupCategoryByUserId(UUID userId);
+    public List<GroupCategoryResDTO> getOnlyGroupCategoryByUserId(UUID userId);
 }

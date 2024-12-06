@@ -5,6 +5,7 @@ import com.JAI.global.status.SuccessStatus;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
 @ToString
@@ -36,15 +37,18 @@ public class ApiResponse<T> {
         return new ApiResponse<>(SuccessStatus.OK.getHttpStatus() , SuccessStatus.OK.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     // 생성 성공
     public static <T> ApiResponse<T> onCreateSuccess(T result){
         return new ApiResponse<>(SuccessStatus.CREATE_SUCCESS.getHttpStatus(), SuccessStatus.CREATE_SUCCESS.getMessage(), result);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     public static <T> ApiResponse<T> onCreateSuccess(String message, T result){
         return new ApiResponse<>(SuccessStatus.CREATE_SUCCESS.getHttpStatus(), SuccessStatus.CREATE_SUCCESS.getMessage(), result);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     // 생성 성공
     public static <T> ApiResponse<T> onCreateSuccess(){
         return new ApiResponse<>(SuccessStatus.CREATE_SUCCESS.getHttpStatus(), SuccessStatus.CREATE_SUCCESS.getMessage());

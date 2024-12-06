@@ -15,7 +15,6 @@ import com.JAI.user.exception.UserNotFoundException;
 import com.JAI.user.repository.UserRepository;
 import com.JAI.user.service.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,7 +91,7 @@ public class GroupSettingServiceImpl implements GroupSettingService {
 
         UUID groupId = deleteMember.getGroup().getGroupId();
         //리더 정보
-        GroupSetting leader = findByGroupIdAndUserId(groupId, user.getUser().getUserId());
+        GroupSetting leader = findGroupSettingByGroupIdAndUserId(groupId, user.getUser().getUserId());
 
         //리더만 가능
         if(leader.getRole() != GroupRole.LEADER){
@@ -108,7 +107,8 @@ public class GroupSettingServiceImpl implements GroupSettingService {
                 .orElseThrow(() -> new GroupSettingNotFoundException("해당 그룹에 존재하지 않는 멤버입니다."));
     }
 
-    public GroupSetting findByGroupIdAndUserId(UUID groupId, UUID userId){
+    @Override
+    public GroupSetting findGroupSettingByGroupIdAndUserId(UUID groupId, UUID userId){
         return groupSettingRepository.findByGroup_GroupIdAndUser_UserId(groupId, userId)
                 .orElseThrow(() -> new GroupSettingNotFoundException("해당 그룹에 존재하지 않는 멤버입니다."));
     }
@@ -150,12 +150,12 @@ public class GroupSettingServiceImpl implements GroupSettingService {
     }
 
     @Override
-    public List<UUID> getGroupEventRelatedUsers(UUID groupEventId) {
-        return groupSettingRepository.findByGroupEventGroupId(groupEventId);
+    public List<UUID> getGroupTodoRelatedUsers(UUID groupTodoId){
+        return groupSettingRepository.findByGroupTodoGroupId(groupTodoId);
     }
 
     @Override
-    public List<UUID> getGroupTodoRelatedUsers(UUID groupTodoId){
-        return groupSettingRepository.findByGroupTodoGroupId(groupTodoId);
+    public List<UUID> getGroupEventRelatedUsers(UUID groupEventId) {
+        return groupSettingRepository.findUserIdByGroupEventGroupId(groupEventId);
     }
 }

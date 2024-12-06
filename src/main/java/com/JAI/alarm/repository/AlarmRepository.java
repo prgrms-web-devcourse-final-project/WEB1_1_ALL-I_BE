@@ -27,4 +27,13 @@ public interface AlarmRepository extends JpaRepository<Alarm, UUID> {
     @Transactional
     @Query("DELETE FROM Alarm a WHERE a.readTime < :standardTime")
     void deleteAlarmNeedToBeDelete(LocalDateTime standardTime);
+
+    @Query("SELECT a " +
+            "FROM Alarm a " +
+            "JOIN GroupEventMapping gem ON gem.groupEventMappingId = a.groupEventMapping.groupEventMappingId " +
+            "JOIN GroupSetting gs ON gs.groupSettingId = gem.groupSetting.groupSettingId " +
+            "WHERE gs.group.groupId = :groupId " +
+            "AND gs.user.userId = :userId " +
+            "AND gem.groupEvent.groupEventId = :groupEventId")
+    Alarm findByGroupEventById(UUID groupEventId, UUID groupId, UUID userId);
 }

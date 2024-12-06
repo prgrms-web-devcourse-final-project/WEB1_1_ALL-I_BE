@@ -1,12 +1,11 @@
-package com.JAI.event.DTO;
+package com.JAI.event.DTO.request;
 
-import com.JAI.category.domain.Category;
-import com.JAI.user.domain.User;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -14,8 +13,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Getter
-public class PersonalEventDTO {
-    UUID personalEventId;
+public class GroupEventUpdateReqDTO {
+    @NotNull(message = "group event Id must not be null")
+    UUID groupEventId;
 
     String title;
 
@@ -29,9 +29,5 @@ public class PersonalEventDTO {
 
     Boolean isAlarmed;
 
-    LocalDateTime createdAt;
-
-    Category category;
-
-    User user;
+    List<UUID> assignedMemberList;
 }

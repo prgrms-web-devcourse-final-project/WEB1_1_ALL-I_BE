@@ -16,13 +16,16 @@ public class AlarmResDTO {
 
     private String description;
 
+    private Boolean isRead;
+
     private UUID userId;
 
     @Builder
-    private AlarmResDTO(UUID alarmId, AlarmType type, String description, UUID userId) {
+    private AlarmResDTO(UUID alarmId, AlarmType type, String description, Boolean isRead, UUID userId) {
+        this.alarmId = alarmId;
         this.type = type;
         this.description = description;
-        this.alarmId = alarmId;
+        this.isRead = isRead;
         this.userId = userId;
     }
 }

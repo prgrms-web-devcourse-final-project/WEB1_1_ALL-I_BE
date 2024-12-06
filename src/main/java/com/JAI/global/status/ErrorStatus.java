@@ -54,7 +54,10 @@ public enum ErrorStatus {
     //그룹 초대
     GROUP_INVITATION_ACCESS_DENIED(HttpStatus.FORBIDDEN,"GROUP-INVITATION403"),
     GROUP_INVITATION_DUPLICATED(HttpStatus.CONFLICT,"GROUP-INVITATION409"),
-    GROUP_INVITATION_NOT_FOUND(HttpStatus.NOT_FOUND, "GROUP-INVITATION404");
+    GROUP_INVITATION_NOT_FOUND(HttpStatus.NOT_FOUND, "GROUP-INVITATION404"),
+
+    // 그룹 알림
+    GROUP_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "GROUP-EVENT404"),;
 
     private final HttpStatus httpStatus;
     private final String code;

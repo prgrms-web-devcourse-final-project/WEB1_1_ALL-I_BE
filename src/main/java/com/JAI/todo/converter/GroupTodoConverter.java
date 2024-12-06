@@ -1,6 +1,7 @@
 package com.JAI.todo.converter;
 
 import com.JAI.category.DTO.CategoryResDTO;
+import com.JAI.category.DTO.GroupCategoryResDTO;
 import com.JAI.group.controller.response.GroupListRes;
 import com.JAI.group.domain.Group;
 import com.JAI.todo.controller.request.GroupTodoCreateReq;
@@ -60,7 +61,7 @@ public class GroupTodoConverter {
                 .build();
     }
 
-    public GroupTodoInfoRes toGroupTodoInfoDTO(List<GroupListRes> groups, List<CategoryResDTO> groupCategories, List<GroupTodoRes> groupTodos){
+    public GroupTodoInfoRes toGroupTodoInfoDTO(List<GroupListRes> groups, List<GroupCategoryResDTO> groupCategories, List<GroupTodoRes> groupTodos){
         return GroupTodoInfoRes.builder()
                 .groups(groups)
                 .groupCategories(groupCategories)

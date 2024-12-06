@@ -78,7 +78,7 @@ public class GroupTodoServiceImpl implements GroupTodoService{
         List<GroupListRes> groupDTOs = new ArrayList<>();
         groupDTOs.add(groupService.getGroupById(groupId));
 
-        List<CategoryResDTO> categoryResDTOs = new ArrayList<>();
+        List<GroupCategoryResDTO> categoryResDTOs = new ArrayList<>();
         categoryResDTOs.add(categoryService.getCategoryByGroupId(groupId));
 
 
@@ -107,11 +107,11 @@ public class GroupTodoServiceImpl implements GroupTodoService{
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
         List<GroupListRes> groupDTOs = groupService.getGroupByUserId(userId);
-        List<CategoryResDTO> categoryResDTOs = categoryService.getOnlyGroupCategoryByUserId(userId);
+        List<GroupCategoryResDTO> categoryResDTOs = categoryService.getOnlyGroupCategoryByUserId(userId);
 
         // categoryResDTOs를 groupId를 키로 가지는 Map으로 변환
         Map<UUID, UUID> groupIdToCategoryIdMap = categoryResDTOs.stream()
-                .collect(Collectors.toMap(CategoryResDTO::getGroupId, CategoryResDTO::getCategoryId));
+                .collect(Collectors.toMap(GroupCategoryResDTO::getGroupId, GroupCategoryResDTO::getCategoryId));
 
         List<GroupTodoRes> groupTodos = groupTodoRepository.findByUserIdAndDateBetween(userId, startDate, endDate)
                 .stream()
@@ -143,7 +143,7 @@ public class GroupTodoServiceImpl implements GroupTodoService{
         List<GroupListRes> groupDTOs = new ArrayList<>();
         groupDTOs.add(groupService.getGroupById(groupId));
 
-        List<CategoryResDTO> categoryResDTOs = new ArrayList<>();
+        List<GroupCategoryResDTO> categoryResDTOs = new ArrayList<>();
         categoryResDTOs.add(categoryService.getCategoryByGroupId(groupId));
 
         List<GroupTodoRes> groupTodos = groupTodoRepository.findByGroupIdAndUserIdAndDateBetween(groupId, userId, startDate, endDate)
