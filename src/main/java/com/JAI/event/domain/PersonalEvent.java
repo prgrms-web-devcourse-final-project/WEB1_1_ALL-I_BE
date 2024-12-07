@@ -57,7 +57,7 @@ public class PersonalEvent {
     @JoinColumn(name = "category_id", referencedColumnName = "category_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Category category;
 
-    @OneToOne(mappedBy = "personalEvent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "personalEvent", cascade = CascadeType.ALL, orphanRemoval = false)
     private Alarm alarm;
 
     public void setUser(final User user) {

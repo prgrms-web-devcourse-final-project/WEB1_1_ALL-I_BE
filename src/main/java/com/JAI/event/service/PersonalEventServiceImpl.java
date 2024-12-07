@@ -77,7 +77,6 @@ public class PersonalEventServiceImpl implements PersonalEventService {
 
         PersonalEvent updatedPersonalEvent = personalEventConverter.personalUpdateReqEventDTOToPersonalEvent(personalEventUpdateReqDTO, existingEvent);
 
-        // categoryService를 통해 Category를 설정
         Optional.ofNullable(personalEventUpdateReqDTO.getCategoryId())
                 .map(categoryService::getCategoryByCategoryId)
                 .map(category -> {
@@ -87,13 +86,12 @@ public class PersonalEventServiceImpl implements PersonalEventService {
                     updatedPersonalEvent.setCategory(category);
                     return category;
                 })
-                .orElseThrow(() -> new CategoryNotFoundException("해당 ID의 카테고리를 찾을 수 없습니다.", personalEventUpdateReqDTO.getCategoryId()));
-
-
+                .orElseGet(() -> {
+                    updatedPersonalEvent.setCategory(existingEvent.getCategory());
+                    return null;
+                });
 
         personalEventRepository.save(updatedPersonalEvent);
-
-
 
         if (updatedPersonalEvent.getIsAlarmed()) {
             alarmService.updatePersonalEventAlarm(personalEventConverter.personalEventToPersonalEventDTO(updatedPersonalEvent));
