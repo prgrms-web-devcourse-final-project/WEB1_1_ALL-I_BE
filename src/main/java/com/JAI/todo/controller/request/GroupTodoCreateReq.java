@@ -20,7 +20,7 @@ public class GroupTodoCreateReq {
 
     @NotBlank(message = "내용은 필수 입니다.")
     String title;
-    @NotBlank(message = "날짜는 필수 입니다.")
+    @NotNull(message = "날짜는 필수 입니다.")
     LocalDate date;
 
     LocalTime startTime;
