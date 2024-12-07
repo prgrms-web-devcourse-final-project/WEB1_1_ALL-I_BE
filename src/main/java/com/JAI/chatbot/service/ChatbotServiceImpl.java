@@ -82,8 +82,8 @@ public class ChatbotServiceImpl implements ChatbotService {
     @Override
     public ChatbotResponseWrapper<?> createResponseJson(CustomUserDetails user,  TokenReqDTO token) throws ChatbotForbiddenException{
 
-//        System.out.println("createResponseJson");
-//        System.out.println("token: "+token.getToken());
+        System.out.println("createResponseJson");
+        System.out.println("token: "+token.getToken());
 
         ChatbotRedisDataDTO chatbotRedisDataDTO = redisChatbotUtil.getChatbotData(token.getToken());
 
@@ -154,8 +154,8 @@ public class ChatbotServiceImpl implements ChatbotService {
     @Override
     public void analyzeIntention(CustomUserDetails user, TokenReqDTO token) {
 
-//        System.out.println("analyzeIntention");
-//        System.out.println("token: "+token.getToken());
+        System.out.println("analyzeIntention");
+        System.out.println("token: "+token.getToken());
 
 
         ChatbotRedisDataDTO chatbotRedisDataDTO = redisChatbotUtil.getChatbotData(token.getToken());
@@ -175,14 +175,24 @@ public class ChatbotServiceImpl implements ChatbotService {
 
         // 텍스트 의도 분석 요청
         String intention = chatGPTService.findIntention(messages, token);
+        System.out.println("intention: "+intention);
 
-        // 레디스에 intention 저장하기
-        ChatbotReqDTO newChatbotReqDTO = ChatbotReqDTO.builder()
-                .intention(intention)
-                .categoryId(chatbotRedisDataDTO.getChatbotReqDTO().getCategoryId())
-                .prompt(chatbotRedisDataDTO.getChatbotReqDTO().getPrompt())
-                .build();
-        redisChatbotUtil.saveChatbotReq(token.getToken(), newChatbotReqDTO);
+        // intention이 '그외'인 경우 예외 처리
+        if(intention.equals("EXCEPTION")){
+            throw new ChatbotBadRequestException("일정, 투두 자동 기입 혹은 계획 추천과 관련 메세지를 입력해주세요");
+        }
+
+        else {
+            if(chatbotRedisDataDTO.getChatbotReqDTO().getIntention() == null){
+                // 레디스에 intention 저장하기
+                ChatbotReqDTO newChatbotReqDTO = ChatbotReqDTO.builder()
+                        .intention(intention)
+                        .categoryId(chatbotRedisDataDTO.getChatbotReqDTO().getCategoryId())
+                        .prompt(chatbotRedisDataDTO.getChatbotReqDTO().getPrompt())
+                        .build();
+                redisChatbotUtil.saveChatbotReq(token.getToken(), newChatbotReqDTO);
+            }
+        }
     }
 
     @Override
