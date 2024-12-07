@@ -19,7 +19,7 @@ public class GroupEventConverter {
                 .endTime(groupEvent.getEndTime())
                 .isAlarmed(groupEvent.getIsAlarmed())
                 .createdAt(groupEvent.getCreatedAt())
-                .groupId(groupEvent.getGroupEventId())
+                .groupId(groupEvent.getGroup().getGroupId())
                 .categoryId(groupEvent.getGroup().getCategory().getCategoryId())
                 .build();
     }
