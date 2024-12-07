@@ -1,0 +1,81 @@
+name: Deploy to Amazon EC2
+
+on:
+  push:
+    branches: [ "develop", "main" ]
+  pull_request:
+    branches: [ "develop", "main" ]
+
+env:
+  AWS_REGION: ap-northeast-2
+  S3_BUCKET_NAME: jai-s3-bucket
+  CODE_DEPLOY_APPLICATION_NAME: jai-app
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: jai-deployment-group
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    # (1) 기본 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+
+    # (2) resources 파일 생성
+      - name: Ensure resources directory exists
+        run: mkdir -p ./src/main/resources
+
+    # (3) JDK 17 설정
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+    # (4) YAML 파일 생성 
+      - name: Create application.yaml from Secrets
+        run: |
+          echo "${{ secrets.APPLICATION_YAML }}" > ./src/main/resources/application.yaml
+          echo "${{ secrets.APPLICATION_DEV_YAML }}" > ./src/main/resources/application-dev.yaml
+          echo "${{ secrets.APPLICATION_TEST_YAML }}" > ./src/main/resources/application-test.yaml
+    
+    # (5) gradlew 권한 추가
+      - name: Add execute permission to gradlew
+        run: chmod +x gradlew
+
+    # (6) Gradle 빌드 실행 (arguments 파라미터 제거)
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+
+    # (7) AWS 인증
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+    # (8) 빌드 결과물을 S3 버킷에 업로드
+      - name: Upload to AWS S3
+        run: |
+          aws deploy push \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --ignore-hidden-files \
+            --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
+            --source .
+
+    # (9) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
+      - name: Deploy to AWS EC2 from S3
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+            --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
+
