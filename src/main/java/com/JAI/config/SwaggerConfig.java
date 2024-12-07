@@ -31,8 +31,8 @@ public class SwaggerConfig {
 
     private Info apiInfo() {
         return new Info()
-                .title("API Documentation")
+                .title("J-AI API 문서")
                 .description("API Documentation")
-                .version("0.5");
+                .version("1.0");
     }
 }
