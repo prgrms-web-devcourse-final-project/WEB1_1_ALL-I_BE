@@ -19,13 +19,15 @@ public interface AlarmRepository extends JpaRepository<Alarm, UUID> {
     @Query("SELECT a FROM Alarm a WHERE a.scheduledTime <= :standardTime AND a.isSent = false AND a.type = com.JAI.alarm.domain.AlarmType.INVITATION")
     List<Alarm> findPendingInvitationAlarms(LocalDateTime standardTime);
 
+
+    @Query("SELECT a FROM Alarm a WHERE a.personalEvent.personalEventId = :personalEventId")
     Alarm findByPersonalEvent_PersonalEventId(UUID personalEventId);
 
     List<Alarm> findByUser_UserId(UUID userId);
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM Alarm a WHERE a.readTime < :standardTime")
+    @Query("DELETE FROM Alarm a WHERE a.readTime <= :standardTime AND a.readTime IS NOT NULL")
     void deleteAlarmNeedToBeDelete(LocalDateTime standardTime);
 
     @Query("SELECT a " +
