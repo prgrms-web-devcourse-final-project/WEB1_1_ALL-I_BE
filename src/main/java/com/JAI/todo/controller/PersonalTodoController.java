@@ -9,6 +9,7 @@ import com.JAI.todo.controller.response.*;
 import com.JAI.todo.domain.PersonalTodo;
 import com.JAI.todo.service.PersonalTodoService;
 import com.JAI.user.service.dto.CustomUserDetails;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,7 +26,7 @@ public class PersonalTodoController {
 
     //투두 생성
     @PostMapping()
-    public ApiResponse<String> createPersonalTodo(@RequestBody PersonalTodoCreateReq req, @AuthenticationPrincipal CustomUserDetails user){
+    public ApiResponse<String> createPersonalTodo(@RequestBody @Valid PersonalTodoCreateReq req, @AuthenticationPrincipal CustomUserDetails user){
         personalTodoService.createPersonalTodo(req, user);
 
         return ApiResponse.onCreateSuccess("Todo Create Success");
@@ -33,13 +34,13 @@ public class PersonalTodoController {
 
     //투두 세부 항목 수정
     @PatchMapping("/{todoId}/update")
-    public ApiResponse<PersonalTodoUpdateRes> updatePersonalTodo(@PathVariable UUID todoId, @RequestBody PersonalTodoUpdateReq req, @AuthenticationPrincipal CustomUserDetails user){
+    public ApiResponse<PersonalTodoUpdateRes> updatePersonalTodo(@PathVariable UUID todoId, @RequestBody @Valid PersonalTodoUpdateReq req, @AuthenticationPrincipal CustomUserDetails user){
         return ApiResponse.onSuccess(personalTodoService.updatePersonalTodo(todoId, req, user));
     }
 
     //투두 내용 변경
     @PatchMapping("/{todoId}/title")
-    public ApiResponse<PersonalTodoUpdateTitleRes> updatePersonalTodoTitle(@PathVariable UUID todoId, @RequestBody PersonalTodoUpdateTitleReq req, @AuthenticationPrincipal CustomUserDetails user) {
+    public ApiResponse<PersonalTodoUpdateTitleRes> updatePersonalTodoTitle(@PathVariable UUID todoId, @RequestBody @Valid PersonalTodoUpdateTitleReq req, @AuthenticationPrincipal CustomUserDetails user) {
         return ApiResponse.onSuccess(personalTodoService.updatePersonalTodoTitle(todoId, req, user));
     }
     //투두 상태 변경

@@ -57,7 +57,7 @@ public class GroupTodoController {
     }
 
     @PatchMapping("/{groupId}/todos/{groupTodoId}/info")
-    public ApiResponse<GroupTodoUpdateRes> updateGroupTodoInfo(@RequestBody GroupTodoUpdateReq req, @PathVariable UUID groupId, @PathVariable UUID groupTodoId, @AuthenticationPrincipal CustomUserDetails user){
+    public ApiResponse<GroupTodoUpdateRes> updateGroupTodoInfo(@RequestBody @Valid GroupTodoUpdateReq req, @PathVariable UUID groupId, @PathVariable UUID groupTodoId, @AuthenticationPrincipal CustomUserDetails user){
         return ApiResponse.onSuccess(groupTodoService.updateGroupTodoInfo(req, groupTodoId, groupId, user.getUserId()));
     }
 
