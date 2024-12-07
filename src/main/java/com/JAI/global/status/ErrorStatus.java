@@ -60,7 +60,15 @@ public enum ErrorStatus {
     GROUP_INVITATION_NOT_FOUND(HttpStatus.NOT_FOUND, "GROUP-INVITATION404"),
 
     // 그룹 알림
-    GROUP_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "GROUP-EVENT404"),;
+    GROUP_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "GROUP-EVENT404"),
+
+    // 그룹 투두
+    GROUP_TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "GROUP-TODO404"),
+    GROUP_TODO_NOT_OWNER_FOUND(HttpStatus.FORBIDDEN, "GROUP-TODO403"),
+    GROUP_TODO_BAD_REQUEST(HttpStatus.BAD_REQUEST, "GROUP-TODO400"),
+
+    // 그룹 투두 맵핑
+    GROUP_TODO_MAPPING_NOT_OWNER_FOUND(HttpStatus.FORBIDDEN, "GROUP-TODO-MAPPING403");
 
     private final HttpStatus httpStatus;
     private final String code;
