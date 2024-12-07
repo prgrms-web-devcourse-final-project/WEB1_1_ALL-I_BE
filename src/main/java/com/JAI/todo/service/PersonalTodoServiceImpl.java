@@ -108,6 +108,8 @@ public class PersonalTodoServiceImpl implements PersonalTodoService{
         validatePersonalTodoOwner(user, personalTodo);
         //변경할 카테고리 조회
         Category changeCategory = findCategoryOrThrowException(req.getCategoryId());
+        //로그인 된 유저의 카테고리인지 검증
+        validateCategoryOwner(user, changeCategory);
         //변경 사항 적용
         personalTodo.updatePersonalTodo(req.getTitle(), changeCategory, req.getStartTime(), req.getDate());
         personalTodoRepository.save(personalTodo);
