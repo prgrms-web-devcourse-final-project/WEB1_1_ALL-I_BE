@@ -31,22 +31,10 @@ public class ChatbotController {
         // 사용자 입력 데이터 레디스에 저장
         TokenReqDTO tokenReqDTO = chatbotService.saveRequest(user, request);
 
-        // 레디스에 저장된 intention 불러오기
-        ChatbotRedisDataDTO chatbotRedisDataDTO = redisChatbotUtil.getChatbotData(tokenReqDTO.getToken());
-        String intention = chatbotRedisDataDTO.getChatbotReqDTO().getIntention();
-
-        // intention이 null 아닌 경우 -> createResponseJson() 호출
-        if (intention != null) {
-            return ApiResponse.onCreateSuccess(chatbotService.createResponseJson(user, tokenReqDTO));
-        }
-
-        // intention이 null인 경우
         // analyzeIntention() 호출해서 텍스트 의도 분석 후
         // createResponseJson() 호출
-        else {
-            chatbotService.analyzeIntention(user, tokenReqDTO);
-            return ApiResponse.onCreateSuccess(chatbotService.createResponseJson(user, tokenReqDTO));
-        }
+        chatbotService.analyzeIntention(user, tokenReqDTO);
+        return ApiResponse.onCreateSuccess(chatbotService.createResponseJson(user, tokenReqDTO));
     }
 
     @PostMapping("/message")
