@@ -114,7 +114,9 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Override
     public List<AlarmResDTO> getAlarm(UUID userId) {
-        return alarmRepository.findByUser_UserIdOrderByScheduledTimeDesc(userId).stream()
+        LocalDateTime now = LocalDateTime.now();
+
+        return alarmRepository.findByUserId(userId, now).stream()
                 .map(alarm -> {
                     AlarmResDTO alarmResDTO = alarmConverter.alarmToAlarmResDTO(alarm);
                     markAlarmAsRead(alarmResDTO);
