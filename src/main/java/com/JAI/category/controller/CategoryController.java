@@ -29,7 +29,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ApiResponse<CategoryResDTO> createCategory(@AuthenticationPrincipal CustomUserDetails user, BindingResult bindingResult, @RequestBody @Valid CategoryCreateReqDTO categoryCreateReqDTO) {
+    public ApiResponse<CategoryResDTO> createCategory(@AuthenticationPrincipal CustomUserDetails user, @RequestBody @Valid CategoryCreateReqDTO categoryCreateReqDTO, BindingResult bindingResult) {
         return ApiResponse.onCreateSuccess(categoryService.createCategory(categoryCreateReqDTO, user.getUserId()));
     }
 
