@@ -50,7 +50,7 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://web-1-1-all-i-fe.vercel.app"));
+                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://web-1-1-all-i-fe.vercel.app"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
