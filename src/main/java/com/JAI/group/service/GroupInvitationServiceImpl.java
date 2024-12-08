@@ -92,6 +92,9 @@ public class GroupInvitationServiceImpl implements GroupInvitationService{
         AddGroupMemberServiceReq req = groupSettingConverter.toAddGroupMemberServiceReq(
                 groupInvitation.getGroup(), user.getUser(), GroupRole.MEMBER);
         groupSettingService.addGroupMember(req);
+
+        // 그룹 초대 알림 삭제
+        alarmService.deleteAlarmByGroupInvitationId(groupInvitationId);
     }
 
 
@@ -107,6 +110,9 @@ public class GroupInvitationServiceImpl implements GroupInvitationService{
         //상태를 거절로 변경
         groupInvitation.updateStatus(InvitationStatus.DECLINED);
         groupInvitationRepository.save(groupInvitation);
+
+        // 그룹 초대 알림 삭제
+        alarmService.deleteAlarmByGroupInvitationId(groupInvitationId);
     }
 
 

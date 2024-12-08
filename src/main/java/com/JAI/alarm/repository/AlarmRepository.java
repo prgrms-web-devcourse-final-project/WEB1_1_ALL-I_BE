@@ -1,6 +1,7 @@
 package com.JAI.alarm.repository;
 
 import com.JAI.alarm.domain.Alarm;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -38,4 +39,9 @@ public interface AlarmRepository extends JpaRepository<Alarm, UUID> {
             "AND gs.user.userId = :userId " +
             "AND gem.groupEvent.groupEventId = :groupEventId")
     Alarm findByGroupEventById(UUID groupEventId, UUID groupId, UUID userId);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Alarm a WHERE a.groupInvitation.groupInvitationId = :groupInvitationId")
+    void deleteByGroupInvitationId(@Param("groupInvitationId") UUID groupInvitationId);
 }

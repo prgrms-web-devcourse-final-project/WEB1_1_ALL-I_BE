@@ -25,4 +25,6 @@ public interface AlarmService {
     public List<AlarmResDTO> findPendingAlarms(LocalDateTime start, LocalDateTime end);
 
     public void markAlarmAsSent(AlarmResDTO alarmResDTO);
+
+    public void deleteAlarmByGroupInvitationId(UUID groupInvitationId);
 }

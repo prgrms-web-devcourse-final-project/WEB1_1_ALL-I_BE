@@ -252,4 +252,9 @@ public class AlarmServiceImpl implements AlarmService {
             alarmRepository.save(alarm);
         });
     }
+
+    @Override
+    public void deleteAlarmByGroupInvitationId(UUID groupInvitationId) {
+        alarmRepository.deleteByGroupInvitationId(groupInvitationId);
+    }
 }
