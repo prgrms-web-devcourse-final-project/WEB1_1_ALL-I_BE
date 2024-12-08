@@ -5,6 +5,7 @@ import com.JAI.event.DTO.request.PersonalEventUpdateReqDTO;
 import com.JAI.event.DTO.response.PersonalEventResDTO;
 import com.JAI.event.service.PersonalEventService;
 import com.JAI.global.controller.ApiResponse;
+import com.JAI.global.status.ErrorStatus;
 import com.JAI.user.service.dto.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,7 +50,12 @@ public class PersonalEventController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<Void> createPersonalEvent(
-            @Valid @RequestBody PersonalEventCreateReqDTO personalCreateEventReqDTO, @AuthenticationPrincipal CustomUserDetails user) {
+            @Valid @RequestBody PersonalEventCreateReqDTO personalCreateEventReqDTO, BindingResult bindingResult, @AuthenticationPrincipal CustomUserDetails user) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            return ApiResponse.onFailure(ErrorStatus.BAD_REQUEST, errorMessage, null);
+        }
+
         personalEventService.createPersonalEvent(personalCreateEventReqDTO, user.getUserId());
         return ApiResponse.onCreateSuccess();
     }
@@ -69,7 +76,13 @@ public class PersonalEventController {
             @Parameter(name = "categoryId", description = "카테고리 아이디(NOT NULL)", example = "3e7d8c6a-0acf-4b83-8366-bca08a145e22"),
     })
     public ApiResponse<PersonalEventResDTO> updatePersonalEvent(@PathVariable("event_id") UUID personalEventId,
-                                                                @Valid @RequestBody PersonalEventUpdateReqDTO personalEventUpdateReqDTO, @AuthenticationPrincipal CustomUserDetails user) {
+                                                                @Valid @RequestBody PersonalEventUpdateReqDTO personalEventUpdateReqDTO,
+                                                                BindingResult bindingResult, @AuthenticationPrincipal CustomUserDetails user) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            return ApiResponse.onFailure(ErrorStatus.BAD_REQUEST, errorMessage, null);
+        }
+
         PersonalEventResDTO updatedPersonalEvent = personalEventService.updatePersonalEvent(personalEventUpdateReqDTO, personalEventId, user.getUserId());
         return ApiResponse.onSuccess(updatedPersonalEvent);
     }

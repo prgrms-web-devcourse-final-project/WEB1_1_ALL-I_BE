@@ -14,6 +14,7 @@ import com.JAI.event.mapper.GroupEventConverter;
 import com.JAI.event.repository.GroupEventMappingRepository;
 import com.JAI.event.repository.GroupEventRepository;
 import com.JAI.group.controller.response.GroupListRes;
+import com.JAI.group.exception.GroupBadRequestException;
 import com.JAI.group.exception.GroupNotFoundException;
 import com.JAI.group.service.GroupService;
 import com.JAI.group.service.GroupSettingService;
@@ -139,6 +140,10 @@ public class GroupEventServiceImpl implements GroupEventService {
         // 사용자가 해당 그룹에 속하지 않는 에러 처리
         if (!groupSettingService.isGroupMemberExisted(groupId, userId)) {
             throw new GroupNotFoundException(userId + "사용자는 해당 그룹에 속하지 않습니다.");
+        }
+
+        if (!groupEventCreateReqDTO.getGroupId().equals(groupId)) {
+            throw new GroupBadRequestException("해당 그룹에서 다른 그룹 일정을 생성할 수 없습니다.");
         }
 
         GroupEvent groupEvent = groupEventConverter.groupEventCreateReqDTOToGroupEvent(groupEventCreateReqDTO);
