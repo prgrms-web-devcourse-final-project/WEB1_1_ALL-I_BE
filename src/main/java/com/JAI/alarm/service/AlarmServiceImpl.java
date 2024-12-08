@@ -131,33 +131,38 @@ public class AlarmServiceImpl implements AlarmService {
 
         // 개인 일정에 해당하는 알림이 없는 경우 예외 처리
         if (existedAlarm == null) {
-            throw new AlarmNotFoundException("해당 일정에 관련된 알림은 없습니다.");
+            createPersonalEventAlarm(personalEventDTO);
+        } else {
+            // 시작 시간 없는 경우 현재 시간으로 설정
+            LocalDateTime scheduledTime = Optional.ofNullable(personalEventDTO.getStartTime())
+                    .map(startTime -> personalEventDTO.getStartDate().atTime(startTime))
+                    .orElse(personalEventDTO.getStartDate().atTime(LocalTime.now()));
+
+            // 변경된 알림 생성 후 저장
+            Alarm updatedAlarm = Alarm.builder()
+                    .alarmId(existedAlarm.getAlarmId())
+                    .type(existedAlarm.getType())
+                    .description(personalEventConverter
+                            .personalEventDTOToPersonalEventResDTO(personalEventDTO)
+                            .toString())
+                    .scheduledTime(scheduledTime)
+                    .createdAt(existedAlarm.getCreatedAt())
+                    .user(existedAlarm.getUser())
+                    .personalEvent(personalEventConverter
+                            .personalEventDTOToPersonalEvent(personalEventDTO))
+                    .build();
+
+            alarmRepository.save(updatedAlarm);
         }
-
-        // 시작 시간 없는 경우 현재 시간으로 설정
-        LocalDateTime scheduledTime = Optional.ofNullable(personalEventDTO.getStartTime())
-                .map(startTime -> personalEventDTO.getStartDate().atTime(startTime))
-                .orElse(personalEventDTO.getStartDate().atTime(LocalTime.now()));
-
-        // 변경된 알림 생성 후 저장
-        Alarm updatedAlarm = Alarm.builder()
-                .alarmId(existedAlarm.getAlarmId())
-                .type(existedAlarm.getType())
-                .description(personalEventConverter
-                        .personalEventDTOToPersonalEventResDTO(personalEventDTO)
-                        .toString())
-                .scheduledTime(scheduledTime)
-                .createdAt(existedAlarm.getCreatedAt())
-                .user(existedAlarm.getUser())
-                .personalEvent(personalEventConverter
-                        .personalEventDTOToPersonalEvent(personalEventDTO))
-                .build();
-
-        alarmRepository.save(updatedAlarm);
     }
 
     @Override
     public void updateGroupEventAlarm(GroupEventForAlarmDTO groupEventForAlarmDTO) {
+        // 시작 시간 없는 경우 현재 시간으로 설정
+        LocalDateTime scheduledTime = Optional.ofNullable(groupEventForAlarmDTO.getStartTime())
+                .map(startTime -> groupEventForAlarmDTO.getStartDate().atTime(startTime))
+                .orElse(groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now()));
+
         groupEventForAlarmDTO.getAssignedUserIds().forEach(assignedUserId -> {
             // 저장된 알림
             Alarm existedAlarm = alarmRepository.findByGroupEventById(
@@ -165,28 +170,34 @@ public class AlarmServiceImpl implements AlarmService {
                     groupEventForAlarmDTO.getGroup().getGroupId(),
                     assignedUserId);
 
+            Alarm updatedAlarm = null;
+
             // 개인 일정에 해당하는 알림이 없는 경우 예외 처리
             if (existedAlarm == null) {
-                throw new AlarmNotFoundException("해당 일정에 관련된 알림은 없습니다.");
+                updatedAlarm = Alarm.builder()
+                        .type(AlarmType.EVENT)
+                        .scheduledTime(scheduledTime)
+                        .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
+                        .user(userService.getUserById(assignedUserId))
+                        .groupEventMapping(groupEventMappingService.findById(
+                                groupEventForAlarmDTO.getGroupEventId(),
+                                groupEventForAlarmDTO.getGroup().getGroupId(),
+                                assignedUserId))
+                        .build();
+            } else {
+                // 변경된 알림 생성 후 저장
+                updatedAlarm = Alarm.builder()
+                        .alarmId(existedAlarm.getAlarmId())
+                        .type(existedAlarm.getType())
+                        .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
+                        .scheduledTime(scheduledTime)
+                        .createdAt(existedAlarm.getCreatedAt())
+                        .user(existedAlarm.getUser())
+                        .groupEventMapping(groupEventMappingService.findById(groupEventForAlarmDTO.getGroupEventId(),
+                                groupEventForAlarmDTO.getGroup().getGroupId()
+                                , assignedUserId))
+                        .build();
             }
-
-            // 시작 시간 없는 경우 현재 시간으로 설정
-            LocalDateTime scheduledTime = Optional.ofNullable(groupEventForAlarmDTO.getStartTime())
-                    .map(startTime -> groupEventForAlarmDTO.getStartDate().atTime(startTime))
-                    .orElse(groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now()));
-
-            // 변경된 알림 생성 후 저장
-            Alarm updatedAlarm = Alarm.builder()
-                    .alarmId(existedAlarm.getAlarmId())
-                    .type(existedAlarm.getType())
-                    .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
-                    .scheduledTime(scheduledTime)
-                    .createdAt(existedAlarm.getCreatedAt())
-                    .user(existedAlarm.getUser())
-                    .groupEventMapping(groupEventMappingService.findById(groupEventForAlarmDTO.getGroupEventId(),
-                            groupEventForAlarmDTO.getGroup().getGroupId()
-                            , assignedUserId))
-                    .build();
 
             alarmRepository.save(updatedAlarm);
         });
