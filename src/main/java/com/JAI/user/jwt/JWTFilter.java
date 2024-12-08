@@ -1,6 +1,7 @@
 package com.JAI.user.jwt;
 
 import com.JAI.user.domain.User;
+import com.JAI.user.exception.AccessTokenExpiredException;
 import com.JAI.user.service.dto.CustomUserDetails;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -37,7 +38,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         try {
             if (jwtUtil.isExpired(token)) {
-                throw new ExpiredJwtException(null, null,"AccessToken is Expired");
+                throw new AccessTokenExpiredException("AccessToken is Expired");
             }
 
             String email = jwtUtil.getEmail(token);

@@ -2,6 +2,7 @@ package com.JAI.user.jwt;
 
 import com.JAI.user.controller.request.UserLoginReq;
 import com.JAI.user.domain.User;
+import com.JAI.user.exception.LoginRequestParseException;
 import com.JAI.user.repository.UserRepository;
 import com.JAI.user.service.dto.CustomUserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,7 +49,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
             return authenticationManager.authenticate(authToken);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new LoginRequestParseException("Failed to parse login request", e);
         }
     }
 
@@ -86,6 +87,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             response.getWriter().write(jsonResponse);
         } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("Failed to write json response", e);
         }
     }
 

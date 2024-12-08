@@ -1,7 +1,7 @@
 package com.JAI.user.jwt;
 
 import com.JAI.user.domain.User;
-import com.JAI.user.exception.UserNotFoundException;
+import com.JAI.user.exception.*;
 import com.JAI.user.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
@@ -37,7 +37,7 @@ public class JWTService {
         //RefreshToken이 없을때
         if(refresh == null) {
             //System.out.println("리프레시 토큰 없음");
-            throw new IllegalArgumentException("refresh token null");
+            throw new RefreshTokenNotFoundException("refresh token null");
         }
 
         //RefreshToken 만료 여부 확인
@@ -45,7 +45,7 @@ public class JWTService {
             jwtUtil.isExpired(refresh);
         }catch (ExpiredJwtException e){
             //System.out.println("리프레시 토큰 만료됨");
-            throw new IllegalArgumentException("refresh token expired");
+            throw new RefreshTokenExpiredException("refresh token expired",e);
         }
 
         //토큰이 refresh 토큰인지 확인
@@ -53,7 +53,7 @@ public class JWTService {
 
         if(!type.equals("refresh")) {
             //System.out.println("리프레시 토큰이 아님");
-            throw new IllegalArgumentException("invalid refresh token");
+            throw new InvalidTokenTypeException("invalid refresh token");
         }
 
         //검증된 refreshToken에서 이메일 받아오기
@@ -63,7 +63,7 @@ public class JWTService {
         String storedRefreshToken = redisTokenUtil.getRefreshToken(email);
         if(storedRefreshToken == null || !storedRefreshToken.equals(refresh)) {
             //System.out.println("레디스에 존재하지 않음");
-            throw new IllegalArgumentException("Refresh token expired or mismatch");
+            throw new RefreshTokenMismatchException("Refresh token expired or mismatch");
         }
 
         //RefreshToken 검증 완 새 Access Token 발급

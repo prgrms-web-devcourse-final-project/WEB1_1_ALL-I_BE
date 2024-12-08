@@ -41,7 +41,7 @@ public class TodoExceptionHandler {
     @ExceptionHandler(GroupTodoNotFoundException.class)
     public ApiResponse<Object> handleGroupTodoNotFound(GroupTodoNotFoundException e){
         return ApiResponse.onFailure(
-                ErrorStatus.PERSONAL_TODO_NOT_FOUND,
+                ErrorStatus.GROUP_TODO_NOT_FOUND,
                 e.getMessage(),
                 e.getData());
     }
@@ -50,7 +50,7 @@ public class TodoExceptionHandler {
     @ExceptionHandler(GroupTodoNotOwnerException.class)
     public ApiResponse<Object> handleGroupTodoNotOwner(GroupTodoNotOwnerException e){
         return ApiResponse.onFailure(
-                ErrorStatus.PERSONAL_TODO_NOT_OWNER_FOUND,
+                ErrorStatus.GROUP_TODO_NOT_OWNER_FOUND,
                 e.getMessage(),
                 e.getData());
     }
@@ -59,7 +59,7 @@ public class TodoExceptionHandler {
     @ExceptionHandler(GroupTodoBadRequestException.class)
     public ApiResponse<Object> handleGroupTodoBadRequest(GroupTodoBadRequestException e){
         return ApiResponse.onFailure(
-                ErrorStatus.PERSONAL_TODO_BAD_REQUEST,
+                ErrorStatus.GROUP_TODO_BAD_REQUEST,
                 e.getMessage(),
                 e.getData());
     }
@@ -69,7 +69,7 @@ public class TodoExceptionHandler {
     @ExceptionHandler(GroupTodoMappingNotOwnerException.class)
     public ApiResponse<Object> handleGroupTodoMappingNotOwner(GroupTodoMappingNotOwnerException e){
         return ApiResponse.onFailure(
-                ErrorStatus.PERSONAL_TODO_NOT_OWNER_FOUND,
+                ErrorStatus.GROUP_TODO_MAPPING_NOT_OWNER_FOUND,
                 e.getMessage(),
                 e.getData());
     }

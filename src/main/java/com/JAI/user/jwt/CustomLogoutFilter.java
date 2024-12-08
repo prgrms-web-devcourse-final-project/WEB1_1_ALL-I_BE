@@ -1,5 +1,9 @@
 package com.JAI.user.jwt;
 
+import com.JAI.user.exception.InvalidTokenTypeException;
+import com.JAI.user.exception.RefreshTokenExpiredException;
+import com.JAI.user.exception.RefreshTokenMismatchException;
+import com.JAI.user.exception.RefreshTokenNotFoundException;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;
@@ -43,36 +47,28 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
         //추출한 토큰이 유효한지 검증
         if (refresh == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Refresh token not found in cookies");
-            return;
+            throw new RefreshTokenNotFoundException("Refresh token not found in cookies");
         }
 
         //expired check
         try {
             if (jwtUtil.isExpired(refresh)) {
-                throw new ExpiredJwtException(null, null, "RefreshToken is Expired");
+                throw new RefreshTokenExpiredException("Refresh token expired");
             }
         } catch (ExpiredJwtException e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Refresh token is expired");
-            return;
+            throw new RefreshTokenExpiredException("Refresh token expired");
         }
 
         //추출한 토큰이 리프레시 토큰인지 검증
         String type = jwtUtil.getType(refresh);
         if (!type.equals("refresh")) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Invalid token type: Not a refresh token");
-            return;
+            throw new InvalidTokenTypeException("Invalid token type: Not a refresh token");
         }
         //레디스에 저장되어 있는지 검증
         String email = jwtUtil.getEmail(refresh);
         String storedRefreshToken = redisTokenUtil.getRefreshToken(email);
         if(storedRefreshToken == null || !storedRefreshToken.equals(refresh)) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("Refresh token does not exist or mismatch");
-            return;
+            throw new RefreshTokenMismatchException("Refresh token does not exist or mismatch");
         }
         //로그아웃 진행
         //레디스에서 해당 토큰 값 삭제

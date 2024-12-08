@@ -35,7 +35,7 @@ public class GroupController {
     }
 
     @PatchMapping("/{groupId}")
-    public ApiResponse<GroupUpdateRes> updateGroupInfo(@PathVariable UUID groupId, @RequestBody GroupUpdateReq req, @AuthenticationPrincipal CustomUserDetails user) {
+    public ApiResponse<GroupUpdateRes> updateGroupInfo(@PathVariable UUID groupId, @RequestBody @Valid GroupUpdateReq req, @AuthenticationPrincipal CustomUserDetails user) {
         return ApiResponse.onSuccess(groupService.updateGroupInfo(groupId, req, user));
     }
 
