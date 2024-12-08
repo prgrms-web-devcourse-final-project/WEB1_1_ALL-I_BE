@@ -65,6 +65,9 @@ dependencies {
 	// test
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.orbisgis:h2gis:2.2.0'
+
+	// swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 }
 
 tasks.named('test') {
