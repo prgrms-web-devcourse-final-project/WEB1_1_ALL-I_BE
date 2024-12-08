@@ -39,7 +39,8 @@ public class CategoryController {
             @Parameter(name = "name", description = "카테고리 이름(NOT NULL)", example = "운동"),
             @Parameter(name = "color", description = "카테고리 색깔(NOT NULL)", example = "#000000")}
     )
-    public ApiResponse<CategoryResDTO> createCategory(@AuthenticationPrincipal CustomUserDetails user, @RequestBody @Valid CategoryCreateReqDTO categoryCreateReqDTO, BindingResult bindingResult) {
+    public ApiResponse<CategoryResDTO> createCategory(@AuthenticationPrincipal CustomUserDetails user,
+                                                      @RequestBody @Valid CategoryCreateReqDTO categoryCreateReqDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
             return ApiResponse.onFailure(ErrorStatus.BAD_REQUEST, errorMessage, null);
@@ -55,7 +56,8 @@ public class CategoryController {
             @Parameter(name = "name", description = "카테고리 이름", example = "운동"),
             @Parameter(name = "color", description = "카테고리 색깔", example = "#000000")}
     )
-    public ApiResponse<CategoryResDTO> updateCategory(@PathVariable("category_id") UUID categoryId, @RequestBody @Valid CategoryUpdateReqDTO categoryUpdateReqDTO, @AuthenticationPrincipal CustomUserDetails user, BindingResult bindingResult) {
+    public ApiResponse<CategoryResDTO> updateCategory(@PathVariable("category_id") UUID categoryId, @RequestBody @Valid CategoryUpdateReqDTO categoryUpdateReqDTO,
+                                                      @AuthenticationPrincipal CustomUserDetails user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
             return ApiResponse.onFailure(ErrorStatus.BAD_REQUEST, errorMessage, null);
