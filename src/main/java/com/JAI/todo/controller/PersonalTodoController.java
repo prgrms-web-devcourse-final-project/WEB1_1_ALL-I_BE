@@ -57,9 +57,10 @@ public class PersonalTodoController {
     @PatchMapping("/{todoId}/title")
     @Operation(summary = "개인 TO DO 제목 수정", description = "개인 TO DO 제목 수정 요청 API")
     @Parameter(name = "title", description = "그룹 TO DO", example = "개발 문서 완")
-    public ApiResponse<PersonalTodoUpdateTitleRes> updatePersonalTodoTitle(@PathVariable UUID todoId, @RequestBody PersonalTodoUpdateTitleReq req, @AuthenticationPrincipal CustomUserDetails user) {
+    public ApiResponse<PersonalTodoUpdateTitleRes> updatePersonalTodoTitle(@PathVariable UUID todoId, @RequestBody @Valid PersonalTodoUpdateTitleReq req, @AuthenticationPrincipal CustomUserDetails user) {
         return ApiResponse.onSuccess(personalTodoService.updatePersonalTodoTitle(todoId, req, user));
     }
+
     //투두 상태 변경
     @PatchMapping("/{todoId}/state")
     @Operation(summary = "개인 TO DO 달성으로 상태 변경 요청", description = "개인 TO DO 달성으로 상태 변경 요청 API")
