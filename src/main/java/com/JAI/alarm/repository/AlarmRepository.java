@@ -1,10 +1,10 @@
 package com.JAI.alarm.repository;
 
 import com.JAI.alarm.domain.Alarm;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -24,7 +24,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, UUID> {
     @Query("SELECT a FROM Alarm a WHERE a.personalEvent.personalEventId = :personalEventId")
     Alarm findByPersonalEvent_PersonalEventId(@Param("personalEventId") UUID personalEventId);
 
-    List<Alarm> findByUser_UserId(UUID userId);
+    List<Alarm> findByUser_UserIdOrderByScheduledTimeDesc(UUID userId);
 
     @Modifying
     @Transactional
@@ -41,4 +41,9 @@ public interface AlarmRepository extends JpaRepository<Alarm, UUID> {
     Alarm findByGroupEventById(@Param("groupEventId") UUID groupEventId,
                                @Param("groupId") UUID groupId,
                                @Param("userId") UUID userId);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Alarm a WHERE a.groupInvitation.groupInvitationId = :groupInvitationId")
+    void deleteByGroupInvitationId(@Param("groupInvitationId") UUID groupInvitationId);
 }
