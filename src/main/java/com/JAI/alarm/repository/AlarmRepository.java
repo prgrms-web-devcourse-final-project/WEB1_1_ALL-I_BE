@@ -4,6 +4,7 @@ import com.JAI.alarm.domain.Alarm;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -13,22 +14,22 @@ import java.util.UUID;
 public interface AlarmRepository extends JpaRepository<Alarm, UUID> {
     // 사용자에게 보낼 일정 알림 조회
     @Query("SELECT a FROM Alarm a WHERE a.scheduledTime BETWEEN :start AND :end AND a.isSent = false AND a.type = com.JAI.alarm.domain.AlarmType.EVENT")
-    List<Alarm> findPendingEventAlarmsBetween(LocalDateTime start, LocalDateTime end);
+    List<Alarm> findPendingEventAlarmsBetween(@Param("start")LocalDateTime start, @Param("end")LocalDateTime end);
 
     // 사용자에게 보낼 초대 알림 조회
     @Query("SELECT a FROM Alarm a WHERE a.scheduledTime <= :standardTime AND a.isSent = false AND a.type = com.JAI.alarm.domain.AlarmType.INVITATION")
-    List<Alarm> findPendingInvitationAlarms(LocalDateTime standardTime);
+    List<Alarm> findPendingInvitationAlarms(@Param("standardTime") LocalDateTime standardTime);
 
 
     @Query("SELECT a FROM Alarm a WHERE a.personalEvent.personalEventId = :personalEventId")
-    Alarm findByPersonalEvent_PersonalEventId(UUID personalEventId);
+    Alarm findByPersonalEvent_PersonalEventId(@Param("personalEventId") UUID personalEventId);
 
     List<Alarm> findByUser_UserId(UUID userId);
 
     @Modifying
     @Transactional
     @Query("DELETE FROM Alarm a WHERE a.readTime <= :standardTime AND a.readTime IS NOT NULL")
-    void deleteAlarmNeedToBeDelete(LocalDateTime standardTime);
+    void deleteAlarmNeedToBeDelete(@Param("standardTime") LocalDateTime standardTime);
 
     @Query("SELECT a " +
             "FROM Alarm a " +
@@ -37,5 +38,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, UUID> {
             "WHERE gs.group.groupId = :groupId " +
             "AND gs.user.userId = :userId " +
             "AND gem.groupEvent.groupEventId = :groupEventId")
-    Alarm findByGroupEventById(UUID groupEventId, UUID groupId, UUID userId);
+    Alarm findByGroupEventById(@Param("groupEventId") UUID groupEventId,
+                               @Param("groupId") UUID groupId,
+                               @Param("userId") UUID userId);
 }
