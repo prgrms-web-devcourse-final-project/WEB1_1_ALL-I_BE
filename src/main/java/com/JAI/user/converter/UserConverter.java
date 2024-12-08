@@ -41,6 +41,7 @@ public class UserConverter {
 
     public UserInfoRes toUserInfoDTO(User user){
         return UserInfoRes.builder()
+                .userId(user.getUserId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .imageUrl(user.getImageUrl())
