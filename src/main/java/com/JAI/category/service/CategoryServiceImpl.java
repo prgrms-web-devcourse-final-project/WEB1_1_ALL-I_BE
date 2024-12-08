@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -118,11 +120,20 @@ public class CategoryServiceImpl implements CategoryService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("해당 ID의 유저를 찾을 수 없습니다."));
 
+        // 그룹 카테고리
+        List<Category> groupCategories = categoryRepository.findGroupCategoriesByUserId(userId);
+
         // 사용자의 개인 카테고리
         List<Category> personalCategories = categoryRepository.findByUser_UserId(userId);
 
-        // 그룹 카테고리
-        List<Category> groupCategories = categoryRepository.findGroupCategoriesByUserId(userId);
+        // 개인 카테고리에서 그룹 카테고리를 제외한 결과
+        Set<UUID> groupCategoryIds = groupCategories.stream()
+                .map(Category::getCategoryId)
+                .collect(Collectors.toSet());
+
+        personalCategories = personalCategories.stream()
+                .filter(category -> !groupCategoryIds.contains(category.getCategoryId()))
+                .toList();
 
         return Stream.concat(personalCategories.stream(),
                         groupCategories.stream())
