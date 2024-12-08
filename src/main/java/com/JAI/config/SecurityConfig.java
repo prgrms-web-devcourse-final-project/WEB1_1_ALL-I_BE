@@ -68,6 +68,10 @@ public class SecurityConfig {
                 .authorizeRequests((auth) -> auth
                         .requestMatchers("/user/signup","/user/login", "/user/reissue").permitAll()
 
+                        // 스웨거
+                        .requestMatchers("/swagger-ui/*", "/api-test", "/v3/api-docs/**")
+                        .permitAll()
+
                         .requestMatchers("user/reissue", "user/logout", "user/update").authenticated()
                         .requestMatchers("/todos", "/events", "/groupTodos", "/groupEvents", "/groups", "/categories", "/alarms", "/chatbot").authenticated())
                 //jwt 필터 추가

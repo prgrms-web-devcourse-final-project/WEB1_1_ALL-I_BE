@@ -1,6 +1,7 @@
 package com.JAI.group.repository;
 
 import com.JAI.group.domain.Group;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -14,5 +15,5 @@ public interface GroupRepository extends JpaRepository<Group, UUID> {
             "FROM Group g " +
             "JOIN GroupSetting gs ON gs.group.groupId = g.groupId " +
             "WHERE gs.user.userId = :userId")
-    public List<Group> findGroupByUserId(UUID userId);
+    public List<Group> findGroupByUserId(@Param("userId") UUID userId);
 }
