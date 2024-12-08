@@ -40,9 +40,9 @@ public class GroupEventConverter {
                 .groupEventId(groupEventUpdateReqDTO.getGroupEventId())
                 .title(groupEventUpdateReqDTO.getTitle() == null ? existedGroupEvent.getTitle() : groupEventUpdateReqDTO.getTitle())
                 .startDate(groupEventUpdateReqDTO.getStartDate() == null ? existedGroupEvent.getStartDate() : groupEventUpdateReqDTO.getStartDate())
-                .startTime(groupEventUpdateReqDTO.getStartTime() == null ? existedGroupEvent.getStartTime() : groupEventUpdateReqDTO.getStartTime())
+                .startTime(groupEventUpdateReqDTO.getStartTime() == null ? null : groupEventUpdateReqDTO.getStartTime())
                 .endDate(groupEventUpdateReqDTO.getEndDate() == null ? existedGroupEvent.getEndDate() : groupEventUpdateReqDTO.getEndDate())
-                .endTime(groupEventUpdateReqDTO.getEndTime() == null ? existedGroupEvent.getEndTime() : groupEventUpdateReqDTO.getEndTime())
+                .endTime(groupEventUpdateReqDTO.getEndTime() == null ? null : groupEventUpdateReqDTO.getEndTime())
                 .createdAt(existedGroupEvent.getCreatedAt())
                 .isAlarmed(groupEventUpdateReqDTO.getIsAlarmed() == null ? existedGroupEvent.getIsAlarmed() : groupEventUpdateReqDTO.getIsAlarmed())
                 .build();
