@@ -11,6 +11,7 @@ import com.JAI.user.service.dto.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class PersonalTodoController {
             @Parameter(name = "startTime", description = "그룹 TO DO 시작 시간", example = "21:00:00"),
             @Parameter(name = "categoryId", description = "TO DO 카테고리 아이디", example = "32eda718-fc6c-47ed-82ce-697c5f3f6b28")
     })
-    public ApiResponse<String> createPersonalTodo(@RequestBody PersonalTodoCreateReq req, @AuthenticationPrincipal CustomUserDetails user){
+    public ApiResponse<String> createPersonalTodo(@RequestBody @Valid PersonalTodoCreateReq req, @AuthenticationPrincipal CustomUserDetails user){
         personalTodoService.createPersonalTodo(req, user);
 
         return ApiResponse.onCreateSuccess("Todo Create Success");
@@ -48,7 +49,7 @@ public class PersonalTodoController {
             @Parameter(name = "startTime", description = "그룹 TO DO 시작 시간", example = "21:00:00"),
             @Parameter(name = "categoryId", description = "TO DO 카테고리 아이디", example = "32eda718-fc6c-47ed-82ce-697c5f3f6b28")
     })
-    public ApiResponse<PersonalTodoUpdateRes> updatePersonalTodo(@PathVariable UUID todoId, @RequestBody PersonalTodoUpdateReq req, @AuthenticationPrincipal CustomUserDetails user){
+    public ApiResponse<PersonalTodoUpdateRes> updatePersonalTodo(@PathVariable UUID todoId, @RequestBody @Valid PersonalTodoUpdateReq req, @AuthenticationPrincipal CustomUserDetails user){
         return ApiResponse.onSuccess(personalTodoService.updatePersonalTodo(todoId, req, user));
     }
 

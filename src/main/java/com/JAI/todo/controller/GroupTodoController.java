@@ -86,7 +86,7 @@ public class GroupTodoController {
                     ["32eda718-fc6c-47ed-82ce-697c5f3f6b28"]
                     """)
     })
-    public ApiResponse<GroupTodoUpdateRes> updateGroupTodoInfo(@RequestBody GroupTodoUpdateReq req, @PathVariable UUID groupId, @PathVariable UUID groupTodoId, @AuthenticationPrincipal CustomUserDetails user){
+    public ApiResponse<GroupTodoUpdateRes> updateGroupTodoInfo(@RequestBody @Valid GroupTodoUpdateReq req, @PathVariable UUID groupId, @PathVariable UUID groupTodoId, @AuthenticationPrincipal CustomUserDetails user){
         return ApiResponse.onSuccess(groupTodoService.updateGroupTodoInfo(req, groupTodoId, groupId, user.getUserId()));
     }
 

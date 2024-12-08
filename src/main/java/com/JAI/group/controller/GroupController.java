@@ -52,7 +52,7 @@ public class GroupController {
             @Parameter(name = "description", description = "그룹 설명", example = "운동하고 건강한 삶을 지향해요!"),
             @Parameter(name = "color", description = "그룹 카테고리 색상", example = "#234568")
     })
-    public ApiResponse<GroupUpdateRes> updateGroupInfo(@PathVariable UUID groupId, @RequestBody GroupUpdateReq req, @AuthenticationPrincipal CustomUserDetails user) {
+    public ApiResponse<GroupUpdateRes> updateGroupInfo(@PathVariable UUID groupId, @RequestBody @Valid GroupUpdateReq req, @AuthenticationPrincipal CustomUserDetails user) {
         return ApiResponse.onSuccess(groupService.updateGroupInfo(groupId, req, user));
     }
 
