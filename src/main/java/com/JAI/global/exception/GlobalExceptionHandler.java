@@ -2,6 +2,7 @@ package com.JAI.global.exception;
 
 import com.JAI.global.controller.ApiResponse;
 import com.JAI.global.status.ErrorStatus;
+import com.JAI.user.exception.AccessTokenExpiredException;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
