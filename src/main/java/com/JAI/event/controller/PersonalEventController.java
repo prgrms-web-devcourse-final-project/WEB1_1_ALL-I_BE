@@ -60,7 +60,7 @@ public class PersonalEventController {
         return ApiResponse.onCreateSuccess();
     }
 
-    @PatchMapping("{event_id}")
+    @PatchMapping("/{event_id}")
     @Operation(summary = "개인 일정 수정", description = "개인 일정 수정 요청 API")
     @Parameters({
             @Parameter(name = "personalEventId", description = "개인 일정 아이디(NOT NULL)", example = "4ce7eb71-1b74-4ae3-aebf-7b179a825b5b"),
@@ -87,7 +87,7 @@ public class PersonalEventController {
         return ApiResponse.onSuccess(updatedPersonalEvent);
     }
 
-    @DeleteMapping("{event_id}")
+    @DeleteMapping("/{event_id}")
     @Operation(summary = "개인 일정 삭제", description = "개인 일정 삭제 요청 API")
     public ApiResponse<UUID> deletePersonalEvent(@PathVariable("event_id") UUID personalEventId, @AuthenticationPrincipal CustomUserDetails user) {
         personalEventService.deletePersonalEvent(personalEventId, user.getUserId());
