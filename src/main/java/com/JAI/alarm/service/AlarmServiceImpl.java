@@ -3,7 +3,6 @@ package com.JAI.alarm.service;
 import com.JAI.alarm.DTO.AlarmResDTO;
 import com.JAI.alarm.domain.Alarm;
 import com.JAI.alarm.domain.AlarmType;
-import com.JAI.alarm.exception.AlarmNotFoundException;
 import com.JAI.alarm.mapper.AlarmConverter;
 import com.JAI.alarm.repository.AlarmRepository;
 import com.JAI.event.DTO.GroupEventForAlarmDTO;
@@ -115,7 +114,7 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Override
     public List<AlarmResDTO> getAlarm(UUID userId) {
-        return alarmRepository.findByUser_UserId(userId).stream()
+        return alarmRepository.findByUser_UserIdOrderByScheduledTimeDesc(userId).stream()
                 .map(alarm -> {
                     AlarmResDTO alarmResDTO = alarmConverter.alarmToAlarmResDTO(alarm);
                     markAlarmAsRead(alarmResDTO);

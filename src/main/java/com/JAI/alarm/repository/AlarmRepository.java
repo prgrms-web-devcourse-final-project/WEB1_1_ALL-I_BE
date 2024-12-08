@@ -23,7 +23,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, UUID> {
     @Query("SELECT a FROM Alarm a WHERE a.personalEvent.personalEventId = :personalEventId")
     Alarm findByPersonalEvent_PersonalEventId(UUID personalEventId);
 
-    List<Alarm> findByUser_UserId(UUID userId);
+    List<Alarm> findByUser_UserIdOrderByScheduledTimeDesc(UUID userId);
 
     @Modifying
     @Transactional
