@@ -239,7 +239,7 @@ public class AlarmServiceImpl implements AlarmService {
         List<Alarm> invitationAlarms = alarmRepository.findPendingInvitationAlarms(standardTime);
 
         // 일정 알람 조회
-        List<Alarm> personalEventAlarms = alarmRepository.findPendingEventAlarmsBetween(standardTime);
+        List<Alarm> personalEventAlarms = alarmRepository.findPendingEventAlarms(standardTime);
 
         return Stream.concat(
                         invitationAlarms.stream(),
