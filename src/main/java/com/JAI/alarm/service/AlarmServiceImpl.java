@@ -147,7 +147,9 @@ public class AlarmServiceImpl implements AlarmService {
         return alarmRepository.findByUserId(userId, standardTime).stream()
                 .map(alarm -> {
                     AlarmResDTO alarmResDTO = alarmConverter.alarmToAlarmResDTO(alarm);
-                    markAlarmAsRead(alarmResDTO);
+                    if (!alarmResDTO.getIsRead()) {
+                        markAlarmAsRead(alarmResDTO);
+                    }
                     return alarmResDTO;
                 })
                 .collect(Collectors.toList());
@@ -299,12 +301,12 @@ public class AlarmServiceImpl implements AlarmService {
     // 보낸 알림  칼럼 변경
     private void markAlarmAsRead(AlarmResDTO alarmResDTO) {
         Optional<Alarm> targetAlarm = alarmRepository.findById(alarmResDTO.getAlarmId());
-        LocalDateTime now = LocalDateTime.now();
 
         targetAlarm.ifPresent(alarm -> {
             alarm.markAsSent();
             alarm.markAsRead();
-            alarm.updateReadTime(now);
+            alarm.updateReadTime(ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+                    .withZoneSameInstant(ZoneId.of("UTC")));
             alarmRepository.save(alarm);
         });
     }

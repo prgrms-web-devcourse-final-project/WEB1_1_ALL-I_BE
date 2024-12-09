@@ -47,8 +47,8 @@ public class Alarm {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @Column(name = "read_time", nullable = true, columnDefinition = "DATETIME DEFAULT NULL")
-    private LocalDateTime readTime;
+    @Column(name = "read_time", nullable = true, columnDefinition = "TIMESTAMP DEFAULT NULL")
+    private ZonedDateTime readTime;
 
     @ToString.Exclude
     @ManyToOne
@@ -94,7 +94,7 @@ public class Alarm {
     }
 
     // 읽음 시간 설정
-    public void updateReadTime(LocalDateTime now) {
+    public void updateReadTime(ZonedDateTime now) {
         this.readTime = now;
     }
 }
