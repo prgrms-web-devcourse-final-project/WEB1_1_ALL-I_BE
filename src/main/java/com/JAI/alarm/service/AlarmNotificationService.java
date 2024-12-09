@@ -9,6 +9,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,15 +48,10 @@ public class AlarmNotificationService {
     @Scheduled(fixedRate = 60000)
     public void sendScheduledAlarms() {
         log.info("Checking scheduled alarms...");
-        LocalDateTime start = LocalDateTime.now()
-                .withHour(0)
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(1);
-        LocalDateTime end = LocalDateTime.now();
+        ZonedDateTime standardTime = ZonedDateTime.now(ZoneId.of("UTC"));
 
         // 현재 시간에 도달한 알림을 조회
-        alarmService.findPendingAlarms(start, end).forEach(alarmResDTO -> {
+        alarmService.findPendingAlarms(standardTime.toLocalDateTime()).forEach(alarmResDTO -> {
 
             // 사용자 연결 여부 확인 후 전송
             if (userEmitters.containsKey(alarmResDTO.getUserId())) {

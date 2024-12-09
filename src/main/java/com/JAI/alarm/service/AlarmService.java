@@ -22,7 +22,7 @@ public interface AlarmService {
 
     public List<AlarmResDTO> getAlarm(UUID userId);
 
-    public List<AlarmResDTO> findPendingAlarms(LocalDateTime start, LocalDateTime end);
+    public List<AlarmResDTO> findPendingAlarms(LocalDateTime standardTime);
 
     public void markAlarmAsSent(AlarmResDTO alarmResDTO);
 
