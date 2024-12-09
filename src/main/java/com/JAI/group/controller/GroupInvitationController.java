@@ -7,8 +7,6 @@ import com.JAI.group.service.GroupInvitationService;
 import com.JAI.user.service.dto.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
