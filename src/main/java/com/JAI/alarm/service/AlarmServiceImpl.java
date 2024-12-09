@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,18 +48,18 @@ public class AlarmServiceImpl implements AlarmService {
 
     public void createPersonalEventAlarm(PersonalEventDTO personalEventDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
-        LocalDateTime scheduledTime;
+        ZonedDateTime scheduledTime;
 
         if (personalEventDTO.getStartTime() == null) {
-            scheduledTime = personalEventDTO.getStartDate().atTime(LocalTime.now());
+            scheduledTime = personalEventDTO.getStartDate().atTime(LocalTime.now()).atZone(ZoneId.systemDefault());
         } else {
-            scheduledTime = personalEventDTO.getStartDate().atTime(personalEventDTO.getStartTime());
+            scheduledTime = personalEventDTO.getStartDate().atTime(personalEventDTO.getStartTime()).atZone(ZoneId.systemDefault());
         }
 
         // 알림 생성 후 저장
         Alarm alarm = Alarm.builder()
                 .type(AlarmType.EVENT)
-                .scheduledTime(scheduledTime)
+                .scheduledTime(scheduledTime.toLocalDateTime())
                 .description(personalEventConverter
                         .personalEventDTOToPersonalEventResDTO(personalEventDTO)
                         .toString())
@@ -232,12 +234,12 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Override
-    public List<AlarmResDTO> findPendingAlarms(LocalDateTime start, LocalDateTime end) {
+    public List<AlarmResDTO> findPendingAlarms(LocalDateTime standardTime) {
         // 그룹 초대 알람 조회
-        List<Alarm> invitationAlarms = alarmRepository.findPendingInvitationAlarms(end);
+        List<Alarm> invitationAlarms = alarmRepository.findPendingInvitationAlarms(standardTime);
 
         // 일정 알람 조회
-        List<Alarm> personalEventAlarms = alarmRepository.findPendingEventAlarmsBetween(start, end);
+        List<Alarm> personalEventAlarms = alarmRepository.findPendingEventAlarmsBetween(standardTime);
 
         return Stream.concat(
                         invitationAlarms.stream(),

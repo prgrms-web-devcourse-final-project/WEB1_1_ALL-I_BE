@@ -13,8 +13,8 @@ import java.util.UUID;
 
 public interface AlarmRepository extends JpaRepository<Alarm, UUID> {
     // 사용자에게 보낼 일정 알림 조회
-    @Query("SELECT a FROM Alarm a WHERE a.scheduledTime BETWEEN :start AND :end AND a.isSent = false AND a.type = com.JAI.alarm.domain.AlarmType.EVENT")
-    List<Alarm> findPendingEventAlarmsBetween(@Param("start")LocalDateTime start, @Param("end")LocalDateTime end);
+    @Query("SELECT a FROM Alarm a WHERE a.scheduledTime <= :standardTime AND a.isSent = false AND a.type = com.JAI.alarm.domain.AlarmType.EVENT")
+    List<Alarm> findPendingEventAlarmsBetween(@Param("standardTime")LocalDateTime standardTime);
 
     // 사용자에게 보낼 초대 알림 조회
     @Query("SELECT a FROM Alarm a WHERE a.scheduledTime <= :standardTime AND a.isSent = false AND a.type = com.JAI.alarm.domain.AlarmType.INVITATION")
