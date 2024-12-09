@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +14,7 @@ import java.util.UUID;
 public interface AlarmRepository extends JpaRepository<Alarm, UUID> {
     // 사용자에게 보낼 일정 알림 조회
     @Query("SELECT a FROM Alarm a WHERE a.scheduledTime <= :standardTime AND a.isSent = false AND a.type = com.JAI.alarm.domain.AlarmType.EVENT")
-    List<Alarm> findPendingEventAlarms(@Param("standardTime")ZonedDateTime standardTime);
+    List<Alarm> findPendingEventAlarms(@Param("standardTime") ZonedDateTime standardTime);
 
     // 사용자에게 보낼 초대 알림 조회
     @Query("SELECT a FROM Alarm a WHERE a.scheduledTime <= :standardTime AND a.isSent = false AND a.type = com.JAI.alarm.domain.AlarmType.INVITATION")
