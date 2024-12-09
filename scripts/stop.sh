@@ -5,7 +5,7 @@ DEPLOY_LOG="/home/ubuntu/jai/deploy.log"
 TIME_NOW=$(date +%c)
 
 # 1. 활성화된 CodeDeploy 배포 확인 및 중단
-ACTIVE_DEPLOYMENT=$(aws deploy list-deployments \
+ACTIVE_DEPLOYMENT=$(/usr/local/bin/aws deploy list-deployments \
     --application-name $APPLICATION_NAME \
     --deployment-group-name $DEPLOYMENT_GROUP_NAME \
     --include-only-statuses "InProgress" "Queued" \
@@ -14,7 +14,7 @@ ACTIVE_DEPLOYMENT=$(aws deploy list-deployments \
 
 if [ "$ACTIVE_DEPLOYMENT" != "None" ]; then
     echo "$TIME_NOW > Active deployment found: $ACTIVE_DEPLOYMENT. Stopping it." >> $DEPLOY_LOG
-    aws deploy stop-deployment --deployment-id $ACTIVE_DEPLOYMENT --auto-rollback-enabled
+    /usr/local/bin/aws deploy stop-deployment --deployment-id $ACTIVE_DEPLOYMENT --auto-rollback-enabled
 else
     echo "$TIME_NOW > No active deployment found." >> $DEPLOY_LOG
 fi
