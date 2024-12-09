@@ -51,7 +51,7 @@ public class AlarmNotificationService {
         ZonedDateTime standardTime = ZonedDateTime.now(ZoneId.of("UTC"));
 
         // 현재 시간에 도달한 알림을 조회
-        alarmService.findPendingAlarms(standardTime.toLocalDateTime()).forEach(alarmResDTO -> {
+        alarmService.findPendingAlarms(standardTime).forEach(alarmResDTO -> {
 
             // 사용자 연결 여부 확인 후 전송
             if (userEmitters.containsKey(alarmResDTO.getUserId())) {
