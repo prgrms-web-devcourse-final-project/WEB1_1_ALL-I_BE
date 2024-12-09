@@ -5,7 +5,6 @@ import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -25,7 +24,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, UUID> {
     @Query("SELECT a FROM Alarm a WHERE a.personalEvent.personalEventId = :personalEventId")
     Alarm findByPersonalEvent_PersonalEventId(@Param("personalEventId") UUID personalEventId);
 
-    @Query("SELECT a FROM Alarm a WHERE a.user.userId = :userId AND a.scheduledTime <= :now")
+    @Query("SELECT a FROM Alarm a WHERE a.user.userId = :userId AND a.scheduledTime <= :now ORDER BY a.scheduledTime DESC")
     List<Alarm> findByUserId(@Param("userId") UUID userId, @Param("now") LocalDateTime now);
 
     @Modifying
