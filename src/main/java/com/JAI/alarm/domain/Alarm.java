@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -39,8 +40,8 @@ public class Alarm {
     @Column(name = "is_sent", nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean isSent;
 
-    @Column(name = "scheduled_time", columnDefinition = "DATETIME")
-    private LocalDateTime scheduledTime;
+    @Column(name = "scheduled_time", columnDefinition = "TIMESTAMP")
+    private ZonedDateTime scheduledTime;
 
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME")
     @CreatedDate
@@ -67,7 +68,7 @@ public class Alarm {
     private GroupInvitation groupInvitation;
 
     @Builder
-    private Alarm(UUID alarmId, AlarmType type, String description, LocalDateTime scheduledTime, LocalDateTime createdAt, User user,
+    private Alarm(UUID alarmId, AlarmType type, String description, ZonedDateTime scheduledTime, LocalDateTime createdAt, User user,
                   GroupEventMapping groupEventMapping, PersonalEvent personalEvent, GroupInvitation groupInvitation) {
         this.alarmId = alarmId;
         this.type = type;

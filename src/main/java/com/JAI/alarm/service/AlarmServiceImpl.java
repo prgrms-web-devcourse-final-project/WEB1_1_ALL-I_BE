@@ -46,6 +46,7 @@ public class AlarmServiceImpl implements AlarmService {
     private final GroupConverter groupConverter;
     private final UserConverter userConverter;
 
+    @Override
     public void createPersonalEventAlarm(PersonalEventDTO personalEventDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
         ZonedDateTime scheduledTime;
@@ -67,7 +68,7 @@ public class AlarmServiceImpl implements AlarmService {
         // 알림 생성 후 저장
         Alarm alarm = Alarm.builder()
                 .type(AlarmType.EVENT)
-                .scheduledTime(scheduledTime.toLocalDateTime())
+                .scheduledTime(scheduledTime)
                 .description(personalEventConverter
                         .personalEventDTOToPersonalEventResDTO(personalEventDTO)
                         .toString())
@@ -143,7 +144,7 @@ public class AlarmServiceImpl implements AlarmService {
         ZonedDateTime koreanTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간
         ZonedDateTime standardTime = koreanTime.withZoneSameInstant(ZoneId.of("UTC")); // 한국 시간을 UTC로 변환
 
-        return alarmRepository.findByUserId(userId, standardTime.toLocalDateTime()).stream()
+        return alarmRepository.findByUserId(userId, standardTime).stream()
                 .map(alarm -> {
                     AlarmResDTO alarmResDTO = alarmConverter.alarmToAlarmResDTO(alarm);
                     markAlarmAsRead(alarmResDTO);
@@ -270,7 +271,7 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Override
-    public List<AlarmResDTO> findPendingAlarms(LocalDateTime standardTime) {
+    public List<AlarmResDTO> findPendingAlarms(ZonedDateTime standardTime) {
         // 그룹 초대 알람 조회
         List<Alarm> invitationAlarms = alarmRepository.findPendingInvitationAlarms(standardTime);
 

@@ -6,6 +6,7 @@ import com.JAI.event.DTO.PersonalEventDTO;
 import com.JAI.group.service.response.GroupInvitationForAlarmDTO;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public interface AlarmService {
 
     public List<AlarmResDTO> getAlarm(UUID userId);
 
-    public List<AlarmResDTO> findPendingAlarms(LocalDateTime standardTime);
+    public List<AlarmResDTO> findPendingAlarms(ZonedDateTime standardTime);
 
     public void markAlarmAsSent(AlarmResDTO alarmResDTO);
 

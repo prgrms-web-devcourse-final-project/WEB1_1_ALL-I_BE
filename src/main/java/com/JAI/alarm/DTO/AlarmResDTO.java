@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Getter
@@ -19,12 +20,12 @@ public class AlarmResDTO {
 
     private Boolean isRead;
 
-    private LocalDateTime scheduledTime;
+    private ZonedDateTime scheduledTime;
 
     private UUID userId;
 
     @Builder
-    private AlarmResDTO(UUID alarmId, AlarmType type, String description, Boolean isRead, LocalDateTime scheduledTime, UUID userId) {
+    private AlarmResDTO(UUID alarmId, AlarmType type, String description, Boolean isRead, ZonedDateTime scheduledTime, UUID userId) {
         this.alarmId = alarmId;
         this.type = type;
         this.description = description;
