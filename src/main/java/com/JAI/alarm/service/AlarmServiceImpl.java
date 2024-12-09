@@ -103,7 +103,7 @@ public class AlarmServiceImpl implements AlarmService {
             // 알림 생성 후 저장
             Alarm alarm = Alarm.builder()
                     .type(AlarmType.EVENT)
-                    .scheduledTime(scheduledTime.toLocalDateTime())
+                    .scheduledTime(scheduledTime)
                     .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
                     .user(userService.getUserById(assignedUserId))
                     .groupEventMapping(groupEventMappingService.findById(
@@ -129,7 +129,7 @@ public class AlarmServiceImpl implements AlarmService {
         // 알림 생성 후 저장
         Alarm alarm = Alarm.builder()
                 .type(AlarmType.INVITATION)
-                .scheduledTime(scheduledTime.toLocalDateTime())
+                .scheduledTime(scheduledTime)
                 .description(groupInvitationResDTO.toString())
                 .user(groupInvitationForAlarmDTO.getReceiver())
                 .groupInvitation(groupInvitationConverter
@@ -186,7 +186,7 @@ public class AlarmServiceImpl implements AlarmService {
                     .description(personalEventConverter
                             .personalEventDTOToPersonalEventResDTO(personalEventDTO)
                             .toString())
-                    .scheduledTime(scheduledTime.toLocalDateTime())
+                    .scheduledTime(scheduledTime)
                     .createdAt(existedAlarm.getCreatedAt())
                     .user(existedAlarm.getUser())
                     .personalEvent(personalEventConverter
@@ -229,7 +229,7 @@ public class AlarmServiceImpl implements AlarmService {
             if (existedAlarm == null) {
                 updatedAlarm = Alarm.builder()
                         .type(AlarmType.EVENT)
-                        .scheduledTime(scheduledTime.toLocalDateTime())
+                        .scheduledTime(scheduledTime)
                         .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
                         .user(userService.getUserById(assignedUserId))
                         .groupEventMapping(groupEventMappingService.findById(
@@ -243,7 +243,7 @@ public class AlarmServiceImpl implements AlarmService {
                         .alarmId(existedAlarm.getAlarmId())
                         .type(existedAlarm.getType())
                         .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
-                        .scheduledTime(scheduledTime.toLocalDateTime())
+                        .scheduledTime(scheduledTime)
                         .createdAt(existedAlarm.getCreatedAt())
                         .user(existedAlarm.getUser())
                         .groupEventMapping(groupEventMappingService.findById(groupEventForAlarmDTO.getGroupEventId(),
@@ -265,7 +265,7 @@ public class AlarmServiceImpl implements AlarmService {
         ZonedDateTime standardTime = koreanTime.withZoneSameInstant(ZoneId.of("UTC")); // 한국 시간을 UTC로 변환
         standardTime = standardTime.minusDays(7);
 
-        alarmRepository.deleteAlarmNeedToBeDelete(standardTime.toLocalDateTime());
+        alarmRepository.deleteAlarmNeedToBeDelete(standardTime);
 
         log.info("Alarms need to be deleted.");
     }
