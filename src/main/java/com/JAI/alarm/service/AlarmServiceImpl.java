@@ -86,7 +86,7 @@ public class AlarmServiceImpl implements AlarmService {
             // 알림 생성 후 저장
             Alarm alarm = Alarm.builder()
                     .type(AlarmType.EVENT)
-                    .scheduledTime(scheduledTime)
+                    .scheduledTime(scheduledTime.toLocalDateTime())
                     .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
                     .user(userService.getUserById(assignedUserId))
                     .groupEventMapping(groupEventMappingService.findById(
@@ -195,7 +195,7 @@ public class AlarmServiceImpl implements AlarmService {
             if (existedAlarm == null) {
                 updatedAlarm = Alarm.builder()
                         .type(AlarmType.EVENT)
-                        .scheduledTime(scheduledTime)
+                        .scheduledTime(scheduledTime.toLocalDateTime())
                         .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
                         .user(userService.getUserById(assignedUserId))
                         .groupEventMapping(groupEventMappingService.findById(
@@ -209,7 +209,7 @@ public class AlarmServiceImpl implements AlarmService {
                         .alarmId(existedAlarm.getAlarmId())
                         .type(existedAlarm.getType())
                         .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
-                        .scheduledTime(scheduledTime)
+                        .scheduledTime(scheduledTime.toLocalDateTime())
                         .createdAt(existedAlarm.getCreatedAt())
                         .user(existedAlarm.getUser())
                         .groupEventMapping(groupEventMappingService.findById(groupEventForAlarmDTO.getGroupEventId(),
