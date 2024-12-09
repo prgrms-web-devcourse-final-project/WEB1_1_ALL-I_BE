@@ -48,7 +48,8 @@ public class AlarmNotificationService {
     @Scheduled(fixedRate = 60000)
     public void sendScheduledAlarms() {
         log.info("Checking scheduled alarms...");
-        ZonedDateTime standardTime = ZonedDateTime.now(ZoneId.of("UTC"));
+        ZonedDateTime koreanTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간
+        ZonedDateTime standardTime = koreanTime.withZoneSameInstant(ZoneId.of("UTC")); // 한국 시간을 UTC로 변환
 
         // 현재 시간에 도달한 알림을 조회
         alarmService.findPendingAlarms(standardTime.toLocalDateTime()).forEach(alarmResDTO -> {

@@ -74,12 +74,12 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public void createGroupEventAlarm(GroupEventForAlarmDTO groupEventForAlarmDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
-        LocalDateTime scheduledTime;
+        ZonedDateTime scheduledTime;
 
         if (groupEventForAlarmDTO.getStartTime() == null) {
-            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now());
+            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now()).atZone(ZoneId.systemDefault());
         } else {
-            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(groupEventForAlarmDTO.getStartTime());
+            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(groupEventForAlarmDTO.getStartTime()).atZone(ZoneId.systemDefault());
         }
 
         groupEventForAlarmDTO.getAssignedUserIds().forEach(assignedUserId -> {
@@ -123,9 +123,10 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Override
     public List<AlarmResDTO> getAlarm(UUID userId) {
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime koreanTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간
+        ZonedDateTime standardTime = koreanTime.withZoneSameInstant(ZoneId.of("UTC")); // 한국 시간을 UTC로 변환
 
-        return alarmRepository.findByUserId(userId, now).stream()
+        return alarmRepository.findByUserId(userId, standardTime.toLocalDateTime()).stream()
                 .map(alarm -> {
                     AlarmResDTO alarmResDTO = alarmConverter.alarmToAlarmResDTO(alarm);
                     markAlarmAsRead(alarmResDTO);
@@ -144,12 +145,12 @@ public class AlarmServiceImpl implements AlarmService {
             createPersonalEventAlarm(personalEventDTO);
         } else {
             // 시작 시간 없는 경우 현재 시간으로 설정
-            LocalDateTime scheduledTime;
+            ZonedDateTime scheduledTime;
 
             if (personalEventDTO.getStartTime() == null) {
-                scheduledTime = personalEventDTO.getStartDate().atTime(LocalTime.now());
+                scheduledTime = personalEventDTO.getStartDate().atTime(LocalTime.now()).atZone(ZoneId.systemDefault());
             } else {
-                scheduledTime = personalEventDTO.getStartDate().atTime(personalEventDTO.getStartTime());
+                scheduledTime = personalEventDTO.getStartDate().atTime(personalEventDTO.getStartTime()).atZone(ZoneId.systemDefault());
             }
 
             // 변경된 알림 생성 후 저장
@@ -159,7 +160,7 @@ public class AlarmServiceImpl implements AlarmService {
                     .description(personalEventConverter
                             .personalEventDTOToPersonalEventResDTO(personalEventDTO)
                             .toString())
-                    .scheduledTime(scheduledTime)
+                    .scheduledTime(scheduledTime.toLocalDateTime())
                     .createdAt(existedAlarm.getCreatedAt())
                     .user(existedAlarm.getUser())
                     .personalEvent(personalEventConverter
@@ -173,12 +174,12 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public void updateGroupEventAlarm(GroupEventForAlarmDTO groupEventForAlarmDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
-        LocalDateTime scheduledTime;
+        ZonedDateTime scheduledTime;
 
         if (groupEventForAlarmDTO.getStartTime() == null) {
-            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now());
+            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now()).atZone(ZoneId.systemDefault());
         } else {
-            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(groupEventForAlarmDTO.getStartTime());
+            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(groupEventForAlarmDTO.getStartTime()).atZone(ZoneId.systemDefault());
         }
 
         groupEventForAlarmDTO.getAssignedUserIds().forEach(assignedUserId -> {
@@ -239,7 +240,7 @@ public class AlarmServiceImpl implements AlarmService {
         List<Alarm> invitationAlarms = alarmRepository.findPendingInvitationAlarms(standardTime);
 
         // 일정 알람 조회
-        List<Alarm> personalEventAlarms = alarmRepository.findPendingEventAlarmsBetween(standardTime);
+        List<Alarm> personalEventAlarms = alarmRepository.findPendingEventAlarms(standardTime);
 
         return Stream.concat(
                         invitationAlarms.stream(),
