@@ -123,13 +123,9 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Override
     public List<AlarmResDTO> getAlarm(UUID userId) {
-<<<<<<< Updated upstream
-        LocalDateTime now = LocalDateTime.now();
-=======
         ZonedDateTime standardTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간
->>>>>>> Stashed changes
 
-        return alarmRepository.findByUserId(userId, now).stream()
+        return alarmRepository.findByUserId(userId, standardTime.toLocalDateTime()).stream()
                 .map(alarm -> {
                     AlarmResDTO alarmResDTO = alarmConverter.alarmToAlarmResDTO(alarm);
                     markAlarmAsRead(alarmResDTO);
