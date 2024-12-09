@@ -74,19 +74,19 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public void createGroupEventAlarm(GroupEventForAlarmDTO groupEventForAlarmDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
-        ZonedDateTime scheduledTime;
+        LocalDateTime scheduledTime;
 
         if (groupEventForAlarmDTO.getStartTime() == null) {
-            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now()).atZone(ZoneId.systemDefault());
+            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now());
         } else {
-            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(groupEventForAlarmDTO.getStartTime()).atZone(ZoneId.systemDefault());
+            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(groupEventForAlarmDTO.getStartTime());
         }
 
         groupEventForAlarmDTO.getAssignedUserIds().forEach(assignedUserId -> {
             // 알림 생성 후 저장
             Alarm alarm = Alarm.builder()
                     .type(AlarmType.EVENT)
-                    .scheduledTime(scheduledTime.toLocalDateTime())
+                    .scheduledTime(scheduledTime)
                     .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
                     .user(userService.getUserById(assignedUserId))
                     .groupEventMapping(groupEventMappingService.findById(
@@ -123,8 +123,7 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Override
     public List<AlarmResDTO> getAlarm(UUID userId) {
-        ZonedDateTime koreanTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간
-        ZonedDateTime standardTime = koreanTime.withZoneSameInstant(ZoneId.of("UTC")); // 한국 시간을 UTC로 변환
+        ZonedDateTime standardTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간
 
         return alarmRepository.findByUserId(userId, standardTime.toLocalDateTime()).stream()
                 .map(alarm -> {
@@ -145,12 +144,12 @@ public class AlarmServiceImpl implements AlarmService {
             createPersonalEventAlarm(personalEventDTO);
         } else {
             // 시작 시간 없는 경우 현재 시간으로 설정
-            ZonedDateTime scheduledTime;
+            LocalDateTime scheduledTime;
 
             if (personalEventDTO.getStartTime() == null) {
-                scheduledTime = personalEventDTO.getStartDate().atTime(LocalTime.now()).atZone(ZoneId.systemDefault());
+                scheduledTime = personalEventDTO.getStartDate().atTime(LocalTime.now());
             } else {
-                scheduledTime = personalEventDTO.getStartDate().atTime(personalEventDTO.getStartTime()).atZone(ZoneId.systemDefault());
+                scheduledTime = personalEventDTO.getStartDate().atTime(personalEventDTO.getStartTime());
             }
 
             // 변경된 알림 생성 후 저장
@@ -160,7 +159,7 @@ public class AlarmServiceImpl implements AlarmService {
                     .description(personalEventConverter
                             .personalEventDTOToPersonalEventResDTO(personalEventDTO)
                             .toString())
-                    .scheduledTime(scheduledTime.toLocalDateTime())
+                    .scheduledTime(scheduledTime)
                     .createdAt(existedAlarm.getCreatedAt())
                     .user(existedAlarm.getUser())
                     .personalEvent(personalEventConverter
@@ -174,12 +173,12 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public void updateGroupEventAlarm(GroupEventForAlarmDTO groupEventForAlarmDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
-        ZonedDateTime scheduledTime;
+        LocalDateTime scheduledTime;
 
         if (groupEventForAlarmDTO.getStartTime() == null) {
-            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now()).atZone(ZoneId.systemDefault());
+            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now());
         } else {
-            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(groupEventForAlarmDTO.getStartTime()).atZone(ZoneId.systemDefault());
+            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(groupEventForAlarmDTO.getStartTime());
         }
 
         groupEventForAlarmDTO.getAssignedUserIds().forEach(assignedUserId -> {
@@ -195,7 +194,7 @@ public class AlarmServiceImpl implements AlarmService {
             if (existedAlarm == null) {
                 updatedAlarm = Alarm.builder()
                         .type(AlarmType.EVENT)
-                        .scheduledTime(scheduledTime.toLocalDateTime())
+                        .scheduledTime(scheduledTime)
                         .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
                         .user(userService.getUserById(assignedUserId))
                         .groupEventMapping(groupEventMappingService.findById(
@@ -209,7 +208,7 @@ public class AlarmServiceImpl implements AlarmService {
                         .alarmId(existedAlarm.getAlarmId())
                         .type(existedAlarm.getType())
                         .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
-                        .scheduledTime(scheduledTime.toLocalDateTime())
+                        .scheduledTime(scheduledTime)
                         .createdAt(existedAlarm.getCreatedAt())
                         .user(existedAlarm.getUser())
                         .groupEventMapping(groupEventMappingService.findById(groupEventForAlarmDTO.getGroupEventId(),
@@ -240,7 +239,7 @@ public class AlarmServiceImpl implements AlarmService {
         List<Alarm> invitationAlarms = alarmRepository.findPendingInvitationAlarms(standardTime);
 
         // 일정 알람 조회
-        List<Alarm> personalEventAlarms = alarmRepository.findPendingEventAlarms(standardTime);
+        List<Alarm> personalEventAlarms = alarmRepository.findPendingEventAlarmsBetween(standardTime);
 
         return Stream.concat(
                         invitationAlarms.stream(),

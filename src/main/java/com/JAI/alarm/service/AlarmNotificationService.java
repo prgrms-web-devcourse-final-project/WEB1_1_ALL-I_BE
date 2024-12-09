@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -48,8 +47,8 @@ public class AlarmNotificationService {
     @Scheduled(fixedRate = 60000)
     public void sendScheduledAlarms() {
         log.info("Checking scheduled alarms...");
-        ZonedDateTime koreanTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간
-        ZonedDateTime standardTime = koreanTime.withZoneSameInstant(ZoneId.of("UTC")); // 한국 시간을 UTC로 변환
+
+        ZonedDateTime standardTime = ZonedDateTime.now(ZoneId.of("UTC"));
 
         // 현재 시간에 도달한 알림을 조회
         alarmService.findPendingAlarms(standardTime.toLocalDateTime()).forEach(alarmResDTO -> {
