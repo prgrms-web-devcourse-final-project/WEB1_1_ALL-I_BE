@@ -51,9 +51,17 @@ public class AlarmServiceImpl implements AlarmService {
         ZonedDateTime scheduledTime;
 
         if (personalEventDTO.getStartTime() == null) {
-            scheduledTime = personalEventDTO.getStartDate().atTime(LocalTime.now()).atZone(ZoneId.systemDefault());
+            // 시작 시간이 없는 경우, 현재 한국 시간을 UTC로 변환
+            scheduledTime = personalEventDTO.getStartDate()
+                    .atTime(LocalTime.now(ZoneId.of("Asia/Seoul")))
+                    .atZone(ZoneId.of("Asia/Seoul"))
+                    .withZoneSameInstant(ZoneId.of("UTC"));
         } else {
-            scheduledTime = personalEventDTO.getStartDate().atTime(personalEventDTO.getStartTime()).atZone(ZoneId.systemDefault());
+            // 시작 시간이 있는 경우, 지정된 시간을 UTC로 변환
+            scheduledTime = personalEventDTO.getStartDate()
+                    .atTime(personalEventDTO.getStartTime())
+                    .atZone(ZoneId.of("Asia/Seoul"))
+                    .withZoneSameInstant(ZoneId.of("UTC"));
         }
 
         // 알림 생성 후 저장
@@ -74,19 +82,27 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public void createGroupEventAlarm(GroupEventForAlarmDTO groupEventForAlarmDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
-        LocalDateTime scheduledTime;
+        ZonedDateTime scheduledTime;
 
         if (groupEventForAlarmDTO.getStartTime() == null) {
-            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now());
+            // 시작 시간이 없는 경우, 현재 한국 시간을 UTC로 변환
+            scheduledTime = groupEventForAlarmDTO.getStartDate()
+                    .atTime(LocalTime.now(ZoneId.of("Asia/Seoul")))
+                    .atZone(ZoneId.of("Asia/Seoul"))
+                    .withZoneSameInstant(ZoneId.of("UTC"));
         } else {
-            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(groupEventForAlarmDTO.getStartTime());
+            // 시작 시간이 있는 경우, 지정된 시간을 UTC로 변환
+            scheduledTime = groupEventForAlarmDTO.getStartDate()
+                    .atTime(groupEventForAlarmDTO.getStartTime())
+                    .atZone(ZoneId.of("Asia/Seoul"))
+                    .withZoneSameInstant(ZoneId.of("UTC"));
         }
 
         groupEventForAlarmDTO.getAssignedUserIds().forEach(assignedUserId -> {
             // 알림 생성 후 저장
             Alarm alarm = Alarm.builder()
                     .type(AlarmType.EVENT)
-                    .scheduledTime(scheduledTime)
+                    .scheduledTime(scheduledTime.toLocalDateTime())
                     .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
                     .user(userService.getUserById(assignedUserId))
                     .groupEventMapping(groupEventMappingService.findById(
@@ -102,7 +118,8 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     @Transactional
     public void createGroupInvitationAlarm(GroupInvitationForAlarmDTO groupInvitationForAlarmDTO) {
-        LocalDateTime scheduledTime = LocalDateTime.now();
+        ZonedDateTime koreanTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간
+        ZonedDateTime scheduledTime = koreanTime.withZoneSameInstant(ZoneId.of("UTC")); // 한국 시간을 UTC로 변환
 
         GroupInvitationResDTO groupInvitationResDTO = groupInvitationConverter.toGroupInvitationResDTO(groupInvitationForAlarmDTO);
         groupInvitationResDTO.updateGroup(groupConverter.toGroupListDTO(groupInvitationForAlarmDTO.getGroup()));
@@ -111,7 +128,7 @@ public class AlarmServiceImpl implements AlarmService {
         // 알림 생성 후 저장
         Alarm alarm = Alarm.builder()
                 .type(AlarmType.INVITATION)
-                .scheduledTime(scheduledTime)
+                .scheduledTime(scheduledTime.toLocalDateTime())
                 .description(groupInvitationResDTO.toString())
                 .user(groupInvitationForAlarmDTO.getReceiver())
                 .groupInvitation(groupInvitationConverter
@@ -123,7 +140,8 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Override
     public List<AlarmResDTO> getAlarm(UUID userId) {
-        ZonedDateTime standardTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간
+        ZonedDateTime koreanTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간
+        ZonedDateTime standardTime = koreanTime.withZoneSameInstant(ZoneId.of("UTC")); // 한국 시간을 UTC로 변환
 
         return alarmRepository.findByUserId(userId, standardTime.toLocalDateTime()).stream()
                 .map(alarm -> {
@@ -144,12 +162,20 @@ public class AlarmServiceImpl implements AlarmService {
             createPersonalEventAlarm(personalEventDTO);
         } else {
             // 시작 시간 없는 경우 현재 시간으로 설정
-            LocalDateTime scheduledTime;
+            ZonedDateTime scheduledTime;
 
             if (personalEventDTO.getStartTime() == null) {
-                scheduledTime = personalEventDTO.getStartDate().atTime(LocalTime.now());
+                // 시작 시간이 없는 경우, 현재 한국 시간을 UTC로 변환
+                scheduledTime = personalEventDTO.getStartDate()
+                        .atTime(LocalTime.now(ZoneId.of("Asia/Seoul")))
+                        .atZone(ZoneId.of("Asia/Seoul"))
+                        .withZoneSameInstant(ZoneId.of("UTC"));
             } else {
-                scheduledTime = personalEventDTO.getStartDate().atTime(personalEventDTO.getStartTime());
+                // 시작 시간이 있는 경우, 지정된 시간을 UTC로 변환
+                scheduledTime = personalEventDTO.getStartDate()
+                        .atTime(personalEventDTO.getStartTime())
+                        .atZone(ZoneId.of("Asia/Seoul"))
+                        .withZoneSameInstant(ZoneId.of("UTC"));
             }
 
             // 변경된 알림 생성 후 저장
@@ -159,7 +185,7 @@ public class AlarmServiceImpl implements AlarmService {
                     .description(personalEventConverter
                             .personalEventDTOToPersonalEventResDTO(personalEventDTO)
                             .toString())
-                    .scheduledTime(scheduledTime)
+                    .scheduledTime(scheduledTime.toLocalDateTime())
                     .createdAt(existedAlarm.getCreatedAt())
                     .user(existedAlarm.getUser())
                     .personalEvent(personalEventConverter
@@ -173,12 +199,20 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public void updateGroupEventAlarm(GroupEventForAlarmDTO groupEventForAlarmDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
-        LocalDateTime scheduledTime;
+        ZonedDateTime scheduledTime;
 
         if (groupEventForAlarmDTO.getStartTime() == null) {
-            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now());
+            // 시작 시간이 없는 경우, 현재 한국 시간을 UTC로 변환
+            scheduledTime = groupEventForAlarmDTO.getStartDate()
+                    .atTime(LocalTime.now(ZoneId.of("Asia/Seoul")))
+                    .atZone(ZoneId.of("Asia/Seoul"))
+                    .withZoneSameInstant(ZoneId.of("UTC"));
         } else {
-            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(groupEventForAlarmDTO.getStartTime());
+            // 시작 시간이 있는 경우, 지정된 시간을 UTC로 변환
+            scheduledTime = groupEventForAlarmDTO.getStartDate()
+                    .atTime(groupEventForAlarmDTO.getStartTime())
+                    .atZone(ZoneId.of("Asia/Seoul"))
+                    .withZoneSameInstant(ZoneId.of("UTC"));
         }
 
         groupEventForAlarmDTO.getAssignedUserIds().forEach(assignedUserId -> {
@@ -194,7 +228,7 @@ public class AlarmServiceImpl implements AlarmService {
             if (existedAlarm == null) {
                 updatedAlarm = Alarm.builder()
                         .type(AlarmType.EVENT)
-                        .scheduledTime(scheduledTime)
+                        .scheduledTime(scheduledTime.toLocalDateTime())
                         .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
                         .user(userService.getUserById(assignedUserId))
                         .groupEventMapping(groupEventMappingService.findById(
@@ -208,7 +242,7 @@ public class AlarmServiceImpl implements AlarmService {
                         .alarmId(existedAlarm.getAlarmId())
                         .type(existedAlarm.getType())
                         .description(groupEventConverter.GroupEventForAlarmDTOTogroupEventResDTO(groupEventForAlarmDTO).toString())
-                        .scheduledTime(scheduledTime)
+                        .scheduledTime(scheduledTime.toLocalDateTime())
                         .createdAt(existedAlarm.getCreatedAt())
                         .user(existedAlarm.getUser())
                         .groupEventMapping(groupEventMappingService.findById(groupEventForAlarmDTO.getGroupEventId(),
@@ -226,9 +260,11 @@ public class AlarmServiceImpl implements AlarmService {
         log.info("Checking alarms need to be deleted...");
 
         // 읽은지 7일이 지난 알림 삭제
-        LocalDateTime standardTime = LocalDateTime.now().minusDays(7);
+        ZonedDateTime koreanTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간
+        ZonedDateTime standardTime = koreanTime.withZoneSameInstant(ZoneId.of("UTC")); // 한국 시간을 UTC로 변환
+        standardTime = standardTime.minusDays(7);
 
-        alarmRepository.deleteAlarmNeedToBeDelete(standardTime);
+        alarmRepository.deleteAlarmNeedToBeDelete(standardTime.toLocalDateTime());
 
         log.info("Alarms need to be deleted.");
     }
