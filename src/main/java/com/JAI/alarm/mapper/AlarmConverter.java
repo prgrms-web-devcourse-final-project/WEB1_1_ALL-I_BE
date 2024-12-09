@@ -12,6 +12,7 @@ public class AlarmConverter {
                 .type(alarm.getType())
                 .description(alarm.getDescription())
                 .isRead(alarm.getIsRead())
+                .scheduledTime(alarm.getScheduledTime())
                 .userId(alarm.getUser().getUserId())
                 .build();
     }

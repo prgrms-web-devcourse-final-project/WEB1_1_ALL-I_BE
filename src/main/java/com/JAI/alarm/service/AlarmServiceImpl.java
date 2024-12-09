@@ -46,9 +46,13 @@ public class AlarmServiceImpl implements AlarmService {
 
     public void createPersonalEventAlarm(PersonalEventDTO personalEventDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
-        LocalDateTime scheduledTime = Optional.ofNullable(personalEventDTO.getStartTime())
-                .map(startTime -> personalEventDTO.getStartDate().atTime(startTime))
-                .orElse(personalEventDTO.getStartDate().atTime(LocalTime.now()));
+        LocalDateTime scheduledTime;
+
+        if (personalEventDTO.getStartTime() == null) {
+            scheduledTime = personalEventDTO.getStartDate().atTime(LocalTime.now());
+        } else {
+            scheduledTime = personalEventDTO.getStartDate().atTime(personalEventDTO.getStartTime());
+        }
 
         // 알림 생성 후 저장
         Alarm alarm = Alarm.builder()
@@ -68,9 +72,13 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public void createGroupEventAlarm(GroupEventForAlarmDTO groupEventForAlarmDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
-        LocalDateTime scheduledTime = Optional.ofNullable(groupEventForAlarmDTO.getStartTime())
-                .map(startTime -> groupEventForAlarmDTO.getStartDate().atTime(startTime))
-                .orElse(groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now()));
+        LocalDateTime scheduledTime;
+
+        if (groupEventForAlarmDTO.getStartTime() == null) {
+            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now());
+        } else {
+            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(groupEventForAlarmDTO.getStartTime());
+        }
 
         groupEventForAlarmDTO.getAssignedUserIds().forEach(assignedUserId -> {
             // 알림 생성 후 저장
@@ -92,7 +100,6 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     @Transactional
     public void createGroupInvitationAlarm(GroupInvitationForAlarmDTO groupInvitationForAlarmDTO) {
-        // 시작 시간 없는 경우 현재 시간으로 설정
         LocalDateTime scheduledTime = LocalDateTime.now();
 
         GroupInvitationResDTO groupInvitationResDTO = groupInvitationConverter.toGroupInvitationResDTO(groupInvitationForAlarmDTO);
@@ -135,9 +142,13 @@ public class AlarmServiceImpl implements AlarmService {
             createPersonalEventAlarm(personalEventDTO);
         } else {
             // 시작 시간 없는 경우 현재 시간으로 설정
-            LocalDateTime scheduledTime = Optional.ofNullable(personalEventDTO.getStartTime())
-                    .map(startTime -> personalEventDTO.getStartDate().atTime(startTime))
-                    .orElse(personalEventDTO.getStartDate().atTime(LocalTime.now()));
+            LocalDateTime scheduledTime;
+
+            if (personalEventDTO.getStartTime() == null) {
+                scheduledTime = personalEventDTO.getStartDate().atTime(LocalTime.now());
+            } else {
+                scheduledTime = personalEventDTO.getStartDate().atTime(personalEventDTO.getStartTime());
+            }
 
             // 변경된 알림 생성 후 저장
             Alarm updatedAlarm = Alarm.builder()
@@ -160,9 +171,13 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public void updateGroupEventAlarm(GroupEventForAlarmDTO groupEventForAlarmDTO) {
         // 시작 시간 없는 경우 현재 시간으로 설정
-        LocalDateTime scheduledTime = Optional.ofNullable(groupEventForAlarmDTO.getStartTime())
-                .map(startTime -> groupEventForAlarmDTO.getStartDate().atTime(startTime))
-                .orElse(groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now()));
+        LocalDateTime scheduledTime;
+
+        if (groupEventForAlarmDTO.getStartTime() == null) {
+            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(LocalTime.now());
+        } else {
+            scheduledTime = groupEventForAlarmDTO.getStartDate().atTime(groupEventForAlarmDTO.getStartTime());
+        }
 
         groupEventForAlarmDTO.getAssignedUserIds().forEach(assignedUserId -> {
             // 저장된 알림
