@@ -1,6 +1,6 @@
 <img src="./public/logo192.png" height="100" alt="logo" />
 
-# PlaneWith : J로 만들어줄 AI 비서
+# PlanWith : J로 만들어줄 AI 비서
 
 ### AI 비서와 함께하는 일정 관리 플랫폼
 
