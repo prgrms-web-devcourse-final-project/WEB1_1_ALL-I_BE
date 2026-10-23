@@ -14,6 +14,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ChatbotRedisDataDTO {
 
+    private String approvalState;
+    private String proposalHash;
+    private List<UUID> proposalItemIds;
     private String token;
     private UUID userId;
     private ChatbotReqDTO chatbotReqDTO;

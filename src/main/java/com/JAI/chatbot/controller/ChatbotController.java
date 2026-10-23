@@ -1,6 +1,11 @@
 package com.JAI.chatbot.controller;
 
 import com.JAI.chatbot.RedisChatbotUtil;
+import com.JAI.chatbot.approval.dto.ApprovalResult;
+import com.JAI.chatbot.approval.service.ApprovalOrchestrator;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 import com.JAI.chatbot.controller.dto.ChatbotRedisDataDTO;
 import com.JAI.chatbot.controller.dto.request.ChatbotReqDTO;
 import com.JAI.chatbot.controller.dto.request.TokenReqDTO;
@@ -24,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 public class ChatbotController {
 
     private final ChatbotService chatbotService;
+    private final ApprovalOrchestrator approvalOrchestrator;
 
     private final RedisChatbotUtil redisChatbotUtil;
 
@@ -58,16 +64,21 @@ public class ChatbotController {
     @Operation(summary = "챗봇 응답 투두와 개인 일정에 반영", description = "챗봇 응답 투두와 개인 일정 반영 API")
     @Parameter(name = "token", description = "챗봇 응답이 저장된 저장소 토큰", example = "f1a430ef-2d35-4849-80f5-903d3be36fa2")
     @PostMapping("/message")
-    public ApiResponse<Void> accept(
-            @RequestBody TokenReqDTO token,
-            @RequestParam Boolean accept, Boolean isAlarmed,
+    public ResponseEntity<ApiResponse<ApprovalResult>> accept(
+            @Valid @RequestBody TokenReqDTO token,
+            @RequestParam(name = "accept") Boolean accept,
+            @RequestParam(name = "isAlarmed", defaultValue = "false") Boolean isAlarmed,
             @AuthenticationPrincipal CustomUserDetails user) {
-//        System.out.println("controller");
-//        System.out.println("token: "+token);
-//        System.out.println("accept: "+accept);
-//        System.out.println("isAlarmed: "+isAlarmed);
-        chatbotService.validateAcceptAlarm(user, accept, isAlarmed, token);
-
-        return ApiResponse.onCreateSuccess();
+        if (token == null || token.getToken() == null || token.getToken().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "승인 토큰은 필수입니다");
+        }
+        ApprovalResult result = approvalOrchestrator.process(
+                user.getUser().getUserId(), token.getToken(), Boolean.TRUE.equals(accept),
+                Boolean.TRUE.equals(isAlarmed));
+        HttpStatus status = "PROCESSING".equals(result.status()) ? HttpStatus.ACCEPTED
+                : result.replayed()
+                  ? HttpStatus.OK : HttpStatus.CREATED;
+        return ResponseEntity.status(status)
+                .body(new ApiResponse<>(status, "승인 처리 결과", result));
     }
 }

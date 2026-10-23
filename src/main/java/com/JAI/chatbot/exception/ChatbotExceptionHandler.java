@@ -9,6 +9,22 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice(basePackages = {"com.JAI.chatbot"})
 public class ChatbotExceptionHandler {
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public org.springframework.http.ResponseEntity<ApiResponse<Object>> handleApprovalStatus(
+            org.springframework.web.server.ResponseStatusException e) {
+        HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
+        return org.springframework.http.ResponseEntity.status(status)
+                .body(new ApiResponse<>(status, e.getReason(), null));
+    }
+
+    @ExceptionHandler({org.springframework.dao.DataAccessException.class,
+            org.springframework.transaction.TransactionException.class})
+    public org.springframework.http.ResponseEntity<ApiResponse<Object>> handleStorageFailure(RuntimeException e) {
+        return org.springframework.http.ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(new ApiResponse<>(HttpStatus.SERVICE_UNAVAILABLE,
+                        "저장소 오류입니다. 같은 토큰으로 다시 요청해 주세요", null));
+    }
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ChatbotBadRequestException.class)

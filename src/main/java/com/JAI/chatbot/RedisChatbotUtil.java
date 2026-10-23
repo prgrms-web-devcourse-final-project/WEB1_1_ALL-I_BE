@@ -133,7 +133,8 @@ public class RedisChatbotUtil {
                 .build();
 
         // 수정된 데이터 다시 Redis에 저장
-        saveChatbotData(token, existingData); // 기존 ChatbotData에 EventResp 추가 후 덮어쓰기
+        saveApprovalSnapshot(token, existingData);
+        saveChatbotData(token, existingData);
     }
 
     // ChatbotTodoResp 저장/수정 (기존 ChatbotRedisData 업데이트)
@@ -162,7 +163,8 @@ public class RedisChatbotUtil {
                 .build();
 
         // 수정된 데이터 다시 Redis에 저장
-        saveChatbotData(token, existingData); // 기존 ChatbotData에 TodoResp 추가 후 덮어쓰기
+        saveApprovalSnapshot(token, existingData);
+        saveChatbotData(token, existingData);
     }
 
     // ChatbotRedisData를 Redis에 저장하는 내부 메서드
@@ -181,13 +183,27 @@ public class RedisChatbotUtil {
         }
     }
 
-    public void deleteChatbotData(String token) {
-//        System.out.println("deleteChatbotData");
-//        System.out.println("token: "+token);
 
-        String key = getKeyByToken(token);
-//        System.out.println("key: "+key);
-        redisUtil.delete(key);
+    // Immutable READY snapshot, written only after the LLM output has been mapped.
+    // Changes to a recommendation must receive a new token.
+    private void saveApprovalSnapshot(String token, ChatbotRedisDataDTO data) {
+        try {
+            String json = objectMapper.writeValueAsString(com.JAI.chatbot.approval.dto.ProposalIdentity.ready(data, objectMapper));
+            if (!redisUtil.saveIfAbsent("approval:{" + token + "}:proposal", json, ttlSeconds)) {
+                throw new ChatbotUnprocessableEntityException("이미 확정된 추천안입니다. 새 요청을 생성해 주세요");
+            }
+        } catch (JsonProcessingException e) {
+            throw new ChatbotUnprocessableEntityException("승인 추천안 직렬화 실패");
+        }
+    }
+
+    public void deleteChatbotData(String token) {
+        // Remove both the mapping AND the prefixed data key; the previous version
+        // called delete(key), although the actual data lives at "chatbot:" + key.
+        String key = redisUtil.get(PREFIX_KEY_TOKEN + token);
+        if (key != null) redisUtil.delete(PREFIX_CHATBOT + key);
+        redisUtil.delete(PREFIX_KEY_TOKEN + token);
+        // The owner-checked Lua script removes the approval proposal and lease.
     }
 
 }

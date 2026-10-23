@@ -45,7 +45,7 @@ public class PersonalEventServiceImpl implements PersonalEventService {
         // categoryService를 통해 Category를 설정
         personalEvent.setCategory(Optional.ofNullable(categoryService.getCategoryByCategoryId(personalEventCreateReqDTO.getCategoryId()))
                 .map(category -> {
-                    if (category.getUser().getUserId().equals(userId) && category.getGroup() != null) {
+                    if (category.getUser() == null || !category.getUser().getUserId().equals(userId) || category.getGroup() != null) {
                         throw new CategoryNotOwnerException("다른 사용자의 카테고리를 사용할 수 없습니다.");
                     }
                     return category;
@@ -80,7 +80,7 @@ public class PersonalEventServiceImpl implements PersonalEventService {
         Optional.ofNullable(personalEventUpdateReqDTO.getCategoryId())
                 .map(categoryService::getCategoryByCategoryId)
                 .map(category -> {
-                    if (!category.getUser().getUserId().equals(userId) && category.getGroup() != null) {
+                    if (category.getUser() == null || !category.getUser().getUserId().equals(userId) || category.getGroup() != null) {
                         throw new CategoryNotOwnerException("다른 사용자의 카테고리를 사용할 수 없습니다.");
                     }
                     updatedPersonalEvent.setCategory(category);

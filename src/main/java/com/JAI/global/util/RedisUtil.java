@@ -18,6 +18,12 @@ public class RedisUtil {
         redisTemplate.opsForValue().set(key, value, ttlSeconds, TimeUnit.SECONDS);
     }
 
+    // 원자적인 SET NX EX: READY 스냅샷을 한 번만 확정합니다.
+    public boolean saveIfAbsent(String key, String value, long ttlSeconds) {
+        return Boolean.TRUE.equals(redisTemplate.opsForValue()
+                .setIfAbsent(key, value, ttlSeconds, TimeUnit.SECONDS));
+    }
+
     //레디스 조회
     public String get(String key){
         return redisTemplate.opsForValue().get(key);
